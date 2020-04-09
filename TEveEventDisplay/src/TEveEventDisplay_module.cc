@@ -119,8 +119,8 @@ namespace mu2e
 			fhicl::Atom<art::InputTag>cluTag{Name("CaloClusterCollection"),Comment("cluTag")};
       fhicl::Atom<art::InputTag>cryHitTag{Name("CaloCrystalHitCollection"),Comment("cryHitTag")};
 			fhicl::Atom<std::string> g4ModuleLabel{Name("g4ModuleLabel"), Comment("")};
-			fhicl::Atom<double> minEnergyDep{Name("minEnergyDep"), Comment("choose minium energy"), 50};
-			fhicl::Atom<int> minHits{Name("minHits"), Comment(""), 2};
+			fhicl::Atom<double> minEnergyDep{Name("minEnergyDep"), Comment("choose minium energy"), 50};//TODO - this doesnt belong here!
+			fhicl::Atom<int> minHits{Name("minHits"), Comment(""), 2};//TODO (as above)
 			fhicl::Atom<bool> doDisplay{Name("doDisplay"), Comment(""), true};
 			fhicl::Atom<bool> clickToAdvance{Name("clickToAdvance"), Comment(""), true}; 
 			fhicl::Atom<bool> showEvent{Name("showEvent"), Comment(""),true};     
@@ -523,7 +523,7 @@ void TEveEventDisplay::analyze(const art::Event& event){
 	geom->Draw("ogl");
   
 	gPad->WaitPrimitive();
-    char junk;
+  char junk;
 	cerr << "Enter any character to continue: ";
 	cin >> junk;
 } 

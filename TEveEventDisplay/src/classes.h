@@ -9,3 +9,5 @@
 #include "TEveEventDisplay/src/dict_classes/TEveMu2eHit.h"
 #include "TEveEventDisplay/src/dict_classes/TEveMu2eCluster.h"
 #include "TEveEventDisplay/src/dict_classes/TEveMu2eStraightTrack.h"
+#include "TEveEventDisplay/src/dict_classes/TEveMu2eHelixTrack.h"
+#include "TEveEventDisplay/src/dict_classes/TEveMu2eBField.h"
