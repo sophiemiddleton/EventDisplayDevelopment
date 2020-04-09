@@ -7,5 +7,8 @@
  <class name="mu2e::Particle_Interface"/>
  <class name="mu2e::Draw_Interface"/>
  <class name="mu2e::NavPanel"/>
+  <class name="mu2e::TEveMu2eHit"/>
+ <class name="mu2e::TEveMu2eCluster"/>
+  <class name="mu2e::TEveMu2eStraightTrack"/>
 </lcgdict>
 

@@ -6,3 +6,6 @@
 #include "TEveEventDisplay/src/dict_classes/Particle_Interface.h"
 #include "TEveEventDisplay/src/dict_classes/Draw_Interface.h"
 #include "TEveEventDisplay/src/dict_classes/NavPanel.h"
+#include "TEveEventDisplay/src/dict_classes/TEveMu2eHit.h"
+#include "TEveEventDisplay/src/dict_classes/TEveMu2eCluster.h"
+#include "TEveEventDisplay/src/dict_classes/TEveMu2eStraightTrack.h"

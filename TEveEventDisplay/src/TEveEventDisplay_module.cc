@@ -685,7 +685,7 @@ void TEveEventDisplay::AddCaloCluster(const art::Event& event){
 
 bool TEveEventDisplay::HasCluster(const art::Event& evt){
 	_clustercol = 0; 
-        auto chH = evt.getValidHandle<mu2e::CaloClusterCollection>(cluTag_);
+  auto chH = evt.getValidHandle<mu2e::CaloClusterCollection>(cluTag_);
 	_clustercol = chH.product();
 	foundEvent = true;
 	return _clustercol != 0;
@@ -693,7 +693,7 @@ bool TEveEventDisplay::HasCluster(const art::Event& evt){
 
 bool TEveEventDisplay::HasTrack(const art::Event& evt){
 	_cosmiccol = 0; 
-    auto chH = evt.getValidHandle<mu2e::CosmicTrackSeedCollection>(cosmicTag_);
+  auto chH = evt.getValidHandle<mu2e::CosmicTrackSeedCollection>(cosmicTag_);
 	_cosmiccol = chH.product();
 	return _cosmiccol != 0;
   }
