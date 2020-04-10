@@ -2,6 +2,7 @@
 #ifndef Data_Interface_h
 #define Data_Interface_h
 
+#include "RecoDataProducts/inc/ComboHit.hh"
 #include "RecoDataProducts/inc/CaloCrystalHitCollection.hh"
 #include "RecoDataProducts/inc/CaloHitCollection.hh"
 #include "RecoDataProducts/inc/CrvRecoPulseCollection.hh"
@@ -30,12 +31,12 @@ using namespace CLHEP;
 namespace mu2e{
 	class Data_Interface
 	{
-	
+	   public:
 			#ifndef __CINT__
-			explicit Data_Interface();
+			explicit Data_Interface(){};
 			Data_Interface(const Data_Interface &);
 			Data_Interface& operator=(const Data_Interface &);
-
+      std::vector<art::Handle<mu2e::ComboHitCollection> > _comboHitVector;
 			std::vector<art::Handle<mu2e::StepPointMCCollection> > _stepPointMCVector;
 			std::vector<art::Handle<mu2e::StepPointMCCollection> > _caloStepPointMCVector;
 			std::vector<art::Handle<mu2e::StrawHitCollection> > _strawHitVector;
@@ -63,8 +64,6 @@ namespace mu2e{
 			std::string _g4ModuleLabel;
 			std::string _physicalVolumesMultiLabel;
 
-
-	private:
 			art::Event *_event;
 			art::Run *_run;
 
@@ -86,14 +85,16 @@ namespace mu2e{
 
 			template<class CollectionType> void createNewEntries(std::vector<art::Handle<CollectionType> > &dataVector,const art::Event &event, const std::string &className, std::vector<entryStruct> &newEntries, int classID);
 
-  	public:
-      struct trackInfoStruct
+    template<class CollectionType> void createNewEntries(std::vector<art::Handle<CollectionType> > &dataVector,const art::Event &event, const std::string &className, int classID);
+
+		struct trackInfoStruct
 		  {
 		    int classID, index;
 		    std::string entryText;
 		    std::string moduleLabel, productInstanceName;
 		    art::ProductID productId;
 		  };
+
 		  Data_Interface(TGComboBox *hitBox, TGComboBox *caloHitBox, TGComboBox *crvHitBox, TGListBox *trackBox, std::string const &g4ModuleLabel, std::string const &physicalVolumesMultiLabel);
 	  	void firstLoop();
 	  	void setAvailableCollections(const art::Event& event);
@@ -112,6 +113,17 @@ namespace mu2e{
 		const mu2e::PhysicalVolumeInfoCollection *getPhysicalVolumeInfoCollection() const;
 		const mu2e::PhysicalVolumeInfoMultiCollection *getPhysicalVolumeInfoMultiCollection() const;
 		const mu2e::MCTrajectoryCollection *getMCTrajectoryCollection(const trackInfoStruct &t) const;
+
+		const std::vector<entryStruct> &getStrawHitFlagEntries() const     {return _hitFlagEntries;}
+		const std::vector<entryStruct> &getStrawHitPositionEntries() const {return _hitPositionEntries;}
+		const std::string getSelectedStrawHitFlagEntry()      {return _selectedHitFlagEntry;}
+		const std::string getSelectedStrawPositionFlagEntry() {return _selectedHitPositionEntry;}
+		void setSelectedStrawHitFlagEntry(std::string selectedHitFlagEntry)
+					                         {_selectedHitFlagEntry=selectedHitFlagEntry;}
+		void setSelectedStrawHitPositionEntry(std::string selectedHitPositionEntry)
+				                         {_selectedHitPositionEntry=selectedHitPositionEntry;}
+		const mu2e::StrawHitFlagCollection *getStrawHitFlagCollection() const;
+		const mu2e::StrawHitPositionCollection *getStrawHitPositionCollection() const;
 
 		virtual ~Data_Interface(){};
 

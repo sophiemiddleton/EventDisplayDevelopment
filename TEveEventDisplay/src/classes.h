@@ -1,11 +1,10 @@
-#include "TEveEventDisplay/src/dict_classes/NavState.h"
-#include "TEveEventDisplay/src/dict_classes/EvtDisplayUtils.h"
+
 #include "TEveEventDisplay/src/dict_classes/Geom_Interface.h"
-#include "TEveEventDisplay/src/dict_classes/Collection_Interface.h"
 #include "TEveEventDisplay/src/dict_classes/ParticleTrack.h"
 #include "TEveEventDisplay/src/dict_classes/Particle_Interface.h"
 #include "TEveEventDisplay/src/dict_classes/Draw_Interface.h"
 #include "TEveEventDisplay/src/dict_classes/Data_Interface.h"
+#include "TEveEventDisplay/src/dict_classes/Collection_Filler.h"
 
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eMainWindow.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eHit.h"

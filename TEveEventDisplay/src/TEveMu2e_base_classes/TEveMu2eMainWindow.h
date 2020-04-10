@@ -16,7 +16,9 @@
 //TEveMu2e
 #include "TEveEventDisplay/src/dict_classes/Draw_Interface.h" 
 #include  "TEveEventDisplay/src/dict_classes/Geom_Interface.h"
-
+#include  "TEveEventDisplay/src/dict_classes/Data_Interface.h"
+#include  "TEveEventDisplay/src/dict_classes/Collection_Filler.h"
+#include "RecoDataProducts/inc/ComboHit.hh"
 class TBox;
 class TGTextEntry;
 class TPad;
@@ -36,19 +38,23 @@ namespace mu2e{
             
 		         virtual ~TEveMu2eMainWindow(){};
 
+
                  Bool_t ProcessMessage(Long_t msg, Long_t param1, Long_t param2);
-                 void  setEvent(const art::Event& event, bool firstLoop=false);
+                 void  setEvent(const art::Event& event, bool firstLoop);
                  void  fillEvent(bool firstLoop=false);
                  bool  isClosed() const;
                  int   getEventToFind(bool &findEvent) const;
                  #endif
                  TGeoManager* geom = new TGeoManager("geom","Geom");
+
                  //TApplication* application_;
 		             //TDirectory*   directory_ = nullptr;
 
                  Draw_Interface *draw = new Draw_Interface();
                  Geom_Interface *gdml_geom	=new Geom_Interface(); 
-
+                 Data_Interface *Data = new Data_Interface();
+                 const ComboHitCollection *combohits=nullptr; //TODO THIS NEEDS TO BE DONE DIFFERENTLY, ITS A TEST!
+                 
                  TGTextEntry     *fTeRun,*fTeEvt;
 		             TGLabel         *fTlRun,*fTlEvt;
                  Double_t        hitMarkerSize_;
@@ -79,8 +85,9 @@ namespace mu2e{
                  TText  *_eventNumberText, *_subrunNumberText, *_runNumberText;
                  int _event, _subrun, _run;
 
-                 void AddComboHits(const art::Event& event, bool firstloop);
+                 void AddComboHits(bool firstloop);
                  void SetRunGeometry(const art::Run& run, int _diagLevel);
+
 		         ClassDef(TEveMu2eMainWindow,0);
 
 	}; //end class def

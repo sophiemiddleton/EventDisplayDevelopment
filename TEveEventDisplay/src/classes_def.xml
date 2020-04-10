@@ -1,12 +1,10 @@
 <lcgdict>
- <class name="mu2e::EvtDisplayUtils"/> 
- <class name="mu2e::NavState"/> 
  <class name="mu2e::Geom_Interface"/>
- <class name="mu2e::Collection_Interface"/>
  <class name="mu2e::ParticleTrack"/>
  <class name="mu2e::Particle_Interface"/>
  <class name="mu2e::Draw_Interface"/>
   <class name="mu2e::Data_Interface"/>
+ <class name="mu2e::Collection_Filler"/>
  <class name="mu2e::TEveMu2eMainWindow"/>
   <class name="mu2e::TEveMu2eHit"/>
  <class name="mu2e::TEveMu2eCluster"/>

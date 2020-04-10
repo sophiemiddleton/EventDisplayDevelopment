@@ -30,28 +30,22 @@ TEveEventDisplayHelix : {
   }   
 
 TEveEventDisplayCosmics : {
-    module_type : TEveEventDisplay
-
-    #strawStepsTag          : "compressDigiMCs:tracker"
-    #strawHitsTag           : "makeSH"
-    ComboHitCollection 		      : "makePH"
-    GenParticleCollection 	    : "compressDigiMCs" #generate"
-    StrawDigiCollection		      :  "makeSD"
-    CrvDigiCollection		        : "CrvDigi"
-    CosmicTrackSeedCollection 	: "CosmicTrackFinder"
-    CaloClusterCollection		    : NULL
-    CaloCrystalHitCollection        : NULL
+    module_type : TEveEventDisplayUpgrade 
     g4ModuleLabel        		    : "g4run"
-    #hitMakerModuleLabel  		  : makeSH
-    #trackerStepPoints    		  : tracker
-    minEnergyDep         		    : 0
-    minHits              		    : 1
-    addHits 			              : true
-    addTracks 			            : false
-    addCrvHits			            : false
-    addCosmicSeedFit	          : false
-    isCosmic			              : true
-
+    filler : {
+      ComboHitCollection 		      : "makePH"
+      GenParticleCollection 	    : "compressDigiMCs" 
+      StrawDigiCollection		      :  "makeSD"
+      CrvDigiCollection		        : "CrvDigi"
+      CosmicTrackSeedCollection 	: "CosmicTrackFinder"
+      CaloClusterCollection		    : NULL
+      CaloCrystalHitCollection    : NULL
+      addHits 			              : true
+      addTracks 			            : false
+      addCrvHits			            : false
+      addCosmicSeedFit	          : false
+      isCosmic			              : true
+   }
   }   
 
 TEveEventDisplayCaloOnly : {

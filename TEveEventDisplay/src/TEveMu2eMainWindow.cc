@@ -29,6 +29,7 @@
 #include <TEveProjectionAxes.h>
 
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eMainWindow.h"
+#include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eHit.h"
 
 namespace fhicl
 {
@@ -87,7 +88,7 @@ namespace mu2e{
         navFrame->AddFrame(b);
         b->Associate(this);
 
-        TGPictureButton *f = new TGPictureButton(navFrame, gClient->GetPicture(icondir + "GoForward.gif"),1111);
+        TGPictureButton *f = new TGPictureButton(navFrame, gClient->GetPicture(icondir + "GoForward.gif"),1001);
         navFrame->AddFrame(f);
         f->Associate(this);
 
@@ -207,19 +208,18 @@ namespace mu2e{
             case kCM_BUTTON: 
                  if(param1==1111)
                  {
-                    std::cout<<"Coming Soon: Ability to add hits when I'm pressed..."<<_event<<std::endl; 
-                    //gApplication->Terminate(0);
-                    //AddComboHits(event, firstLoop);
+                  
+                    //AddComboHits(_firstLoop);
 		                //gSystem->ProcessEvents();
 	                  //gClient->NeedRedraw(fTeRun);
                     //gPad->WaitPrimitive();
                     
                  }
-                 if(param1==1001)
+                 if(param1==1001)//Forward
                  {
-                   //TODO - use these space as we develop the GUI
+                   gApplication->Terminate(0);
                  }
-                 if(param1==1100)
+                 if(param1==1100)//Back
                  {
                     std::cout<<"Still developing backwards navigation"<<std::endl;
                  }
@@ -240,32 +240,43 @@ namespace mu2e{
       _firstLoop = firstLoop;
       gSystem->ProcessEvents();
 	    gClient->NeedRedraw(fTeRun);
-
+      
+      //if(firstLoop) Data->setAvailableCollections(event);
+      
        //fillEvent(firstLoop);
-       //AddComboHits(event, firstLoop);
+       AddComboHits(firstLoop);
 
        gApplication->Run(true);
     }
 
 //This is an example - will need to have Collections added elsewhere~!
-    void TEveMu2eMainWindow::AddComboHits(const art::Event& event, bool firstloop){
-      //TEveMu2eHit *h = new TEveMu2eHit();
-	    if (firstloop) {
-		    fHitsList = new TEveElementList("Hits");
-		    fHitsList->IncDenyDestroy();     
-	    }
-	    if(!firstloop) {
-		    fHitsList->DestroyElements();  
-	    }
-	    TEveElementList* HitsList  = new TEveElementList("Combo Hits");
+    void TEveMu2eMainWindow::AddComboHits(bool firstloop){
+     
+      if(combohits!=nullptr){
+	     if (fHitsList == 0) {
+		      fHitsList = new TEveElementList("Hits");
+		      fHitsList->IncDenyDestroy();     
+	      }
+	      else {
+		     fHitsList->DestroyElements();  
+	      }
+        
+        std::vector<mu2e::ComboHit>::const_iterator iter;
+        unsigned int i = 0;
+        for(iter=combohits->begin(); iter!=combohits->end();iter++,i++){
+          TEveMu2eHit *teve_hit = new TEveMu2eHit();
+	        const ComboHit& hit = *iter;
+          CLHEP::Hep3Vector HitPos(hit.pos().x(), hit.pos().y(), hit.pos().z());
 
-      CLHEP::Hep3Vector HitPos(-400,49,900);
-      
-      draw->DrawHit("ComboHits",kRed, 1, 1, HitPos, HitsList, gdml_geom);
-      fHitsList->AddElement(HitsList);  
-      gEve->AddElement(fHitsList);
-      gEve->Redraw3D(kTRUE);
- 
+		      CLHEP::Hep3Vector pointInMu2e = gdml_geom->PointToTracker(HitPos);
+
+          teve_hit->DrawHit("ComboHits",  1, pointInMu2e);
+          fHitsList->AddElement(teve_hit->HitList);  
+          gEve->AddElement(fHitsList);
+          gEve->Redraw3D(kTRUE);  
+       
+        }
+      }
 	  }
 
     void TEveMu2eMainWindow::fillEvent(bool firstLoop)
