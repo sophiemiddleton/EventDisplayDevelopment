@@ -66,14 +66,13 @@ namespace mu2e{
     explicit Collection_Filler(const Config& conf);
     Collection_Filler(const Collection_Filler &);
     Collection_Filler& operator=(const Collection_Filler &);
-    const ComboHitCollection *chcol = 0;
+    const ComboHitCollection *_chcol = 0;
     const StrawDigiCollection* _stcol;
-    const ComboHitCollection* _chcol;
     const StrawDigiCollection* _strawdigicol;
     const CrvDigiCollection* _crvdigicol;
-    const CosmicTrackSeedCollection* _cosmiccol;
+    const CosmicTrackSeedCollection* _cosmiccol = 0;
     const GenParticleCollection* _gencol;
-    const CaloClusterCollection* _clustercol;
+    const CaloClusterCollection* _clustercol = 0;
     const CaloCrystalHitCollection* _cryHitcol;
     art::InputTag chTag_;
     art::InputTag gensTag_;
@@ -96,12 +95,14 @@ namespace mu2e{
     bool HasComboHits(const art::Event& evt);
 
     void FindData(const art::Event& evt);
+
+    //TODO FindData is a function which just fills all data collections for products which are presentent.
    
-    void GetComboHitCollection (art::Event const& evt, Data_Collections &data);
+    void FillCollection(const art::Event& evt, Data_Collections &data, int code);
 
     template<class collection>
     void GetCollection(const art::Event& evt, collection &c, int code);
-    //std::any
+    //TODO what about using std::any?
 
     virtual ~Collection_Filler(){};
 

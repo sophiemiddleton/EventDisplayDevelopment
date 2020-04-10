@@ -43,18 +43,16 @@ namespace mu2e{
 
     #ifndef __CINT__
 
-
     explicit Data_Collections(){};
     Data_Collections(const Data_Collections &){};
     Data_Collections& operator=(const Data_Collections &);
     const ComboHitCollection *chcol = 0;
     const StrawDigiCollection* _stcol;
-    const ComboHitCollection* _chcol;
     const StrawDigiCollection* _strawdigicol;
     const CrvDigiCollection* _crvdigicol;
-    const CosmicTrackSeedCollection* _cosmiccol;
+    const CosmicTrackSeedCollection* cosmiccol = 0;
     const GenParticleCollection* _gencol;
-    const CaloClusterCollection* _clustercol;
+    const CaloClusterCollection* clustercol = 0;
     const CaloCrystalHitCollection* _cryHitcol;
     virtual ~Data_Collections(){};
     #endif

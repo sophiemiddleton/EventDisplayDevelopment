@@ -55,18 +55,28 @@ namespace mu2e{
      }
     }
 
- 
 
-  void Collection_Filler::GetComboHitCollection (art::Event const& evt, Data_Collections &data){
-     
+      void Collection_Filler::FillCollection(const art::Event& evt, Data_Collections &data, int code){
+
+        if(code==1){ //ComboHits TODO -make this a string - it will be easier, or build an enum
           if(!addHits_) std::cout<<"you are adding hits when parameter is off "<<std::endl;
-          chcol = 0; 
           auto chH = evt.getValidHandle<mu2e::ComboHitCollection>(chTag_);
-	        chcol = chH.product();
-          data.chcol = chcol;
-  }
+          data.chcol = chH.product();
+        }
+        if(code==2){
+          if(!addHits_) std::cout<<"you are adding hits when parameter is off "<<std::endl;
+          auto chH = evt.getValidHandle<mu2e::CaloClusterCollection>(cluTag_);
+          data.clustercol = chH.product();
+        }
+         if(code==3){
+          if(!addHits_) std::cout<<"you are adding hits when parameter is off "<<std::endl;
+          auto chH = evt.getValidHandle<mu2e::CosmicTrackSeedCollection>(cosmicTag_);
+          data.cosmiccol = chH.product();
+        }
+       
+    }
 
-
+//TODO- below is some thoughts - need to discuss - might need moving to the DataCollection
   template<class collection>
       void Collection_Filler::GetCollection(const art::Event& evt, collection &c, int code){
      
