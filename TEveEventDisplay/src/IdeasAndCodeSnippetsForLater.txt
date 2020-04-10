@@ -1,0 +1,74 @@
+void TEveEventDisplay::AddHelicalTrack(const art::Event& event, mu2e::BFieldManager const& bf){
+	auto genH = event.getValidHandle<GenParticleCollection>(gensTag_);
+	_gencol = genH.product();
+	if (fTrackList == 0) {
+		fTrackList = new TEveTrackList("Tracks");
+		fTrackList->SetLineWidth(4);
+		fTrackList->IncDenyDestroy(); 
+	}
+	else {
+		fTrackList->DestroyElements();         
+	}
+
+	int mcindex=-1;
+	for ( auto const& gen: *_gencol){
+		TEveTrackPropagator* trkProp = fTrackList->GetPropagator();
+		//if(!isCosmic_) CLHEP::Hep3Vector field = bf.getBField(gen.position());
+		//if(isCosmic_) CLHEP::Hep3Vector field(CLHEP::Hep3Vector(0,0,0)); 
+		trkProp->SetMagField(-1*1000.);
+		trkProp->SetMaxR(trkMaxR_);
+		trkProp->SetMaxZ(trkMaxZ_);
+		trkProp->SetMaxStep(trkMaxStepSize_);
+		mcindex++;
+		//if ( gen.hasChildren() ) continue;
+		TParticle mcpart;
+		mcpart.SetMomentum(gen.momentum().px(),
+		gen.momentum().py(),	
+	  gen.momentum().pz(),
+	  gen.momentum().e());
+		mcpart.SetProductionVertex(gen.position().x(), 		
+	  gen.position().y(), gen.position().z(),0.);
+    mcpart.SetPdgCode(gen.pdgId());
+    TEveTrack* track = new TEveTrack(&mcpart,mcindex,trkProp);
+    track->SetIndex(0);
+    track->SetStdTitle();
+    track->SetAttLineAttMarker(fTrackList);
+
+    if ( abs(gen.pdgId()) == 11 ){
+      track->SetMainColor(kRed);
+    }  if (abs(gen.pdgId()) == 13 ){
+      track->SetMainColor(kGreen);
+    } else {
+      track->SetMainColor(kBlue);
+    }
+		 fTrackList->AddElement(track);
+		}
+		fTrackList->MakeTracks();
+	  fTrackList->SetLineWidth(10);
+		gEve->AddElement(fTrackList);
+		gEve->Redraw3D(kTRUE);
+}
+
+
+void TEveEventDisplay::AddCosmicTrack(const art::Event& event){
+        
+		TEveStraightLineSet *CosmicTrackList = new TEveStraightLineSet();
+		for(size_t ist = 0; ist < _cosmiccol->size(); ++ist){
+			CosmicTrackSeed sts =(*_cosmiccol)[ist];
+			CosmicTrack st = sts._track;
+			
+			CosmicTrackList->SetLineColor(kGreen);
+			Float_t tz1 = -150;
+			Float_t tz2 = 150;
+			Float_t tx1 = st.InitParams.A0  + st.InitParams.A1*tz1;
+			Float_t tx2 = st.InitParams.A0  + st.InitParams.A1*tz2;
+			Float_t ty1 = st.InitParams.B0  + st.InitParams.B1*tz1;
+			Float_t ty2 = st.InitParams.B0  + st.InitParams.B1*tz2; 	
+			CosmicTrackList->AddLine(tx1, ty1, tz1, tx2, ty2, tz2);
+		
+			cout<<st.InitParams.A0<<"track "<<st.InitParams.A1<<st.InitParams.B1<<st.InitParams.B0<<endl;
+			gEve->AddElement(CosmicTrackList);
+		    gEve->Redraw3D(kTRUE);
+		
+	}
+}

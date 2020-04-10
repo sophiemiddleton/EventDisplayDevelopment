@@ -1,0 +1,29 @@
+#ifndef TEveMu2eBrowser_h
+#define TEveMu2eBrowser_h
+
+#include <TObject.h>
+#include <TEveMu2eProjectionManager.h>
+
+
+namespace mu2e {
+
+  class TEveMu2eProjection: public TEveProjectionManager { 
+    
+  public:
+    #ifndef __CINT__
+   //TEveMu2eBrowser (unsigned int w, unsigned int h) : TEveManager (w,h){};
+    virtual ~TEveMu2eProjectionManager(){};
+    #endif
+    TEveViewer *fXYView;
+    TEveViewer *fRZView;
+    TEveProjectionManager *fXYMgr;
+    TEveProjectionManager *fRZMgr;
+    TEveScene *fDetXYScene;
+    TEveScene *fDetRZScene;
+    TEveScene *fEvtXYScene;
+    TEveScene *fEvtRZScene;
+
+    ClassDef(TEveMu2eProjectionManager, 0);
+};
+}
+#endif

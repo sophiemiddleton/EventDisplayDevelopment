@@ -79,8 +79,8 @@ namespace mu2e{
 		void hideTop(TGeoNode* node, int _diagLevel);
 		void hideNodesByName(TGeoNode* node, const std::string& str, bool onOff, int _diagLevel) ;
 		void hideNodesByMaterial(TGeoNode* node, const std::string& mat, bool onOff);
-		void hideBuilding(TGeoNode* node);
-        void Heirarchy( TGeoNode * node, std::vector<CLHEP::Hep3Vector> &TransformList );
+		void SolenoidsOnly(TGeoNode* node);
+    void TrackerVolumeHeirarchy( TGeoNode * node, std::vector<CLHEP::Hep3Vector> &TransformList );
 
 		art::Event  *_event;
 		art::Run    *_run;

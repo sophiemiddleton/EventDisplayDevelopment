@@ -82,7 +82,7 @@ namespace mu2e{
 	}
 
 
-	void Geom_Interface::hideBuilding(TGeoNode* node) {
+	void Geom_Interface::SolenoidsOnly(TGeoNode* node) {
 
 		static std::vector <std::string> substrings  { "Ceiling",
 		"backfill", "dirt", "concrete", "VirtualDetector",
@@ -124,7 +124,7 @@ namespace mu2e{
 	}
 
 
-    void Geom_Interface::Heirarchy( TGeoNode * node, std::vector<CLHEP::Hep3Vector> &TransformList ){
+    void Geom_Interface::TrackerVolumeHeirarchy( TGeoNode * node, std::vector<CLHEP::Hep3Vector> &TransformList ){
         std::string _name = (node->GetVolume()->GetName());
         if( _name == "HallAir") {
         cout<<"HallAir Origin IS "<<node->GetMotherVolume()->GetName();
@@ -168,7 +168,7 @@ namespace mu2e{
         int ndau = node->GetNdaughters();
         for ( int i=0; i<ndau; ++i ){
         TGeoNode * dau = node->GetDaughter(i);
-        Heirarchy(dau, TransformList);
+        TrackerVolumeHeirarchy(dau, TransformList);
         }
       
     }

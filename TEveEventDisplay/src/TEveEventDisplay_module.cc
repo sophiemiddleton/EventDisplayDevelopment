@@ -29,8 +29,6 @@
 #include <TRootEmbeddedCanvas.h>
 // ... libGeom
 #include <TGeoManager.h>
-#include <TGeoTube.h>
-#include <TGeoCompositeShape.h>
 #include <TGeoBoolNode.h>
 #include <TGeoNode.h>
 #include <TGeoPhysicalNode.h>
@@ -58,7 +56,7 @@
 #include  "TEveEventDisplay/src/dict_classes/EvtDisplayUtils.h"
 #include  "TEveEventDisplay/src/dict_classes/Geom_Interface.h"
 #include  "TEveEventDisplay/src/dict_classes/Draw_Interface.h" 
-#include  "TEveEventDisplay/src/dict_classes/NavPanel.h"
+#include  "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eMainWindow.h"
 
 // Mu2e Utilities
 #include "GeometryService/inc/GeomHandle.hh"
@@ -91,7 +89,7 @@
 using namespace std;
 using namespace mu2e;
 
-
+/*
 void setRecursiveColorTransp(TGeoVolume *vol, Int_t color, Int_t transp)
   {
      if(color>=0)vol->SetLineColor(color);
@@ -101,7 +99,7 @@ void setRecursiveColorTransp(TGeoVolume *vol, Int_t color, Int_t transp)
         setRecursiveColorTransp(vol->GetNode(i)->GetVolume(), color, transp);
      }
   }
-
+*/
 namespace mu2e 
 {
   class TEveEventDisplay : public art::EDAnalyzer {
@@ -143,7 +141,7 @@ namespace mu2e
 		     Config _conf;
 		     int _diagLevel;
 		     Int_t _evt; 
-		     //std::string moduleLabel_;
+
 		     const StrawDigiCollection* _stcol;
 		     const ComboHitCollection* _chcol;
 		     const StrawDigiCollection* _strawdigicol;
@@ -160,7 +158,7 @@ namespace mu2e
 		     art::InputTag cluTag_;
          art::InputTag cryHitTrag_;
 		     std::string g4ModuleLabel_;
-		     //std::string hitMakerModuleLabel_;
+
 
 		      double minEnergyDep_;
 		      size_t minHits_;
@@ -179,8 +177,7 @@ namespace mu2e
 		      Double_t        camRotateCenterV_;
 		      Double_t        camDollyDelta_;
 
-		      TEveGeoShape* fSimpleGeom;
-
+/*
 		      TEveViewer *fXYView;
 		      TEveViewer *fRZView;
 		      TEveProjectionManager *fXYMgr;
@@ -189,7 +186,7 @@ namespace mu2e
 		      TEveScene *fDetRZScene;
 		      TEveScene *fEvtXYScene;
 		      TEveScene *fEvtRZScene;
-
+*/
 		      TGTextEntry      *fTeRun,*fTeEvt;
 		      TGLabel          *fTlRun,*fTlEvt;
 		   
@@ -206,16 +203,15 @@ namespace mu2e
 		      Geom_Interface *gdml_geom	=new Geom_Interface(); 
 		      Draw_Interface *draw = new Draw_Interface();
 		      //Particle_Interface *particle_info = new Particle_Interface();
-              //NavPanel *_frame;
-              //fhicl::ParameterSet _pset;
+          TEveMu2eMainWindow *_frame;
+          fhicl::ParameterSet _pset;
 
-		      TGeoManager* geom = new TGeoManager("geom","Geom");
-		      std::vector<CLHEP::Hep3Vector> GDMLt;
-          bool _firstLoop = true;
+		     // TGeoManager* geom = new TGeoManager("geom","Geom");
+
 		      bool foundEvent = false;
-		      void MakeNavPanel();
-          
-	           //TODO : the following function will eventualy be part of the "Collections Interface"
+		      void MakeTEveMu2eMainWindow();
+          bool _firstLoop = true;
+	        //TODO : the following function will eventualy be part of the "Collections Interface"
 		      void AddCosmicTrack(const art::Event& event);
 		      void AddHelicalTrack(const art::Event& event, mu2e::BFieldManager const& fm);
 		      void AddComboHits(const art::Event& event);
@@ -252,9 +248,9 @@ TEveEventDisplay::TEveEventDisplay(const Parameters& conf) :
 
 
 TEveEventDisplay::~TEveEventDisplay(){}
+/*
 
-/*-------Create Control Panel For Event Navigation----""*/
-void TEveEventDisplay::MakeNavPanel()
+void TEveEventDisplay::MakeTEveMu2eMainWindow()
 {
    
 	TEveBrowser* browser = gEve->GetBrowser();
@@ -335,6 +331,10 @@ void TEveEventDisplay::MakeNavPanel()
   
 }
 
+//void TEveEventDisplay::MakeOrthViews(){} //TODO
+
+*/
+
 
 void TEveEventDisplay::beginJob(){
 	directory_ = gDirectory;
@@ -345,10 +345,10 @@ void TEveEventDisplay::beginJob(){
 		application_ = new TApplication( "noapplication", &tmp_argc, tmp_argv );
 	
 	}
-
+   _frame = new TEveMu2eMainWindow(gClient->GetRoot(), 1000,600, _pset);
 	// Initialize global Eve application manager (return gEve)
-	TEveManager::Create();
-
+	//TEveManager::Create();
+  /*TODO - below should form part of a new class - TEveMu2eOrthView - thre should be some example instances of what we might want here e.g. CRV? special views?
 	// Create detector and event scenes for ortho views
 	fDetXYScene = gEve->SpawnNewScene("Det XY Scene", "");
 	fDetRZScene = gEve->SpawnNewScene("Det RZ Scene", "");
@@ -384,37 +384,37 @@ void TEveEventDisplay::beginJob(){
 	fRZView = gEve->SpawnNewViewer("RZ View", "");
 	fRZView->GetGLViewer()->SetCurrentCamera(TGLViewer::kCameraOrthoXOY);
 	fRZView->AddScene(fDetRZScene);
-	fRZView->AddScene(fEvtRZScene);
+	fRZView->AddScene(fEvtRZScene);*/
 
-	gEve->GetBrowser()->GetTabRight()->SetTab(0);
+	//gEve->GetBrowser()->GetTabRight()->SetTab(0);
     
-  MakeNavPanel();
+  //MakeTEveMu2eMainWindow();
     
-  //_frame = new NavPanel(gClient->GetRoot(), 1000,600, _pset);
-    
-	gEve->AddEvent(new TEveEventManager("Event", "Empty Event"));
+
+
+	/*gEve->AddEvent(new TEveEventManager("Event", "Empty Event"));
 
 	TGLViewer *glv = gEve->GetDefaultGLViewer();
 	glv->SetGuideState(TGLUtil::kAxesEdge, kTRUE, kFALSE, 0);
 	glv->CurrentCamera().RotateRad(camRotateCenterH_,camRotateCenterV_);
-	glv->CurrentCamera().Dolly(camDollyDelta_,kFALSE,kFALSE);
+	glv->CurrentCamera().Dolly(camDollyDelta_,kFALSE,kFALSE);*/
 }
 
 
 void TEveEventDisplay::beginRun(const art::Run& run){
-
+  _frame->SetRunGeometry(run, _diagLevel);
+/*
 	if(gGeoManager){
 		gGeoManager->GetListOfNodes()->Delete();
 		gGeoManager->GetListOfVolumes()->Delete();
 		gGeoManager->GetListOfShapes()->Delete();
 	}
 	gEve->GetGlobalScene()->DestroyElements();
-	fDetXYScene->DestroyElements();
-	fDetRZScene->DestroyElements();
+	//fDetXYScene->DestroyElements();
+	//fDetRZScene->DestroyElements();
 
 	// Import the GDML of entire Mu2e Geometry
 	geom = gdml_geom->Geom_Interface::getGeom("TEveEventDisplay/src/fix.gdml");
-	gdml_geom->GetTrackerCenter();
 
 	//Get Top Volume
 	TGeoVolume* topvol = geom->GetTopVolume();
@@ -434,16 +434,12 @@ void TEveEventDisplay::beginRun(const art::Run& run){
 	//This is a basic function to allow us to just see tracker and calo, it needs fixing:
 
 
-	gdml_geom->Geom_Interface::hideBuilding(topnode);
+	gdml_geom->SolenoidsOnly(topnode);
 	gdml_geom->hideTop(topnode, _diagLevel);
 	gdml_geom->InsideDS(topnode, false );
 
-	gdml_geom->Heirarchy(topnode, GDMLt);
-	for(auto const& transformation : GDMLt){
-		cout<<"Transformation "<<transformation.x()<<" "<<transformation.y()<<" "<<transformation.z()<<endl;
-  	}
-  	//Add static detector geometry to global scene
-  	gEve->AddGlobalElement(etopnode);
+  //Add static detector geometry to global scene
+  gEve->AddGlobalElement(etopnode);*/
 }
 
 /*void TEveEventDisplay::analyze(const art::Event& event)
@@ -457,7 +453,7 @@ void TEveEventDisplay::beginRun(const art::Run& run){
       gVirtualX->GetWindowSize(gClient->GetRoot()->GetId(),x,y,width,height);
       width-=30;
       height-=70;
-      _frame = new NavPanel(gClient->GetRoot(), width, height, _pset);
+      _frame = new TEveMu2eMainWindow(gClient->GetRoot(), width, height, _pset);
       if(!_frame->isClosed()) if(addHits_) AddComboHits(event);
     }
     if(!_frame->isClosed())
@@ -487,10 +483,11 @@ void TEveEventDisplay::beginRun(const art::Run& run){
   }
 */
 void TEveEventDisplay::analyze(const art::Event& event){
- 
-	cout<<"[TEveEventDisplay :: analyze] Analyzing Event :"<<event.id()<<endl;
 
-	GeomHandle<mu2e::BFieldManager> bfmgr;
+	cout<<"[TEveEventDisplay :: analyze] Analyzing Event :"<<event.id()<<endl;
+  if(!_frame->isClosed()) _frame->setEvent(event, _firstLoop);
+  _firstLoop = false;
+	/*//GeomHandle<mu2e::BFieldManager> bfmgr;
 	_evt = event.id().event();
 	if(showEvent_ ){
 		if(HasComboHits(event) and _chcol->size() > minHits_ and addHits_) AddComboHits(event);
@@ -502,14 +499,14 @@ void TEveEventDisplay::analyze(const art::Event& event){
 	
 	std::ostringstream sstr;
 	sstr << event.id().run();
-	visutil_->fTbRun->Clear();
-	visutil_->fTbRun->AddText(0,sstr.str().c_str());
+	//visutil_->fTbRun->Clear();
+	//visutil_->fTbRun->AddText(0,sstr.str().c_str());
 	gClient->NeedRedraw(fTeRun);
 
 	sstr.str("");
 	sstr << event.id().event();
-	visutil_->fTbEvt->Clear();
-	visutil_->fTbEvt->AddText(0,sstr.str().c_str());
+	//visutil_->fTbEvt->Clear();
+	//visutil_->fTbEvt->AddText(0,sstr.str().c_str());
 	
 	// Import event into ortho views and apply projections
 	TEveElement* currevt = gEve->GetCurrentEvent();
@@ -525,82 +522,8 @@ void TEveEventDisplay::analyze(const art::Event& event){
 	gPad->WaitPrimitive();
   char junk;
 	cerr << "Enter any character to continue: ";
-	cin >> junk;
+	cin >> junk;*/
 } 
-
-void TEveEventDisplay::AddCosmicTrack(const art::Event& event){
-        
-		TEveStraightLineSet *CosmicTrackList = new TEveStraightLineSet();
-		for(size_t ist = 0; ist < _cosmiccol->size(); ++ist){
-			CosmicTrackSeed sts =(*_cosmiccol)[ist];
-			CosmicTrack st = sts._track;
-			
-			CosmicTrackList->SetLineColor(kGreen);
-			Float_t tz1 = -150;
-			Float_t tz2 = 150;
-			Float_t tx1 = st.InitParams.A0  + st.InitParams.A1*tz1;
-			Float_t tx2 = st.InitParams.A0  + st.InitParams.A1*tz2;
-			Float_t ty1 = st.InitParams.B0  + st.InitParams.B1*tz1;
-			Float_t ty2 = st.InitParams.B0  + st.InitParams.B1*tz2; 	
-			CosmicTrackList->AddLine(tx1, ty1, tz1, tx2, ty2, tz2);
-		
-			cout<<st.InitParams.A0<<"track "<<st.InitParams.A1<<st.InitParams.B1<<st.InitParams.B0<<endl;
-			gEve->AddElement(CosmicTrackList);
-		    gEve->Redraw3D(kTRUE);
-		
-	}
-}
-
-void TEveEventDisplay::AddHelicalTrack(const art::Event& event, mu2e::BFieldManager const& bf){
-	auto genH = event.getValidHandle<GenParticleCollection>(gensTag_);
-	_gencol = genH.product();
-	if (fTrackList == 0) {
-		fTrackList = new TEveTrackList("Tracks");
-		fTrackList->SetLineWidth(4);
-		fTrackList->IncDenyDestroy(); 
-	}
-	else {
-		fTrackList->DestroyElements();         
-	}
-
-	int mcindex=-1;
-	for ( auto const& gen: *_gencol){
-		TEveTrackPropagator* trkProp = fTrackList->GetPropagator();
-		//if(!isCosmic_) CLHEP::Hep3Vector field = bf.getBField(gen.position());
-		//if(isCosmic_) CLHEP::Hep3Vector field(CLHEP::Hep3Vector(0,0,0)); 
-		trkProp->SetMagField(-1*1000.);
-		trkProp->SetMaxR(trkMaxR_);
-		trkProp->SetMaxZ(trkMaxZ_);
-		trkProp->SetMaxStep(trkMaxStepSize_);
-		mcindex++;
-		      //if ( gen.hasChildren() ) continue;
-		TParticle mcpart;
-		mcpart.SetMomentum(gen.momentum().px(),
-			gen.momentum().py(),	
-			gen.momentum().pz(),
-			gen.momentum().e());
-		 	mcpart.SetProductionVertex(gen.position().x(), 		
-						gen.position().y(), gen.position().z(),0.);
-		      mcpart.SetPdgCode(gen.pdgId());
-		      TEveTrack* track = new TEveTrack(&mcpart,mcindex,trkProp);
-		      track->SetIndex(0);
-		      track->SetStdTitle();
-		      track->SetAttLineAttMarker(fTrackList);
-			
-		      if ( abs(gen.pdgId()) == 11 ){
-		        track->SetMainColor(kRed);
-		      }  if (abs(gen.pdgId()) == 13 ){
-			track->SetMainColor(kGreen);
-		      } else {
-			track->SetMainColor(kBlue);
-		      }
-		      fTrackList->AddElement(track);
-		    }
-		    fTrackList->MakeTracks();
-	            fTrackList->SetLineWidth(10);
-		    gEve->AddElement(fTrackList);
-		    gEve->Redraw3D(kTRUE);
-}
 
 void TEveEventDisplay::AddComboHits(const art::Event& event){
 	auto chH = event.getValidHandle<mu2e::ComboHitCollection>(chTag_);
