@@ -65,12 +65,6 @@
 #include "Mu2eUtilities/inc/SimParticleTimeOffset.hh"
 #include "TrkDiag/inc/TrkMCTools.hh"
 
-
-//Mu2e Tracker Geom:
-#include "TrackerGeom/inc/Tracker.hh"
-#include "TrackerGeom/inc/Straw.hh"
-#include "TrkDiag/inc/ComboHitInfo.hh"
-
 // Framework includes.
 #include "art/Framework/Core/EDAnalyzer.h"
 #include "art/Framework/Principal/Event.h"
@@ -78,25 +72,10 @@
 #include "art_root_io/TFileService.h"
 #include "art/Framework/Core/ModuleMacros.h"
 
-//Collections:
-#include "RecoDataProducts/inc/StrawDigiCollection.hh"
-#include "RecoDataProducts/inc/CrvDigiCollection.hh"
-#include "RecoDataProducts/inc/CosmicTrackSeed.hh"
-// Mu2e diagnostics
+
 using namespace std;
 using namespace mu2e;
 
-/*
-void setRecursiveColorTransp(TGeoVolume *vol, Int_t color, Int_t transp)
-  {
-     if(color>=0)vol->SetLineColor(color);
-     if(transp>=0)vol->SetTransparency(transp);
-     Int_t nd = vol->GetNdaughters();
-     for (Int_t i=0; i<nd; i++) {
-        setRecursiveColorTransp(vol->GetNode(i)->GetVolume(), color, transp);
-     }
-  }
-*/
 namespace mu2e 
 {
   class TEveEventDisplay : public art::EDAnalyzer {
@@ -113,6 +92,7 @@ namespace mu2e
       fhicl::Table<Collection_Filler::Config> filler{Name("filler"),Comment("fill collections")};
 			
 	  };
+
 		typedef art::EDAnalyzer::Table<Config> Parameters;
 		explicit TEveEventDisplay(const Parameters& conf);
 		virtual ~TEveEventDisplay();
@@ -121,30 +101,27 @@ namespace mu2e
 		virtual void analyze(const art::Event& e);
 		virtual void endJob() override;
 	private:
-		     Config _conf;
-		     int _diagLevel;
-		     Int_t _evt; 
-		     
-		     std::string g4ModuleLabel_;
+    Config _conf;
+    int _diagLevel;
+    Int_t _evt; 
 
-		      bool doDisplay_;
-		      bool clickToAdvance_;
-		      bool showEvent_;
-             
-		      TApplication* application_;
-		      TDirectory*   directory_ = nullptr;   
-		  
-          Collection_Filler _filler;
-         
-		    
-          TEveMu2eMainWindow *_frame;
-          fhicl::ParameterSet _pset;
+    std::string g4ModuleLabel_;
 
-		     // TGeoManager* geom = new TGeoManager("geom","Geom");
+    bool doDisplay_;
+    bool clickToAdvance_;
+    bool showEvent_;
+       
+    TApplication* application_;
+    TDirectory*   directory_ = nullptr;   
 
-		      bool foundEvent = false;
-		      void MakeTEveMu2eMainWindow();
-          bool _firstLoop = true;
+    Collection_Filler _filler;
+
+    TEveMu2eMainWindow *_frame;
+    fhicl::ParameterSet _pset;
+
+    bool foundEvent = false;
+    void MakeTEveMu2eMainWindow();
+    bool _firstLoop = true;
 	       
 	};
 
@@ -163,15 +140,12 @@ TEveEventDisplay::~TEveEventDisplay(){}
 
 void TEveEventDisplay::beginJob(){
 	directory_ = gDirectory;
-	// Create application environment:
-	if ( !gApplication ){
-		int    tmp_argc(0);
-		char** tmp_argv(0);
-		application_ = new TApplication( "noapplication", &tmp_argc, tmp_argv );
-	
-	}
-   _frame = new TEveMu2eMainWindow(gClient->GetRoot(), 1000,600, _pset);
-
+  if ( !gApplication ){
+    int    tmp_argc(0);
+    char** tmp_argv(0);
+    application_ = new TApplication( "noapplication", &tmp_argc, tmp_argv );
+  }
+  _frame = new TEveMu2eMainWindow(gClient->GetRoot(), 1000,600, _pset);
 }
 
 
@@ -194,10 +168,10 @@ void TEveEventDisplay::analyze(const art::Event& event){
 
 
 void TEveEventDisplay::endJob(){
-	if(!foundEvent){
-		char msg[300];
-		sprintf(msg, "Reached end of file but #%i has not been found", true);
-	        new TGMsgBox(gClient->GetRoot(), gClient->GetRoot(), "Event Not Found", msg, kMBIconExclamation,kMBOk);
+  if(!foundEvent){
+    char msg[300];
+    sprintf(msg, "Reached end of file but #%i has not been found", true);
+    new TGMsgBox(gClient->GetRoot(), gClient->GetRoot(), "Event Not Found", msg, kMBIconExclamation,kMBOk);
 	}
 
 }  
