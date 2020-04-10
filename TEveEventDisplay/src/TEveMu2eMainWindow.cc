@@ -57,7 +57,8 @@ namespace mu2e{
         fTeRun(0),
         fTeEvt(0),
 		    fTlRun(0),
-        fTlEvt(0)
+        fTlEvt(0),
+        fHitsList(0)
     {
      
       TEveManager::Create();
@@ -116,6 +117,7 @@ namespace mu2e{
 		    _runNumber->AddText(0, "1");
 		    //fTeRun->Connect("ReturnPressed()","mu2e::EvtDisplayUtils", visutil_,"GotoEvent()");
 		    runoFrame->AddFrame(fTeRun,new TGLayoutHints(kLHintsExpandX));
+        fTeRun->Associate(this);
 
 		    // ... Create evt num text entry widget and connect to "GotoEvent" rcvr in visutils
 		    TGHorizontalFrame* evnoFrame = new TGHorizontalFrame(evtidFrame);
@@ -128,6 +130,12 @@ namespace mu2e{
 		    _eventNumber->AddText(0, "1");
 		   /// fTeEvt->Connect("ReturnPressed()","mu2e::EvtDisplayUtils", visutil_,"GotoEvent()");
 		    evnoFrame->AddFrame(fTeEvt,new TGLayoutHints(kLHintsExpandX));
+        fTeEvt->Associate(this);
+
+        TGTextButton *Gobutton         = new TGTextButton(navFrame, "&Go", 1999);
+        navFrame->AddFrame(Gobutton, new TGLayoutHints(kLHintsLeft,3,0,3,0));         
+        Gobutton->Associate(this);
+
 
 		    //Add logo
 		    std::string logoFile = "TEveEventDisplay/src/Icons/mu2e_logo_oval.png";
@@ -170,7 +178,7 @@ namespace mu2e{
 	    gEve->GetGlobalScene()->DestroyElements();
 
 	    // Import the GDML of entire Mu2e Geometry
-	    geom = gdml_geom->Geom_Interface::getGeom("TEveEventDisplay/src/fix.gdml");
+	    geom = mu2e_geom->Geom_Interface::getGeom("TEveEventDisplay/src/fix.gdml");
 
 	    //Get Top Volume
 	    TGeoVolume* topvol = geom->GetTopVolume();
@@ -188,9 +196,9 @@ namespace mu2e{
 
 	    setRecursiveColorTransp(etopnode->GetNode()->GetVolume(), kWhite-10,70);
 	  
-	    gdml_geom->SolenoidsOnly(topnode);
-	    gdml_geom->hideTop(topnode, _diagLevel);
-	    gdml_geom->InsideDS(topnode, false );
+	    mu2e_geom->SolenoidsOnly(topnode);
+	    mu2e_geom->hideTop(topnode, _diagLevel);
+	    mu2e_geom->InsideDS(topnode, false );
 
       //Add static detector geometry to global scene
       gEve->AddGlobalElement(etopnode);
@@ -223,6 +231,12 @@ namespace mu2e{
                  {
                     std::cout<<"Still developing backwards navigation"<<std::endl;
                  }
+                 if(param1==1999)//Go
+                 {
+                    eventToFind = atoi(fTeEvt->GetText());
+                    runToFind = atoi(fTeRun->GetText());
+                    gApplication->Terminate();
+                 }
                 break;
       }
       break;
@@ -231,47 +245,74 @@ namespace mu2e{
 }
 
 
-    void TEveMu2eMainWindow::setEvent(const art::Event& event, bool firstLoop)
+    void TEveMu2eMainWindow::setEvent(const art::Event& event, bool firstLoop, Data_Collections &data)
     {
       std::cout<<"BEGINNING....PLEASE WAIT...."<<std::endl;
       _event=event.id().event();
       _subrun=event.id().subRun();
       _run=event.id().run();
       _firstLoop = firstLoop;
+      AddComboHits(firstLoop, data.chcol);
       gSystem->ProcessEvents();
 	    gClient->NeedRedraw(fTeRun);
       
       //if(firstLoop) Data->setAvailableCollections(event);
-      
-       //fillEvent(firstLoop);
-       AddComboHits(firstLoop);
-
+     
        gApplication->Run(true);
     }
 
 //This is an example - will need to have Collections added elsewhere~!
-    void TEveMu2eMainWindow::AddComboHits(bool firstloop){
-     
-      if(combohits!=nullptr){
+    /*void TEveMu2eMainWindow::AddComboHits(bool firstloop, const ComboHitCollection *chcol){
+      std::cout<<"[In AddComboHits()]"<<std::endl;
+      if(chcol!=0){
+       std::cout<<"not null"<<std::endl;
 	     if (fHitsList == 0) {
 		      fHitsList = new TEveElementList("Hits");
 		      fHitsList->IncDenyDestroy();     
 	      }
 	      else {
-		     fHitsList->DestroyElements();  
-	      }
+		       fHitsList->DestroyElements();  
+	       }
         
-        std::vector<mu2e::ComboHit>::const_iterator iter;
-        unsigned int i = 0;
-        for(iter=combohits->begin(); iter!=combohits->end();iter++,i++){
+        for(size_t i=0; i<chcol->size();i++){
+          
           TEveMu2eHit *teve_hit = new TEveMu2eHit();
-	        const ComboHit& hit = *iter;
+	        ComboHit hit = (*chcol)[i];
           CLHEP::Hep3Vector HitPos(hit.pos().x(), hit.pos().y(), hit.pos().z());
 
-		      CLHEP::Hep3Vector pointInMu2e = gdml_geom->PointToTracker(HitPos);
+		      CLHEP::Hep3Vector pointInMu2e = mu2e_geom->PointToTracker(HitPos);
 
           teve_hit->DrawHit("ComboHits",  1, pointInMu2e);
           fHitsList->AddElement(teve_hit->HitList);  
+          gEve->AddElement(fHitsList);
+          gEve->Redraw3D(kTRUE);  
+       
+        }
+      }
+	  }*/
+
+   void TEveMu2eMainWindow::AddComboHits(bool firstloop, const ComboHitCollection *chcol){
+      std::cout<<"[In AddComboHits()]"<<std::endl;
+      if(chcol!=0){
+       std::cout<<"not null"<<std::endl;
+	     if (fHitsList == 0) {
+		      fHitsList = new TEveElementList("Hits");
+		      fHitsList->IncDenyDestroy();     
+	      }
+	      else {
+		       fHitsList->DestroyElements();  
+	       }
+        TEveElementList *HitList = new TEveElementList("ComboHits");
+        for(size_t i=0; i<chcol->size();i++){
+          
+          TEveMu2eHit *teve_hit = new TEveMu2eHit();
+	        ComboHit hit = (*chcol)[i];
+          CLHEP::Hep3Vector HitPos(hit.pos().x(), hit.pos().y(), hit.pos().z());
+
+		      CLHEP::Hep3Vector pointInMu2e = mu2e_geom->PointToTracker(HitPos);
+         
+          teve_hit->DrawHit("ComboHits",  1, pointInMu2e, HitList);
+          fHitsList->AddElement(HitList);  
           gEve->AddElement(fHitsList);
           gEve->Redraw3D(kTRUE);  
        

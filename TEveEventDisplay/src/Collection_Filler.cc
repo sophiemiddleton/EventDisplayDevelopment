@@ -55,16 +55,32 @@ namespace mu2e{
      }
     }
 
+ 
+
+  void Collection_Filler::GetComboHitCollection (art::Event const& evt, Data_Collections &data){
+     
+          if(!addHits_) std::cout<<"you are adding hits when parameter is off "<<std::endl;
+          chcol = 0; 
+          auto chH = evt.getValidHandle<mu2e::ComboHitCollection>(chTag_);
+	        chcol = chH.product();
+          data.chcol = chcol;
+  }
+
+
   template<class collection>
-      collection Collection_Filler::GetCollection(std::string name){
-        collection c;
-        if(name=="ComboHit"){
+      void Collection_Filler::GetCollection(const art::Event& evt, collection &c, int code){
+     
+        if(code==1){ //ComboHits TODO - build an enum to allocate code to typename
+          if(!addHits_) std::cout<<"you are adding hits when parameter is off "<<std::endl;
+          _chcol = 0; 
+          auto chH = evt.getValidHandle<mu2e::ComboHitCollection>(chTag_);
+	        _chcol = chH.product();
           c=_chcol;
         }
-        if(name=="CaloCluster"){
+        if(code==2){
           c=_clustercol;
         }
-         if(name=="CosmicTrackSeed"){
+         if(code==3){
           c=_cosmiccol;
         }
         return c;

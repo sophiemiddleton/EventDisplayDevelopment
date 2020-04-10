@@ -40,20 +40,20 @@ namespace mu2e{
 
 
                  Bool_t ProcessMessage(Long_t msg, Long_t param1, Long_t param2);
-                 void  setEvent(const art::Event& event, bool firstLoop);
+                 void  setEvent(const art::Event& event, bool firstLoop, Data_Collections &data);
                  void  fillEvent(bool firstLoop=false);
                  bool  isClosed() const;
                  int   getEventToFind(bool &findEvent) const;
                  #endif
                  TGeoManager* geom = new TGeoManager("geom","Geom");
 
-                 //TApplication* application_;
-		             //TDirectory*   directory_ = nullptr;
 
                  Draw_Interface *draw = new Draw_Interface();
-                 Geom_Interface *gdml_geom	=new Geom_Interface(); 
+                 Geom_Interface *mu2e_geom	=new Geom_Interface(); 
                  Data_Interface *Data = new Data_Interface();
-                 const ComboHitCollection *combohits=nullptr; //TODO THIS NEEDS TO BE DONE DIFFERENTLY, ITS A TEST!
+                 
+                 int eventToFind, runToFind;
+    
                  
                  TGTextEntry     *fTeRun,*fTeEvt;
 		             TGLabel         *fTlRun,*fTlEvt;
@@ -67,7 +67,7 @@ namespace mu2e{
 
                  TGTextBuffer *_eventNumber, *_subrunNumber, *_runNumber;
                  int  _eventToFind = 0;
-                 bool  _showBuilding = false;
+                 bool _showBuilding = false;
                  bool _showCRV=false;
                  bool _showDSOnly = true;
                  bool _showTracker = true;
@@ -85,7 +85,7 @@ namespace mu2e{
                  TText  *_eventNumberText, *_subrunNumberText, *_runNumberText;
                  int _event, _subrun, _run;
 
-                 void AddComboHits(bool firstloop);
+                 void AddComboHits(bool firstloop, const ComboHitCollection *chcol);
                  void SetRunGeometry(const art::Run& run, int _diagLevel);
 
 		         ClassDef(TEveMu2eMainWindow,0);

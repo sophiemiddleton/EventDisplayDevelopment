@@ -7,7 +7,7 @@ namespace mu2e{
 	TEveMu2eHit::TEveMu2eHit(){}
 
   
-  void TEveMu2eHit::DrawHit(const std::string &pstr, Int_t n, CLHEP::Hep3Vector pointInMu2e)
+  void TEveMu2eHit::DrawHit(const std::string &pstr, Int_t n, CLHEP::Hep3Vector pointInMu2e, TEveElementList *HitList)
   	{
 	
 		  
@@ -29,7 +29,7 @@ namespace mu2e{
 		  HitList->AddElement(h);
 	  }
 
-   void TEveMu2eHit::DrawHitCollection(const std::string &pstr, size_t n, std::vector<CLHEP::Hep3Vector> pointInMu2e)
+   void TEveMu2eHit::DrawHitCollection(const std::string &pstr, size_t n, std::vector<CLHEP::Hep3Vector> pointInMu2e, TEveElementList *HitList)
   	{
 	    for(auto const& hit : pointInMu2e){
 		    

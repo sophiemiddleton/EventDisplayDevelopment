@@ -5,6 +5,7 @@
 #include "TEveEventDisplay/src/dict_classes/Draw_Interface.h"
 #include "TEveEventDisplay/src/dict_classes/Data_Interface.h"
 #include "TEveEventDisplay/src/dict_classes/Collection_Filler.h"
+#include "TEveEventDisplay/src/dict_classes/Data_Collections.h"
 
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eMainWindow.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eHit.h"

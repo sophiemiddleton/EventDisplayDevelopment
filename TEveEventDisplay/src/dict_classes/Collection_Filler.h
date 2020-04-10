@@ -33,81 +33,82 @@
 using namespace CLHEP;
 #include "RecoDataProducts/inc/KalRepCollection.hh"
 #include "RecoDataProducts/inc/TrkExtTrajCollection.hh"
-
-
+#include "TEveEventDisplay/src/dict_classes/Data_Collections.h"
+//enum code : { ComboHits, Clusters, Cosmics}
 
 namespace mu2e{
 	class Collection_Filler
 	{
-	   public:
-      struct Config{
-			  using Name=fhicl::Name;
-			  using Comment=fhicl::Comment;
-			  fhicl::Atom<int> diagLevel{Name("diagLevel"), Comment("for info"),0};
-			  fhicl::Atom<art::InputTag>chTag{Name("ComboHitCollection"),Comment("chTag")};
-			  fhicl::Atom<art::InputTag>gensTag{Name("GenParticleCollection"),Comment("gensTag")};
-			  fhicl::Atom<art::InputTag>strawdigiTag{Name("StrawDigiCollection"),Comment("strawdigiTag")};
-			  fhicl::Atom<art::InputTag>crvdigiTag{Name("CrvDigiCollection"),Comment("crvTag")};
-			  fhicl::Atom<art::InputTag>cosmicTag{Name("CosmicTrackSeedCollection"),Comment("cosmicTag")};
-			  fhicl::Atom<art::InputTag>cluTag{Name("CaloClusterCollection"),Comment("cluTag")};
-        fhicl::Atom<art::InputTag>cryHitTag{Name("CaloCrystalHitCollection"),Comment("cryHitTag")};
-			  fhicl::Atom<bool> addHits{Name("addHits"), Comment("set to add the hits"),false};
-			  fhicl::Atom<bool> addTracks{Name("addTracks"), Comment("set to add tracks"),false};
-			  fhicl::Atom<bool> addClusters{Name("addClusters"), Comment("set to add calo lusters"),false};
-			  fhicl::Atom<bool> addCrvHits{Name("addCrvHits"), Comment("set to add crv hits"),false};	
-        fhicl::Atom<bool> addCrystallHits{Name("addCrystalHits"), Comment("for calo cry hits"), false};
-			  fhicl::Atom<bool> addCosmicSeedFit{Name("addCosmicSeedFit"), Comment("for fitted cosmic track"), false};
-			  fhicl::Atom<bool> isCosmic{Name("isCosmic"), Comment("flag for cosmic track v helix track"), false};	
-	    };
+  public:
+    struct Config{
+      using Name=fhicl::Name;
+      using Comment=fhicl::Comment;
+      fhicl::Atom<int> diagLevel{Name("diagLevel"), Comment("for info"),0};
+      fhicl::Atom<art::InputTag>chTag{Name("ComboHitCollection"),Comment("chTag"), "makePH"};
+      fhicl::Atom<art::InputTag>gensTag{Name("GenParticleCollection"),Comment("gensTag")};
+      fhicl::Atom<art::InputTag>strawdigiTag{Name("StrawDigiCollection"),Comment("strawdigiTag")};
+      fhicl::Atom<art::InputTag>crvdigiTag{Name("CrvDigiCollection"),Comment("crvTag")};
+      fhicl::Atom<art::InputTag>cosmicTag{Name("CosmicTrackSeedCollection"),Comment("cosmicTag")};
+      fhicl::Atom<art::InputTag>cluTag{Name("CaloClusterCollection"),Comment("cluTag")};
+      fhicl::Atom<art::InputTag>cryHitTag{Name("CaloCrystalHitCollection"),Comment("cryHitTag")};
+      fhicl::Atom<bool> addHits{Name("addHits"), Comment("set to add the hits"),false};
+      fhicl::Atom<bool> addTracks{Name("addTracks"), Comment("set to add tracks"),false};
+      fhicl::Atom<bool> addClusters{Name("addClusters"), Comment("set to add calo lusters"),false};
+      fhicl::Atom<bool> addCrvHits{Name("addCrvHits"), Comment("set to add crv hits"),false};	
+      fhicl::Atom<bool> addCrystallHits{Name("addCrystalHits"), Comment("for calo cry hits"), false};
+      fhicl::Atom<bool> addCosmicSeedFit{Name("addCosmicSeedFit"), Comment("for fitted cosmic track"), false};
+      fhicl::Atom<bool> isCosmic{Name("isCosmic"), Comment("flag for cosmic track v helix track"), false};	
+    };
 
-			#ifndef __CINT__
+    #ifndef __CINT__
 
-  
-			explicit Collection_Filler(const Config& conf);
-			Collection_Filler(const Collection_Filler &);
-			Collection_Filler& operator=(const Collection_Filler &);
-      const ComboHitCollection *chcol;
-			const StrawDigiCollection* _stcol;
-	    const ComboHitCollection* _chcol;
-	    const StrawDigiCollection* _strawdigicol;
-	    const CrvDigiCollection* _crvdigicol;
-	    const CosmicTrackSeedCollection* _cosmiccol;
-	    const GenParticleCollection* _gencol;
-	    const CaloClusterCollection* _clustercol;
-      const CaloCrystalHitCollection* _cryHitcol;
-	    art::InputTag chTag_;
-	    art::InputTag gensTag_;
-	    art::InputTag strawdigiTag_;
-	    art::InputTag crvdigiTag_;
-	    art::InputTag cosmicTag_;
-	    art::InputTag cluTag_;
-      art::InputTag cryHitTrag_;
-	    std::string g4ModuleLabel_;
-			art::Event *_event;
-			art::Run *_run;
 
-			bool addHits_, addTracks_, addClusters_, addCrvHits_, addCosmicSeedFit_, isCosmic_;
+    explicit Collection_Filler(const Config& conf);
+    Collection_Filler(const Collection_Filler &);
+    Collection_Filler& operator=(const Collection_Filler &);
+    const ComboHitCollection *chcol = 0;
+    const StrawDigiCollection* _stcol;
+    const ComboHitCollection* _chcol;
+    const StrawDigiCollection* _strawdigicol;
+    const CrvDigiCollection* _crvdigicol;
+    const CosmicTrackSeedCollection* _cosmiccol;
+    const GenParticleCollection* _gencol;
+    const CaloClusterCollection* _clustercol;
+    const CaloCrystalHitCollection* _cryHitcol;
+    art::InputTag chTag_;
+    art::InputTag gensTag_;
+    art::InputTag strawdigiTag_;
+    art::InputTag crvdigiTag_;
+    art::InputTag cosmicTag_;
+    art::InputTag cluTag_;
+    art::InputTag cryHitTrag_;
+    std::string g4ModuleLabel_;
+    art::Event *_event;
+    art::Run *_run;
 
-			bool HasCluster(const art::Event& evt);
 
-      bool HasTrack(const art::Event& evt);
+    bool addHits_, addTracks_, addClusters_, addCrvHits_, addCosmicSeedFit_, isCosmic_;
 
-      bool HasComboHits(const art::Event& evt);
+    bool HasCluster(const art::Event& evt);
 
-      void FindData(const art::Event& evt);
+    bool HasTrack(const art::Event& evt);
 
-      
-      template<class collection>
-      collection GetCollection(std::string name);
+    bool HasComboHits(const art::Event& evt);
 
-     //std::any
+    void FindData(const art::Event& evt);
+   
+    void GetComboHitCollection (art::Event const& evt, Data_Collections &data);
 
-		  virtual ~Collection_Filler(){};
+    template<class collection>
+    void GetCollection(const art::Event& evt, collection &c, int code);
+    //std::any
+
+    virtual ~Collection_Filler(){};
 
     private:
-      Config _conf;
-		  #endif
-		  ClassDef(Collection_Filler,0);
+    Config _conf;
+    #endif
+    ClassDef(Collection_Filler,0);
 	};
 
 }

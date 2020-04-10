@@ -72,3 +72,23 @@ void TEveEventDisplay::AddCosmicTrack(const art::Event& event){
 		
 	}
 }
+
+
+This code allows use of content selector in the frame:
+
+const mu2e::ComboHitCollection *hits = Data->getSelectedHitCollection<mu2e::ComboHitCollection>();
+if(hits!=nullptr){
+std::vector<mu2e::ComboHit>::const_iterator iter;
+        unsigned int i = 0;
+        for(iter=hits->begin(); iter!=hits->end();iter++,i++){
+          TEveMu2eHit *teve_hit = new TEveMu2eHit();
+	        const ComboHit& hit = *iter;
+          CLHEP::Hep3Vector HitPos(hit.pos().x(), hit.pos().y(), hit.pos().z());
+
+		      CLHEP::Hep3Vector pointInMu2e = gdml_geom->PointToTracker(HitPos);
+
+          teve_hit->DrawHit("ComboHits",  1, pointInMu2e);
+          fHitsList->AddElement(teve_hit->HitList);  
+          gEve->AddElement(fHitsList);
+          gEve->Redraw3D(kTRUE);  
+  

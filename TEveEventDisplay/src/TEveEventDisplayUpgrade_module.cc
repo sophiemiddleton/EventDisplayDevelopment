@@ -52,10 +52,9 @@
 #include "fstream"
 
 //TEveEventDisplayUpgrade Headers:
-#include  "TEveEventDisplay/src/dict_classes/Geom_Interface.h"
-#include  "TEveEventDisplay/src/dict_classes/Draw_Interface.h" 
 #include  "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eMainWindow.h"
 #include  "TEveEventDisplay/src/dict_classes/Collection_Filler.h"
+#include  "TEveEventDisplay/src/dict_classes/Data_Collections.h"
 // Mu2e Utilities
 #include "GeometryService/inc/GeomHandle.hh"
 #include "GeometryService/inc/DetectorSystem.hh"
@@ -125,22 +124,7 @@ namespace mu2e
 		     Config _conf;
 		     int _diagLevel;
 		     Int_t _evt; 
-
-		     const StrawDigiCollection* _stcol;
-		     const ComboHitCollection* _chcol;
-		     const StrawDigiCollection* _strawdigicol;
-		     const CrvDigiCollection* _crvdigicol;
-		     const CosmicTrackSeedCollection* _cosmiccol;
-		     const GenParticleCollection* _gencol;
-		     const CaloClusterCollection* _clustercol;
-         const CaloCrystalHitCollection* _cryHitcol;
-		     art::InputTag chTag_;
-		     art::InputTag gensTag_;
-		     art::InputTag strawdigiTag_;
-		     art::InputTag crvdigiTag_;
-		     art::InputTag cosmicTag_;
-		     art::InputTag cluTag_;
-         art::InputTag cryHitTrag_;
+		     
 		     std::string g4ModuleLabel_;
 
 		      bool doDisplay_;
@@ -148,31 +132,10 @@ namespace mu2e
 		      bool showEvent_;
              
 		      TApplication* application_;
-		      TDirectory*   directory_ = nullptr;
-		      
-		      Double_t        hitMarkerSize_;
-		      Double_t        trkMaxR_;
-		      Double_t        trkMaxZ_;
-		      Double_t        trkMaxStepSize_;
-		      Double_t        camRotateCenterH_;
-		      Double_t        camRotateCenterV_;
-		      Double_t        camDollyDelta_;
-
+		      TDirectory*   directory_ = nullptr;   
+		  
           Collection_Filler _filler;
-
-		      TGTextEntry      *fTeRun,*fTeEvt;
-		      TGLabel          *fTlRun,*fTlEvt;
-		   
-		     // GeomHandle<mu2e::BFieldManager> bfmgr;
-		     
-		      TEveTrackList *fTrackList;
-		      TEveElementList *fHitsList;
-		      TEveElementList *fClusters;
-		      
-		      bool addHits_, addTracks_, addClusters_, addCrvHits_, addCosmicSeedFit_, isCosmic_;
-		     
-		      Geom_Interface *gdml_geom	=new Geom_Interface(); 
-		      Draw_Interface *draw = new Draw_Interface();
+         
 		    
           TEveMu2eMainWindow *_frame;
           fhicl::ParameterSet _pset;
@@ -219,16 +182,19 @@ void TEveEventDisplayUpgrade::beginRun(const art::Run& run){
 
 void TEveEventDisplayUpgrade::analyze(const art::Event& event){
   std::cout<<"[In TEveEventDisplay::analyze()]"<<std::endl;
-  _filler.HasComboHits(event);
-  _frame->combohits = _filler.chcol;
-  if(!_frame->isClosed()) _frame->setEvent(event, _firstLoop);
+  foundEvent = true;
+  Data_Collections data;
+  _filler.GetComboHitCollection(event, data);
+  int N = data.chcol->size();
+  cout<<N<<" hits extracted into Collection"<<endl;
+  if(!_frame->isClosed()) _frame->setEvent(event, _firstLoop, data);
   _firstLoop = false;
 
 } 
 
 
 void TEveEventDisplayUpgrade::endJob(){
-	if(foundEvent){
+	if(!foundEvent){
 		char msg[300];
 		sprintf(msg, "Reached end of file but #%i has not been found", true);
 	        new TGMsgBox(gClient->GetRoot(), gClient->GetRoot(), "Event Not Found", msg, kMBIconExclamation,kMBOk);
