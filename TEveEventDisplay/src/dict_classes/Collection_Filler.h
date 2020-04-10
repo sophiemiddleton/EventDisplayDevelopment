@@ -37,6 +37,9 @@ using namespace CLHEP;
 //enum code : { ComboHits, Clusters, Cosmics}
 
 namespace mu2e{
+
+    enum RecoDataProductName { ComboHits, CaloCrystalHits, CaloClusters, CosmicTracks, HelixSeeds, KalSeeds};
+
 	class Collection_Filler
 	{
   public:
@@ -111,8 +114,8 @@ namespace mu2e{
 
     //TODO FindData is a function which just fills all data collections for products which are presentent.
    
-    void FillRecoCollection(const art::Event& evt, Data_Collections &data, int code);
-    void FillMCCollections(const art::Event& evt, Data_Collections &data, int code);
+    void FillRecoCollection(const art::Event& evt, Data_Collections &data, RecoDataProductName code);
+    void FillMCCollections(const art::Event& evt, Data_Collections &data, RecoDataProductName code);
 
     template<class collection>
     void GetCollection(const art::Event& evt, collection &c, int code);

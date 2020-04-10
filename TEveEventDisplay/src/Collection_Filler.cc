@@ -9,6 +9,8 @@
 using namespace mu2e;
 namespace mu2e{
 
+
+
   Collection_Filler::Collection_Filler(const Config& conf) :
     chTag_(conf.chTag()),
 	  gensTag_(conf.gensTag()),
@@ -62,19 +64,19 @@ namespace mu2e{
     }
 
 
-      void Collection_Filler::FillRecoCollection(const art::Event& evt, Data_Collections &data, int code){
+      void Collection_Filler::FillRecoCollection(const art::Event& evt, Data_Collections &data, RecoDataProductName code){
 
-        if(code==1){ //ComboHits TODO -make this a string - it will be easier, or build an enum
+        if(code==ComboHits){ //ComboHits TODO -make this a string - it will be easier, or build an enum
           if(!addHits_) std::cout<<"you are adding hits when parameter is off "<<std::endl;
           auto chH = evt.getValidHandle<mu2e::ComboHitCollection>(chTag_);
           data.chcol = chH.product();
         }
-        if(code==2){
+        if(code==CaloClusters){
           if(!addHits_) std::cout<<"you are adding hits when parameter is off "<<std::endl;
           auto chH = evt.getValidHandle<mu2e::CaloClusterCollection>(cluTag_);
           data.clustercol = chH.product();
         }
-         if(code==3){
+         if(code==CosmicTracks){
           if(!addHits_) std::cout<<"you are adding hits when parameter is off "<<std::endl;
           auto chH = evt.getValidHandle<mu2e::CosmicTrackSeedCollection>(cosmicTag_);
           data.cosmiccol = chH.product();
