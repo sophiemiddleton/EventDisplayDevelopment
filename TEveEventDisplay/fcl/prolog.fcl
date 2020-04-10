@@ -30,7 +30,7 @@ TEveEventDisplayHelix : {
   }   
 
 TEveEventDisplayCosmics : {
-    module_type : TEveEventDisplayUpgrade 
+    module_type : TEveEventDisplay
     g4ModuleLabel        		    : "g4run"
     filler : {
       ComboHitCollection 		      : "makePH"
