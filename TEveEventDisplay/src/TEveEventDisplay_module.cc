@@ -158,7 +158,7 @@ void TEveEventDisplay::analyze(const art::Event& event){
   std::cout<<"[In TEveEventDisplay::analyze()]"<<std::endl;
   foundEvent = true;
   Data_Collections data;
-  _filler.FillCollection(event, data, 1); //1=ComboHits, this needs to be changed to a string or something more sophisicated but is mostly to test the code works currently
+  _filler.FillRecoCollection(event, data, 1); //1=ComboHits, this needs to be changed to a string or something more sophisicated but is mostly to test the code works currently
   int N = data.chcol->size();
   cout<<N<<" hits extracted into Collection"<<endl;
   if(!_frame->isClosed()) _frame->setEvent(event, _firstLoop, data);

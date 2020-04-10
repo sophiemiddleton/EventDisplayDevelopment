@@ -13,13 +13,19 @@ namespace mu2e{
     chTag_(conf.chTag()),
 	  gensTag_(conf.gensTag()),
 	  strawdigiTag_(conf.strawdigiTag()),
-	  crvdigiTag_(conf.crvdigiTag()),
+	  crvcoinTag_(conf.crvdigiTag()),
+    cluTag_(conf.cluTag()),
+    cryHitTag_(conf.cryHitTag()),
+    hseedTag_(conf.hseedTag()),
+    kalseedTag_(conf.kalseedTag()),
 	  addHits_(conf.addHits()),
 	  addTracks_(conf.addTracks()),
 	  addClusters_(conf.addClusters()),
 	  addCrvHits_(conf.addCrvHits()),
 	  addCosmicSeedFit_(conf.addCosmicSeedFit()),
-	  isCosmic_(conf.isCosmic()){}
+	  isCosmic_(conf.isCosmic()),
+    MCOnly_(conf.MCOnly())
+    {}
   
     bool Collection_Filler::HasCluster(const art::Event& evt){
 	    _clustercol = 0; 
@@ -56,7 +62,7 @@ namespace mu2e{
     }
 
 
-      void Collection_Filler::FillCollection(const art::Event& evt, Data_Collections &data, int code){
+      void Collection_Filler::FillRecoCollection(const art::Event& evt, Data_Collections &data, int code){
 
         if(code==1){ //ComboHits TODO -make this a string - it will be easier, or build an enum
           if(!addHits_) std::cout<<"you are adding hits when parameter is off "<<std::endl;

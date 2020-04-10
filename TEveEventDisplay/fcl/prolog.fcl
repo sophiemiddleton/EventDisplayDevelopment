@@ -8,25 +8,24 @@ BEGIN_PROLOG
 
 TEveEventDisplayHelix : {
     module_type : TEveEventDisplay
-
-    #strawStepsTag       		: "compressDigiMCs:tracker"
-    #strawHitsTag         		: "makeSH"
-    ComboHitCollection 		    : "makeSH"
-    GenParticleCollection 		: "compressDigiMCs" #generate"
-    StrawDigiCollection		    :  "selectRecoMC"
-    CrvDigiCollection	 	      : "CrvDigi"
-    CosmicTrackSeedCollection :  NULL
-    CaloClusterCollection		  :  NULL
-    CaloCrystalHitCollection  : "CaloClusterFast"
-    g4ModuleLabel        		  : "g4run"
-    minEnergyDep         		  : 0
-    minHits              		  : 1
-    addHits 			            : false
-    addTracks 			          : true
-    addCrvHits			          : false
-    addCosmicSeedFit	        : false
-    addClusters			          : false
-    isCosmic			            : false
+    g4ModuleLabel        		    : "g4run"
+    filler : {
+      ComboHitCollection 		    : "makeSH"
+      GenParticleCollection 		: "compressDigiMCs" #generate"
+      StrawDigiCollection		    :  "selectRecoMC"
+      CrvCoincidenceClusterCollection	  : NULL
+      CosmicTrackSeedCollection :  NULL
+      CaloClusterCollection		  :  "CaloClusterFromProtoCluster"
+      CaloCrystalHitCollection  :  "CaloCrystalHitFromHit"
+      HelixSeedCollection       :  "HelixFinderDe"
+      KalSeedCollection         :  "KFFDeM"
+      addHits 			            : false
+      addTracks 			          : true
+      addCrvHits			          : false
+      addCosmicSeedFit	        : false
+      addClusters			          : false
+      isCosmic			            : false
+    }
   }   
 
 TEveEventDisplayCosmics : {
@@ -36,10 +35,12 @@ TEveEventDisplayCosmics : {
       ComboHitCollection 		      : "makePH"
       GenParticleCollection 	    : "compressDigiMCs" 
       StrawDigiCollection		      :  "makeSD"
-      CrvDigiCollection		        : "CrvDigi"
+      CrvCoincidenceClusterCollection		        : NULL
       CosmicTrackSeedCollection 	: "CosmicTrackFinder"
       CaloClusterCollection		    : NULL
       CaloCrystalHitCollection    : NULL
+      HelixSeedCollection         : NULL
+      KalSeedCollection           : NULL
       addHits 			              : true
       addTracks 			            : false
       addCrvHits			            : false
@@ -50,24 +51,25 @@ TEveEventDisplayCosmics : {
 
 TEveEventDisplayCaloOnly : {
     module_type : TEveEventDisplay  
-
-    ComboHitCollection 		      : NULL
-    GenParticleCollection 		  : NULL
-    StrawDigiCollection		      : NULL
-    CrvDigiCollection		        : NULL
-    CosmicTrackSeedCollection 	: NULL
-    CaloClusterCollection		    : "CaloClusterFast"
-    CaloCrystalHitCollection    : "CaloClusterFast"
     g4ModuleLabel        		    : "g4run"
-    minEnergyDep         		    : 0
-    minHits              		    : 0
-    addHits 			              : false
-    addTracks 			            : false
-    addClusters			            : true
-    addCrvHits			            : false
-    addCosmicSeedFit	          : false
-    addCrystalHits              : True
-    isCosmic			              : false
+    filler : {
+      ComboHitCollection 		      : NULL
+      GenParticleCollection 		  : NULL
+      StrawDigiCollection		      : NULL
+      CrvCoincidenceClusterCollection		        : NULL
+      CosmicTrackSeedCollection 	: NULL
+      CaloClusterCollection		    : "CaloClusterFromProtCluster"
+      CaloCrystalHitCollection    : "CaloCrystalHitFromHit"
+      HelixSeedCollection         :  NULL
+      KalSeedCollection           :  NULL
+      addHits 			              : false
+      addTracks 			            : false
+      addClusters			            : true
+      addCrvHits			            : false
+      addCosmicSeedFit	          : false
+      addCrystalHits              : True
+      isCosmic			              : false
+  }
   }   
 
 TEveDis : {  

@@ -5,7 +5,7 @@
 #include "RecoDataProducts/inc/ComboHit.hh"
 #include "RecoDataProducts/inc/CaloCrystalHitCollection.hh"
 #include "RecoDataProducts/inc/CaloHitCollection.hh"
-#include "RecoDataProducts/inc/CrvRecoPulseCollection.hh"
+#include "RecoDataProducts/inc/CrvCoincidenceClusterCollection.hh"
 #include "MCDataProducts/inc/PhysicalVolumeInfoCollection.hh"
 #include "MCDataProducts/inc/PhysicalVolumeInfoMultiCollection.hh"
 #include "MCDataProducts/inc/MCTrajectoryCollection.hh"
@@ -47,17 +47,20 @@ namespace mu2e{
       fhicl::Atom<art::InputTag>chTag{Name("ComboHitCollection"),Comment("chTag"), "makePH"};
       fhicl::Atom<art::InputTag>gensTag{Name("GenParticleCollection"),Comment("gensTag")};
       fhicl::Atom<art::InputTag>strawdigiTag{Name("StrawDigiCollection"),Comment("strawdigiTag")};
-      fhicl::Atom<art::InputTag>crvdigiTag{Name("CrvDigiCollection"),Comment("crvTag")};
+      fhicl::Atom<art::InputTag>crvdigiTag{Name("CrvCoincidenceClusterCollection"),Comment("crvTag")};
       fhicl::Atom<art::InputTag>cosmicTag{Name("CosmicTrackSeedCollection"),Comment("cosmicTag")};
       fhicl::Atom<art::InputTag>cluTag{Name("CaloClusterCollection"),Comment("cluTag")};
       fhicl::Atom<art::InputTag>cryHitTag{Name("CaloCrystalHitCollection"),Comment("cryHitTag")};
+      fhicl::Atom<art::InputTag>hseedTag{Name("HelixSeedCollection"),Comment("hseedTag")};
+      fhicl::Atom<art::InputTag>kalseedTag{Name("KalSeedCollection"),Comment("kalseedTag")};
       fhicl::Atom<bool> addHits{Name("addHits"), Comment("set to add the hits"),false};
       fhicl::Atom<bool> addTracks{Name("addTracks"), Comment("set to add tracks"),false};
       fhicl::Atom<bool> addClusters{Name("addClusters"), Comment("set to add calo lusters"),false};
       fhicl::Atom<bool> addCrvHits{Name("addCrvHits"), Comment("set to add crv hits"),false};	
       fhicl::Atom<bool> addCrystallHits{Name("addCrystalHits"), Comment("for calo cry hits"), false};
       fhicl::Atom<bool> addCosmicSeedFit{Name("addCosmicSeedFit"), Comment("for fitted cosmic track"), false};
-      fhicl::Atom<bool> isCosmic{Name("isCosmic"), Comment("flag for cosmic track v helix track"), false};	
+      fhicl::Atom<bool> isCosmic{Name("isCosmic"), Comment("flag for cosmic track v helix track"), false};
+      fhicl::Atom<bool> MCOnly{Name("MCOnly"), Comment("fset to see only MC Data Products"), false};	
     };
 
     #ifndef __CINT__
@@ -66,27 +69,37 @@ namespace mu2e{
     explicit Collection_Filler(const Config& conf);
     Collection_Filler(const Collection_Filler &);
     Collection_Filler& operator=(const Collection_Filler &);
+    
+    //RecoDataProducts:
     const ComboHitCollection *_chcol = 0;
     const StrawDigiCollection* _stcol;
     const StrawDigiCollection* _strawdigicol;
-    const CrvDigiCollection* _crvdigicol;
+    const CrvCoincidenceClusterCollection* _crvcoincol;
     const CosmicTrackSeedCollection* _cosmiccol = 0;
     const GenParticleCollection* _gencol;
     const CaloClusterCollection* _clustercol = 0;
     const CaloCrystalHitCollection* _cryHitcol;
+    const HelixSeedCollection* _hseedcol = 0;
+    const KalSeedCollection* _kalseedcol;
     art::InputTag chTag_;
     art::InputTag gensTag_;
     art::InputTag strawdigiTag_;
-    art::InputTag crvdigiTag_;
+    art::InputTag crvcoinTag_;
     art::InputTag cosmicTag_;
     art::InputTag cluTag_;
-    art::InputTag cryHitTrag_;
+    art::InputTag cryHitTag_;
+    art::InputTag hseedTag_;
+    art::InputTag kalseedTag_;
+
+    //MCDataProdutcs:
     std::string g4ModuleLabel_;
+    //TODO
+
     art::Event *_event;
     art::Run *_run;
 
 
-    bool addHits_, addTracks_, addClusters_, addCrvHits_, addCosmicSeedFit_, isCosmic_;
+    bool addHits_, addTracks_, addClusters_, addCrvHits_, addCosmicSeedFit_, isCosmic_, MCOnly_;
 
     bool HasCluster(const art::Event& evt);
 
@@ -98,7 +111,8 @@ namespace mu2e{
 
     //TODO FindData is a function which just fills all data collections for products which are presentent.
    
-    void FillCollection(const art::Event& evt, Data_Collections &data, int code);
+    void FillRecoCollection(const art::Event& evt, Data_Collections &data, int code);
+    void FillMCCollections(const art::Event& evt, Data_Collections &data, int code);
 
     template<class collection>
     void GetCollection(const art::Event& evt, collection &c, int code);

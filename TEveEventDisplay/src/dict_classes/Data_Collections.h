@@ -5,7 +5,7 @@
 #include "RecoDataProducts/inc/ComboHit.hh"
 #include "RecoDataProducts/inc/CaloCrystalHitCollection.hh"
 #include "RecoDataProducts/inc/CaloHitCollection.hh"
-#include "RecoDataProducts/inc/CrvRecoPulseCollection.hh"
+#include "RecoDataProducts/inc/CrvCoincidenceClusterCollection.hh"
 #include "MCDataProducts/inc/PhysicalVolumeInfoCollection.hh"
 #include "MCDataProducts/inc/PhysicalVolumeInfoMultiCollection.hh"
 #include "MCDataProducts/inc/MCTrajectoryCollection.hh"
@@ -46,14 +46,23 @@ namespace mu2e{
     explicit Data_Collections(){};
     Data_Collections(const Data_Collections &){};
     Data_Collections& operator=(const Data_Collections &);
+
+    //RecoDataProducts:
+
     const ComboHitCollection *chcol = 0;
-    const StrawDigiCollection* _stcol;
-    const StrawDigiCollection* _strawdigicol;
-    const CrvDigiCollection* _crvdigicol;
+    const StrawDigiCollection* _stcol = 0;
+    const StrawDigiCollection* _strawdigicol = 0;
+    const CrvCoincidenceClusterCollection* _crvcoincol = 0;
     const CosmicTrackSeedCollection* cosmiccol = 0;
-    const GenParticleCollection* _gencol;
+    const GenParticleCollection* _gencol = 0;
     const CaloClusterCollection* clustercol = 0;
-    const CaloCrystalHitCollection* _cryHitcol;
+    const CaloCrystalHitCollection* _cryHitcol = 0;
+    const HelixSeedCollection* _hseedcol = 0;
+    const KalSeedCollection* _kalseedcol = 0;
+
+    //MCDataProducts:
+    //TODO
+
     virtual ~Data_Collections(){};
     #endif
     ClassDef(Data_Collections,0);
