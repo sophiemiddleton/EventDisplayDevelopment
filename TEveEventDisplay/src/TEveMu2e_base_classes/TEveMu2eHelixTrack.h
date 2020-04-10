@@ -9,7 +9,7 @@
 
 namespace mu2e {
 
-class   TEveMu2eHelixTrack: public TEveTrackPropagator, public KalSeed {
+class   TEveMu2eHelixTrack: public TEveTrack, TEveTrackPropagator, public KalSeed {
 
     KalSeed *fKalSeed;
 
