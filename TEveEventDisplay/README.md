@@ -2,7 +2,9 @@
 
 This branch contains the prototype for the TEve based Mu2e Event Display.
 
-Here are the details.
+Please read the wiki tab for details.
+
+Here are just a few basic details.
 
 ## The Module
 
@@ -32,11 +34,11 @@ The GDML file used here can be regenerated using: ```mu2e -c mu2eG4/fcl/gdmldump
 
 Contains callers for access to Tracker and Calo geometry. This class also contains functions to set visability of different elements absed on their names within the gdml.
 
-### Drawing
+### TEveMu2e basis
 
-Contains drawing options for both hits and clusters. These are cosmetic features.
+Contains base classes which inherit from TEve objects. This is the interface between TEve objects and mu2e products.
 
-### Collection Interface
+### Collection Filler and Data Collections
 
 Not yet used but will be as we move towards a more complex design. bsed on EventDisplay infrastructure.
 
@@ -44,8 +46,8 @@ Not yet used but will be as we move towards a more complex design. bsed on Event
 
 The physics or PID world.
 
-### NavState and EvtUtils
+### Main Window
 
-These contian the event navigation. It currently does not work as planned. This needs to be adapted to the ART world.
+This class sets up the Gui and imports the geometry. Here the plotting data functions are currently called.
 
 
