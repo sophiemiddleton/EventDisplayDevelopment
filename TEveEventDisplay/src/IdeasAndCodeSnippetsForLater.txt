@@ -1,6 +1,23 @@
+
+ TEveRecTrack t;
+        TEvePropagator *propagator;
+        t.fBeta = 1;
+        t.fSign = -1;
+        XYZVec Position(0,0,0);
+        XYZVec Direction;
+        XYZVec origin(0,0,0);
+        kseed.helix()->helix().position(Position);
+        kseed.helix()->helix().direction(0, Direction);
+        double momentum = kseed.helix()->helix().momentum()
+        
+        t.fV = TEveVector(Position.x(),Positon.y(),Position.z());
+        t.fP = TEveVector(momentum*Direction.x(),momentum*Direction.y(),momentum*Direction.z());
+        TEveTrack *track = new TEveTrack(&t, propagator);
+
+
 void TEveEventDisplay::AddHelicalTrack(const art::Event& event, mu2e::BFieldManager const& bf){
-	auto genH = event.getValidHandle<GenParticleCollection>(gensTag_);
-	_gencol = genH.product();
+	//auto genH = event.getValidHandle<GenParticleCollection>(gensTag_);
+	//_gencol = genH.product();
 	if (fTrackList == 0) {
 		fTrackList = new TEveTrackList("Tracks");
 		fTrackList->SetLineWidth(4);
@@ -13,9 +30,9 @@ void TEveEventDisplay::AddHelicalTrack(const art::Event& event, mu2e::BFieldMana
 	int mcindex=-1;
 	for ( auto const& gen: *_gencol){
 		TEveTrackPropagator* trkProp = fTrackList->GetPropagator();
-		//if(!isCosmic_) CLHEP::Hep3Vector field = bf.getBField(gen.position());
-		//if(isCosmic_) CLHEP::Hep3Vector field(CLHEP::Hep3Vector(0,0,0)); 
-		trkProp->SetMagField(-1*1000.);
+		CLHEP::Hep3Vector field = bf.getBField(gen.position());
+	
+		trkProp->SetMagField(...);
 		trkProp->SetMaxR(trkMaxR_);
 		trkProp->SetMaxZ(trkMaxZ_);
 		trkProp->SetMaxStep(trkMaxStepSize_);
@@ -92,3 +109,65 @@ std::vector<mu2e::ComboHit>::const_iterator iter;
           gEve->AddElement(fHitsList);
           gEve->Redraw3D(kTRUE);  
   
+//Thinking about custom tracks:
+   void TEveMu2eMainWindow::AddHelix(bool firstloop, const KalSeedCollection *seedcol){
+      std::cout<<"Adding Helix"<<std::endl;
+      //THelix *example_helix = new THelix(-398.923, 49.0273, 865.809);
+      //TPolyLine3D *line = new TPolyLine3D;
+      TEveElementList *List = new TEveElementList("Hits");
+      for(i=0;i< 10;i++){
+        TEveMu2eCustomTrack *line = new TEveMu2eHelixTrack();
+        line->SetPostionAndDirectionFromKalRep();
+        
+        double x = 1;
+        double y = 1;
+        double z = 1;
+        if(i =0){
+           line->SetPoint(0,x,y,z);
+        }
+        else{
+          line->SetNextPoint(i,x,y,z);
+        } 
+        line->SetLineColor(kGreen);
+        line->SetLineWidth(5);
+        List->AddElement(line);
+      }
+      gEve->AddElement(List);
+      gEve->Redraw3D(kTRUE);
+   }
+
+  
+    bool Collection_Filler::HasCluster(const art::Event& evt){
+	    _clustercol = 0; 
+      auto chH = evt.getValidHandle<mu2e::CaloClusterCollection>(cluTag_);
+	    _clustercol = chH.product();
+	    return _clustercol != 0;
+    }
+
+    bool Collection_Filler::HasTrack(const art::Event& evt){
+	    _cosmiccol = 0; 
+      auto chH = evt.getValidHandle<mu2e::CosmicTrackSeedCollection>(cosmicTag_);
+	    _cosmiccol = chH.product();
+	    return _cosmiccol != 0;
+    }
+
+    bool Collection_Filler::HasComboHits(const art::Event& evt){
+	    _chcol = 0; 
+        auto chH = evt.getValidHandle<mu2e::ComboHitCollection>(chTag_);
+	    _chcol = chH.product();
+	    return _chcol != 0;
+    }
+void Collection_Filler::FindData(const art::Event& evt){
+    if(addClusters_){
+         _clustercol = 0; 
+         auto chH = evt.getValidHandle<mu2e::CaloClusterCollection>(cluTag_);
+	       _clustercol = chH.product();
+      }
+     if(addHits_){
+        _chcol = 0; 
+        auto chH = evt.getValidHandle<mu2e::ComboHitCollection>(chTag_);
+	      _chcol = chH.product();
+     }
+    }
+
+

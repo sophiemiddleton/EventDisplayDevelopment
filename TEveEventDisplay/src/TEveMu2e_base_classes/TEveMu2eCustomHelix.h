@@ -13,32 +13,47 @@ namespace mu2e {
 
 class   TEveMu2eCustomHelix: public TEveElement, public TPolyLine3D { //public THelix
 
-    KalSeed *fKalSeed;
-    HelixSeed *fHelixSeed;
+
   public:
      #ifndef __CINT__
     explicit  TEveMu2eCustomHelix(){};
-    TEveMu2eCustomHelix(HelixSeed *hseed){fHelixSeed = hseed;};
+    TEveMu2eCustomHelix(HelixSeed hseed){fHelixSeed = hseed;};
     virtual ~ TEveMu2eCustomHelix(){};
     #endif
+    
+    KalSeed fKalSeed;
+    HelixSeed fHelixSeed;
+
     void DrawHelixTrack();
     void SetPostionAndDirectionFromHelixSeed(double zpos){
-      fHelixSeed->helix().position(Position);
-      fHelixSeed->helix().direction(zpos, Direction);
+      fHelixSeed.helix().position(Position);
+      fHelixSeed.helix().direction(zpos, Direction);
     }
 
     void SetPostionAndDirectionFromKalRep(double zpos){
-      fKalSeed->helix()->helix().position(Position);
-      fKalSeed->helix()->helix().direction(zpos, Direction);
+      fKalSeed.helix()->helix().position(Position);
+      fKalSeed.helix()->helix().direction(zpos, Direction);
     }
 
     double GetFlightLen(){
-      return fKalSeed->flt0();
+      return fKalSeed.flt0();
+    }
+
+    void SetMomentum(){
+      this->Momentum = fKalSeed.helix()->helix().momentum();
+    }
+
+    void SetParticle(){
+      this->PDGcode = fKalSeed.particle().particleType();
     }
 
     XYZVec Direction;
     XYZVec Position;
-    int pdg_code;
+    double Momentum;
+    int PDGcode  = 11;
+    unsigned int nSteps = 100;
+    double TrackerLength = 300;//cm
+    int kStepSize = nSteps/TrackerLength;//cm
     ClassDef( TEveMu2eCustomHelix, 0);
 };
 }

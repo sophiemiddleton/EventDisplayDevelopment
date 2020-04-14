@@ -158,8 +158,8 @@ void TEveEventDisplay::analyze(const art::Event& event){
   std::cout<<"[In TEveEventDisplay::analyze()]"<<std::endl;
   foundEvent = true;
   Data_Collections data;
-  RecoDataProductName name = ComboHits;
-  if(_filler.addHits_)_filler.FillRecoCollection(event, data, name);
+  if(_filler.addHits_)_filler.FillRecoCollection(event, data, ComboHits);
+  if(_filler.addTracks_)_filler.FillRecoCollection(event, data, KalSeeds);
   if(!_frame->isClosed()) _frame->setEvent(event, _firstLoop, data);
   _firstLoop = false;
 

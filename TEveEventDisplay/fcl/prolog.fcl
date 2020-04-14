@@ -17,10 +17,10 @@ TEveEventDisplayHelix : {
       CosmicTrackSeedCollection :  NULL
       CaloClusterCollection		  :  "CaloClusterFromProtoCluster"
       CaloCrystalHitCollection  :  "CaloCrystalHitFromHit"
-      HelixSeedCollection       :  "HelixFinderDe"
+      HelixSeedCollection       :  "HelixFinderDe:Negative"
       KalSeedCollection         :  "KFFDeM"
       addHits 			            : false
-      addTracks 			          : false
+      addTracks 			          : true
       addCrvHits			          : false
       addCosmicSeedFit	        : false
       addClusters			          : false

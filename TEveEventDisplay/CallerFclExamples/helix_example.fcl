@@ -42,11 +42,11 @@ source : { module_type : RootInput }
 physics :
 {
   
-  producers : { @table::TrkHitReco.producers} 
+  //producers : { @table::TrkHitReco.producers} 
   analyzers : { @table::TEveDis.analyzers}
 }
 
-physics.RecoPath : [ @sequence::TrkHitReco.PrepareHits]
+//physics.RecoPath : [ @sequence::TrkHitReco.PrepareHits]
 physics.EndPath  : [ @sequence::TEveDis.seqHelix] 
 
 

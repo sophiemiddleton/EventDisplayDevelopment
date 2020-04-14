@@ -76,13 +76,16 @@ namespace mu2e{
                  bool _findEvent = true;
                  bool _firstLoop = true;
 		             TEveElementList *fHitsList;
-
+                 TEveElementList *fTrackList;
+                 TEveTrackList *tList;
                  TEveElementList *test;
 
                  TText  *_eventNumberText, *_subrunNumberText, *_runNumberText;
                  int _event, _subrun, _run;
 
-                 void AddHelix(bool firstloop, const KalSeedCollection *seedcol);
+                 void AddHelixEveTracks(bool firstloop, const KalSeedCollection *seedcol);
+                 void AddHelixBySegments(bool firstloop, const KalSeedCollection *seedcol);
+                 void AddHelixPieceWise(bool firstloop, const KalSeedCollection *seedcol);
                  void AddComboHits(bool firstloop, const ComboHitCollection *chcol);
                  void SetRunGeometry(const art::Run& run, int _diagLevel);
 

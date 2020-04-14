@@ -174,7 +174,7 @@ namespace mu2e{
     }
 
 	CLHEP::Hep3Vector Geom_Interface::GetTrackerCenter(){
-                std::string filename("Mu2eG4/geom/geom_common_current.txt");
+    std::string filename("Mu2eG4/geom/geom_common_current.txt");
 		SimpleConfig GeomConfig(filename);
 		double zCenter  =  GeomConfig.getDouble("mu2e.detectorSystemZ0")*CLHEP::mm;
 		double xCenter  = -GeomConfig.getDouble("mu2e.solenoidOffset")*CLHEP::mm;
@@ -184,7 +184,7 @@ namespace mu2e{
 	}
 
 	CLHEP::Hep3Vector Geom_Interface::GetCaloCenter(int nDisk){
-                std::string filename("Mu2eG4/geom/Calorimeter_CsI.txt");
+    std::string filename("Mu2eG4/geom/Calorimeter_CsI.txt");
 		SimpleConfig GeomConfig(filename);
 		double zCenter;
 		if(nDisk==0) zCenter = GeomConfig.getDouble("mu2e.calorimeter.caloMotherZ0")*CLHEP::mm;
@@ -198,10 +198,10 @@ namespace mu2e{
 	CLHEP::Hep3Vector Geom_Interface::GetGDMLOffsetFromMu2e(){
 		std::string filename("Mu2eG4/geom/mu2eHall.txt");
 		SimpleConfig HallConfig(filename);
-      	double zCenter = 0;//-7929;
+    double zCenter = 0;//-7929;
 		double yCenter  =  0;//HallConfig.getDouble("yOfFloorSurface.below.mu2eOrigin")*CLHEP::mm;
 		double xCenter  = 1288;//3040;//-HallConfig.getDouble("mu2e.solenoidOffset")*CLHEP::mm;
-	    CLHEP::Hep3Vector center(xCenter,yCenter,zCenter);
+	  CLHEP::Hep3Vector center(xCenter,yCenter,zCenter);
 		TrackerG4Origin = center;
 		return center;
 	}
