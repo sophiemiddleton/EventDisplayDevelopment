@@ -13,6 +13,6 @@
  <class name="mu2e::TEveMu2eHelixTrack"/>
  <class name="mu2e::TEveMu2eCustomHelix"/>
   <class name="mu2e::TEveMu2eBField"/>
-  <class name="mu2e::TEveMu2eBrowser"/>
+  <class name="mu2e::TEveMu2e2DProjection"/>
 </lcgdict>
 
