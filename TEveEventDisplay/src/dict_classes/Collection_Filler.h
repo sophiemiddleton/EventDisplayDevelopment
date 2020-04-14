@@ -34,11 +34,10 @@ using namespace CLHEP;
 #include "RecoDataProducts/inc/KalRepCollection.hh"
 #include "RecoDataProducts/inc/TrkExtTrajCollection.hh"
 #include "TEveEventDisplay/src/dict_classes/Data_Collections.h"
-//enum code : { ComboHits, Clusters, Cosmics}
 
 namespace mu2e{
 
-    enum RecoDataProductName { ComboHits, CaloCrystalHits, CaloClusters, CosmicTracks, HelixSeeds, KalSeeds};
+  enum RecoDataProductName {ComboHits, CaloCrystalHits, CaloClusters, CosmicTracks, HelixSeeds, KalSeeds, CRVCoincidences};
 
 	class Collection_Filler
 	{
@@ -62,8 +61,10 @@ namespace mu2e{
       fhicl::Atom<bool> addCrvHits{Name("addCrvHits"), Comment("set to add crv hits"),false};	
       fhicl::Atom<bool> addCrystallHits{Name("addCrystalHits"), Comment("for calo cry hits"), false};
       fhicl::Atom<bool> addCosmicSeedFit{Name("addCosmicSeedFit"), Comment("for fitted cosmic track"), false};
+      fhicl::Atom<bool> addCRV{Name("addCoRV"), Comment("for CRV reco"), false};
       fhicl::Atom<bool> isCosmic{Name("isCosmic"), Comment("flag for cosmic track v helix track"), false};
-      fhicl::Atom<bool> MCOnly{Name("MCOnly"), Comment("fset to see only MC Data Products"), false};	
+      fhicl::Atom<bool> MCOnly{Name("MCOnly"), Comment("set to see only MC Data Products"), false};
+      fhicl::Atom<bool> FillAll{Name("FillAll"), Comment("to see all available products"), false};		
     };
 
     #ifndef __CINT__
@@ -73,17 +74,8 @@ namespace mu2e{
     Collection_Filler(const Collection_Filler &);
     Collection_Filler& operator=(const Collection_Filler &);
     
-    //RecoDataProducts:
-    const ComboHitCollection *_chcol = 0;
-    const StrawDigiCollection* _stcol;
-    const StrawDigiCollection* _strawdigicol;
-    const CrvCoincidenceClusterCollection* _crvcoincol;
-    const CosmicTrackSeedCollection* _cosmiccol = 0;
-    const GenParticleCollection* _gencol;
-    const CaloClusterCollection* _clustercol = 0;
-    const CaloCrystalHitCollection* _cryHitcol;
-    const HelixSeedCollection* _hseedcol = 0;
-    const KalSeedCollection* _kalseedcol;
+    //RecoDataProducts: //TODO - maybe remove these if not used!
+
     art::InputTag chTag_;
     art::InputTag gensTag_;
     art::InputTag strawdigiTag_;
@@ -102,7 +94,7 @@ namespace mu2e{
     art::Run *_run;
 
 
-    bool addHits_, addTracks_, addClusters_, addCrvHits_, addCosmicSeedFit_, isCosmic_, MCOnly_;
+    bool addHits_, addTracks_, addClusters_, addCrvHits_, addCosmicSeedFit_, addCRV_, isCosmic_, MCOnly_, FillAll_;
 
     bool HasCluster(const art::Event& evt);
 

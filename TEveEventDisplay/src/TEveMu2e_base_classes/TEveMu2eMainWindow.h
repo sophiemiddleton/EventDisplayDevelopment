@@ -77,14 +77,12 @@ namespace mu2e{
                  bool _firstLoop = true;
 		             TEveElementList *fHitsList;
 
-                 //TGHorizontalFrame* navFrame;
-	               //TGVerticalFrame* evtidFrame;
-                 //TRootEmbeddedCanvas *_mainCanvas;
-                 //TGCanvas  *_infoCanvas;
-                 //TPad *_mainPad, *_infoPad;
+                 TEveElementList *test;
+
                  TText  *_eventNumberText, *_subrunNumberText, *_runNumberText;
                  int _event, _subrun, _run;
 
+                 void AddHelix(bool firstloop, const KalSeedCollection *seedcol);
                  void AddComboHits(bool firstloop, const ComboHitCollection *chcol);
                  void SetRunGeometry(const art::Run& run, int _diagLevel);
 

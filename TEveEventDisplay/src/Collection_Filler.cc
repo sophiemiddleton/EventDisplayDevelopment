@@ -25,65 +25,46 @@ namespace mu2e{
 	  addClusters_(conf.addClusters()),
 	  addCrvHits_(conf.addCrvHits()),
 	  addCosmicSeedFit_(conf.addCosmicSeedFit()),
+    addCRV_(conf.addCRV()),
 	  isCosmic_(conf.isCosmic()),
-    MCOnly_(conf.MCOnly())
+    MCOnly_(conf.MCOnly()),
+    FillAll_(conf.FillAll())
     {}
-  
-    bool Collection_Filler::HasCluster(const art::Event& evt){
-	    _clustercol = 0; 
-      auto chH = evt.getValidHandle<mu2e::CaloClusterCollection>(cluTag_);
-	    _clustercol = chH.product();
-	    return _clustercol != 0;
-    }
 
-    bool Collection_Filler::HasTrack(const art::Event& evt){
-	    _cosmiccol = 0; 
-      auto chH = evt.getValidHandle<mu2e::CosmicTrackSeedCollection>(cosmicTag_);
-	    _cosmiccol = chH.product();
-	    return _cosmiccol != 0;
-    }
+    
+      void Collection_Filler::FillRecoCollection(const art::Event& evt, Data_Collections &data, RecoDataProductName CollectionName){
 
-    bool Collection_Filler::HasComboHits(const art::Event& evt){
-	    _chcol = 0; 
-        auto chH = evt.getValidHandle<mu2e::ComboHitCollection>(chTag_);
-	    _chcol = chH.product();
-	    return _chcol != 0;
-    }
-
-    void Collection_Filler::FindData(const art::Event& evt){
-    if(addClusters_){
-         _clustercol = 0; 
-         auto chH = evt.getValidHandle<mu2e::CaloClusterCollection>(cluTag_);
-	       _clustercol = chH.product();
-      }
-     if(addHits_){
-        _chcol = 0; 
-        auto chH = evt.getValidHandle<mu2e::ComboHitCollection>(chTag_);
-	      _chcol = chH.product();
-     }
-    }
-
-
-      void Collection_Filler::FillRecoCollection(const art::Event& evt, Data_Collections &data, RecoDataProductName code){
-
-        if(code==ComboHits){ //ComboHits TODO -make this a string - it will be easier, or build an enum
-          if(!addHits_) std::cout<<"you are adding hits when parameter is off "<<std::endl;
+        if(FillAll_ or(addHits_ and CollectionName==ComboHits)){ 
           auto chH = evt.getValidHandle<mu2e::ComboHitCollection>(chTag_);
           data.chcol = chH.product();
         }
-        if(code==CaloClusters){
-          if(!addHits_) std::cout<<"you are adding hits when parameter is off "<<std::endl;
+        if(FillAll_ or (CollectionName == CaloCrystalHits)){
+          auto chH = evt.getValidHandle<mu2e::CaloCrystalHitCollection>(cryHitTag_);
+          data.cryHitcol = chH.product();
+        }
+        if(FillAll_ or (addClusters_ and CollectionName==CaloClusters)){
           auto chH = evt.getValidHandle<mu2e::CaloClusterCollection>(cluTag_);
           data.clustercol = chH.product();
         }
-         if(code==CosmicTracks){
-          if(!addHits_) std::cout<<"you are adding hits when parameter is off "<<std::endl;
+        if(FillAll_ or (isCosmic_ and addTracks_ and CollectionName==CosmicTracks)){
           auto chH = evt.getValidHandle<mu2e::CosmicTrackSeedCollection>(cosmicTag_);
           data.cosmiccol = chH.product();
         }
-       
+        if(FillAll_ or (!isCosmic_ and addTracks_ and CollectionName==HelixSeeds)){
+          auto chH = evt.getValidHandle<mu2e::HelixSeedCollection>(hseedTag_);
+          data.hseedcol = chH.product();
+        }
+        if(FillAll_ or (!isCosmic_ and addTracks_ and CollectionName==KalSeeds)){
+          auto chH = evt.getValidHandle<mu2e::KalSeedCollection>(kalseedTag_);
+          data.kalseedcol = chH.product();
+        }
+       if(FillAll_ or (addCRV_ and CollectionName==CRVCoincidences)){
+          auto chH = evt.getValidHandle<mu2e::CrvCoincidenceClusterCollection>(crvcoinTag_);
+          data.crvcoincol = chH.product();
+        }
     }
 
+/*
 //TODO- below is some thoughts - need to discuss - might need moving to the DataCollection
   template<class collection>
       void Collection_Filler::GetCollection(const art::Event& evt, collection &c, int code){
@@ -103,5 +84,5 @@ namespace mu2e{
         }
         return c;
     }
-
+*/
 }

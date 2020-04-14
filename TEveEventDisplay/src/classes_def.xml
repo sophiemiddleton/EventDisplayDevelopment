@@ -11,6 +11,7 @@
  <class name="mu2e::TEveMu2eCluster"/>
   <class name="mu2e::TEveMu2eStraightTrack"/>
  <class name="mu2e::TEveMu2eHelixTrack"/>
+ <class name="mu2e::TEveMu2eCustomHelix"/>
   <class name="mu2e::TEveMu2eBField"/>
   <class name="mu2e::TEveMu2eBrowser"/>
 </lcgdict>

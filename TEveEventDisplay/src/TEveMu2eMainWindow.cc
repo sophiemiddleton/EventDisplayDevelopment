@@ -15,6 +15,7 @@
 #include <TG3DLine.h>
 #include<TGLViewer.h>
 #include <TGMsgBox.h>
+#include<TPolyLine3D.h>
 
 // ... libRGL
 #include <TGLViewer.h>
@@ -30,7 +31,8 @@
 
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eMainWindow.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eHit.h"
-
+#include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eHelixTrack.h"
+#include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eCustomHelix.h"
 namespace fhicl
 {
   class ParameterSet;
@@ -253,6 +255,7 @@ namespace mu2e{
       _run=event.id().run();
       _firstLoop = firstLoop;
       AddComboHits(firstLoop, data.chcol);
+      AddHelix(firstLoop, data.kalseedcol);
       gSystem->ProcessEvents();
 	    gClient->NeedRedraw(fTeRun);
       
@@ -260,41 +263,27 @@ namespace mu2e{
      
        gApplication->Run(true);
     }
-
-//This is an example - will need to have Collections added elsewhere~!
-    /*void TEveMu2eMainWindow::AddComboHits(bool firstloop, const ComboHitCollection *chcol){
-      std::cout<<"[In AddComboHits()]"<<std::endl;
-      if(chcol!=0){
-       std::cout<<"not null"<<std::endl;
-	     if (fHitsList == 0) {
-		      fHitsList = new TEveElementList("Hits");
-		      fHitsList->IncDenyDestroy();     
-	      }
-	      else {
-		       fHitsList->DestroyElements();  
-	       }
-        
-        for(size_t i=0; i<chcol->size();i++){
-          
-          TEveMu2eHit *teve_hit = new TEveMu2eHit();
-	        ComboHit hit = (*chcol)[i];
-          CLHEP::Hep3Vector HitPos(hit.pos().x(), hit.pos().y(), hit.pos().z());
-
-		      CLHEP::Hep3Vector pointInMu2e = mu2e_geom->PointToTracker(HitPos);
-
-          teve_hit->DrawHit("ComboHits",  1, pointInMu2e);
-          fHitsList->AddElement(teve_hit->HitList);  
-          gEve->AddElement(fHitsList);
-          gEve->Redraw3D(kTRUE);  
-       
-        }
-      }
-	  }*/
+ 
+   void TEveMu2eMainWindow::AddHelix(bool firstloop, const KalSeedCollection *seedcol){
+      std::cout<<"Adding Helix"<<std::endl;
+      //THelix *example_helix = new THelix(-398.923, 49.0273, 865.809);
+      //TPolyLine3D *line = new TPolyLine3D;
+      TEveElementList *List = new TEveElementList("Hits");
+      TEveMu2eCustomHelix *line = new TEveMu2eCustomHelix();
+      line->SetPoint(0,-398.923, 49.0273, 865.809);
+      line->SetNextPoint(-399.006, 50.6225, 865.809);
+      line->SetNextPoint(-389.943 ,54.6686, 865.268);
+      line->SetNextPoint(-391.195, 55.3038, 865.268);
+      line->SetLineColor(kGreen);
+      line->SetLineWidth(5);
+      List->AddElement(line);
+      gEve->AddElement(List);
+      gEve->Redraw3D(kTRUE);
+   }
 
    void TEveMu2eMainWindow::AddComboHits(bool firstloop, const ComboHitCollection *chcol){
       std::cout<<"[In AddComboHits()]"<<std::endl;
       if(chcol!=0){
-       std::cout<<"not null"<<std::endl;
 	     if (fHitsList == 0) {
 		      fHitsList = new TEveElementList("Hits");
 		      fHitsList->IncDenyDestroy();     

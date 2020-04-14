@@ -2,6 +2,8 @@
 #define TEveMu2eHelixTrack_h
 
 #include <TObject.h>
+#include <THelix.h>
+#include <TPolyLine3D.h>
 #include "RecoDataProducts/inc/HelixSeed.hh"
 #include "RecoDataProducts/inc/KalSeed.hh"
 
@@ -9,14 +11,13 @@
 
 namespace mu2e {
 
-class   TEveMu2eHelixTrack: public TEveTrack {
+class   TEveMu2eHelixTrack: public TEveTrack { //public THelix
 
     KalSeed *fKalSeed;
 
   public:
      #ifndef __CINT__
     explicit  TEveMu2eHelixTrack(){};
-    //TEveHelixTrack(double x1, double y1, double z1, double t1, double x2, double y2, double z2, double t2)
     virtual ~ TEveMu2eHelixTrack(){};
     #endif
     void DrawHelixTrack();

@@ -50,15 +50,13 @@ namespace mu2e{
     //RecoDataProducts:
 
     const ComboHitCollection *chcol = 0;
-    const StrawDigiCollection* _stcol = 0;
-    const StrawDigiCollection* _strawdigicol = 0;
-    const CrvCoincidenceClusterCollection* _crvcoincol = 0;
+    const CrvCoincidenceClusterCollection* crvcoincol = 0;
     const CosmicTrackSeedCollection* cosmiccol = 0;
-    const GenParticleCollection* _gencol = 0;
+    const GenParticleCollection* gencol = 0;
     const CaloClusterCollection* clustercol = 0;
-    const CaloCrystalHitCollection* _cryHitcol = 0;
-    const HelixSeedCollection* _hseedcol = 0;
-    const KalSeedCollection* _kalseedcol = 0;
+    const CaloCrystalHitCollection* cryHitcol = 0;
+    const HelixSeedCollection* hseedcol = 0;
+    const KalSeedCollection* kalseedcol = 0;
 
     //MCDataProducts:
     //TODO
