@@ -426,26 +426,37 @@ namespace mu2e{
           line->fKalSeed = kseed;
           line->SetMomentum();
           line->SetParticle();
+
           unsigned int nSteps = 1000;  
-          double TrackerLength = 30;//cm
+          double TrackerLength = 300.8;//cm FIXME - this should not be hardcoded this way!!
           double kStepSize = nSteps/TrackerLength;
           line->kStepSize = kStepSize;
+
           for(size_t i = 0 ; i< nSteps; i++){
-            line->SetPostionAndDirectionFromKalRep(i*kStepSize-TrackerLength/2);//need to start from
+            double zpos = (i*kStepSize)-TrackerLength/2;
+            line->SetPostionAndDirectionFromKalRep(zpos);//need to start from
             if(i==0) {
               CLHEP::Hep3Vector Pos(line->Position.x(), line->Position.y(), line->Position.z());
 		          CLHEP::Hep3Vector InMu2e = mu2e_geom->PointToTracker(Pos);
-              line->SetPoint(i,InMu2e.x()/10, InMu2e.y()/10, InMu2e.z()/10);
-              std::cout<<"adding point "<<InMu2e.x()/10<<","<<InMu2e.y()/10<<","<<InMu2e.z()/10<<std::endl;
+
+              line->SetPoint(i,InMu2e.x()/10+line->Direction.x()*line->Momentum/10,InMu2e.y()/10+line->Direction.y()*line->Momentum/10, 1288+zpos/10-TrackerLength/2);
+
+               std::cout<<InMu2e.x()/10+line->Direction.x()*line->Momentum
+                    <<","<<InMu2e.y()/10+line->Direction.y()*line->Momentum
+                    <<","<<(zpos)/10+1288-1.5*TrackerLength<<std::endl;
+
             } else {
+
               CLHEP::Hep3Vector Pos(line->Position.x(), line->Position.y(), line->Position.z());
 		          CLHEP::Hep3Vector InMu2e = mu2e_geom->PointToTracker(Pos);
-              line->SetNextPoint(InMu2e.x()/10+line->Direction.x()*line->Momentum/10,InMu2e.y()/10+line->Direction.y()*line->Momentum/10, (i*kStepSize-TrackerLength/2-1288)/10);
+
+              line->SetNextPoint(InMu2e.x()/10+line->Direction.x()*line->Momentum/10,InMu2e.y()/10+line->Direction.y()*line->Momentum/10, 1288+zpos/10-1.5*TrackerLength);
+              
+
               std::cout<<InMu2e.x()/10+line->Direction.x()*line->Momentum
                     <<","<<InMu2e.y()/10+line->Direction.y()*line->Momentum
-                    <<","<<(i*kStepSize-TrackerLength/2-1288)/10<<std::endl;
-            }
-       
+                    <<","<<(zpos)/10+1288-1.5*TrackerLength<<std::endl;
+              }
           }
             line->SetLineColor(kGreen);
             line->SetLineWidth(3);

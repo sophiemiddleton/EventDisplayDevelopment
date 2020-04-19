@@ -178,7 +178,7 @@ namespace mu2e{
 		SimpleConfig GeomConfig(filename);
 		double zCenter  =  GeomConfig.getDouble("mu2e.detectorSystemZ0")*CLHEP::mm;
 		double xCenter  = -GeomConfig.getDouble("mu2e.solenoidOffset")*CLHEP::mm;
-		CLHEP::Hep3Vector c(xCenter, 0, zCenter);//y=0 as unchanged
+		CLHEP::Hep3Vector c(xCenter, 0, zCenter);
 		TrackMu2eOrigin = c;
 		return c;
 	}
@@ -190,17 +190,17 @@ namespace mu2e{
 		if(nDisk==0) zCenter = GeomConfig.getDouble("mu2e.calorimeter.caloMotherZ0")*CLHEP::mm;
 		if(nDisk==1) zCenter = GeomConfig.getDouble("mu2e.calorimeter.caloMotherZ1")*CLHEP::mm;
 		double xCenter  = -GeomConfig.getDouble("mu2e.solenoidOffset")*CLHEP::mm;
-		CLHEP::Hep3Vector c(xCenter, 0, zCenter);//y=0 as unchanged
+		CLHEP::Hep3Vector c(xCenter, 0, zCenter);
 		TrackMu2eOrigin = c;
 		return c;
 	}
 
-	CLHEP::Hep3Vector Geom_Interface::GetGDMLOffsetFromMu2e(){
-		std::string filename("Mu2eG4/geom/mu2eHall.txt");
-		SimpleConfig HallConfig(filename);
-    double zCenter = 0;//-7929;
-		double yCenter  =  0;//HallConfig.getDouble("yOfFloorSurface.below.mu2eOrigin")*CLHEP::mm;
-		double xCenter  = 1288;//3040;//-HallConfig.getDouble("mu2e.solenoidOffset")*CLHEP::mm;
+	CLHEP::Hep3Vector Geom_Interface::GetGDMLOffsetFromMu2e(){ //Taken from Heirarchy of tracker
+		//std::string filename("Mu2eG4/geom/mu2eHall.txt");
+		//SimpleConfig HallConfig(filename);
+    double xCenter = 0;
+		double yCenter  =  0;
+		double zCenter  = 1288;
 	  CLHEP::Hep3Vector center(xCenter,yCenter,zCenter);
 		TrackerG4Origin = center;
 		return center;
