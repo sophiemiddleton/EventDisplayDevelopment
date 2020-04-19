@@ -52,7 +52,7 @@ class   TEveMu2eCustomHelix: public TEveElement, public TPolyLine3D { //public T
     double Momentum;
     int PDGcode  = 11;
     unsigned int nSteps = 100;
-    double TrackerLength = 300;//cm
+    double TrackerLength = 300.8;//cm
     int kStepSize = nSteps/TrackerLength;//cm
     ClassDef( TEveMu2eCustomHelix, 0);
 };

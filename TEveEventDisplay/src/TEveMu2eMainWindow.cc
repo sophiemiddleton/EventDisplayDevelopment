@@ -436,26 +436,26 @@ namespace mu2e{
             double zpos = (i*kStepSize)-TrackerLength/2;
             line->SetPostionAndDirectionFromKalRep(zpos);//need to start from
             if(i==0) {
-              CLHEP::Hep3Vector Pos(line->Position.x(), line->Position.y(), line->Position.z());
+              CLHEP::Hep3Vector Pos(line->Position.x(), line->Position.y(), zpos+line->Position.z());
 		          CLHEP::Hep3Vector InMu2e = mu2e_geom->PointToTracker(Pos);
 
-              line->SetPoint(i,InMu2e.x()/10+line->Direction.x()*line->Momentum/10,InMu2e.y()/10+line->Direction.y()*line->Momentum/10, 1288+zpos/10-TrackerLength/2);
+              line->SetPoint(i,InMu2e.x()/10+line->Direction.x()*line->Momentum/10,InMu2e.y()/10+line->Direction.y()*line->Momentum/10, InMu2e.z()/10-TrackerLength/2);
 
                std::cout<<InMu2e.x()/10+line->Direction.x()*line->Momentum
                     <<","<<InMu2e.y()/10+line->Direction.y()*line->Momentum
-                    <<","<<(zpos)/10+1288-1.5*TrackerLength<<std::endl;
+                    <<","<<InMu2e.z()/10-TrackerLength/2<<std::endl;//(zpos)/10+1288-1.5*TrackerLength
 
             } else {
 
-              CLHEP::Hep3Vector Pos(line->Position.x(), line->Position.y(), line->Position.z());
+              CLHEP::Hep3Vector Pos(line->Position.x(), line->Position.y(), zpos+line->Position.z());
 		          CLHEP::Hep3Vector InMu2e = mu2e_geom->PointToTracker(Pos);
 
-              line->SetNextPoint(InMu2e.x()/10+line->Direction.x()*line->Momentum/10,InMu2e.y()/10+line->Direction.y()*line->Momentum/10, 1288+zpos/10-1.5*TrackerLength);
+              line->SetNextPoint(InMu2e.x()/10+line->Direction.x()*line->Momentum/10,InMu2e.y()/10+line->Direction.y()*line->Momentum/10, InMu2e.z()/10-TrackerLength/2);
               
 
               std::cout<<InMu2e.x()/10+line->Direction.x()*line->Momentum
                     <<","<<InMu2e.y()/10+line->Direction.y()*line->Momentum
-                    <<","<<(zpos)/10+1288-1.5*TrackerLength<<std::endl;
+                    <<","<<InMu2e.z()/10-TrackerLength/2<<std::endl;
               }
           }
             line->SetLineColor(kGreen);
