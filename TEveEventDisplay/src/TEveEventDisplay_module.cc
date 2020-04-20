@@ -4,7 +4,6 @@
 //This is the first stages of this development 
 // ... libCore
 #include <TApplication.h>
-#include <TString.h>
 #include <TSystem.h>
 #include <TList.h>
 #include <TObjArray.h>
@@ -17,6 +16,7 @@
 #include  "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eMainWindow.h"
 #include  "TEveEventDisplay/src/dict_classes/Collection_Filler.h"
 #include  "TEveEventDisplay/src/dict_classes/Data_Collections.h"
+
 // Mu2e Utilities
 #include "GeometryService/inc/GeomHandle.hh"
 #include "GeometryService/inc/DetectorSystem.hh"
@@ -43,34 +43,30 @@ namespace mu2e
   class TEveEventDisplay : public art::EDAnalyzer {
 	public:
 
-		struct Config{
-			using Name=fhicl::Name;
-			using Comment=fhicl::Comment;
-			fhicl::Atom<int> diagLevel{Name("diagLevel"), Comment("for info"),0};
-			fhicl::Atom<std::string> g4ModuleLabel{Name("g4ModuleLabel"), Comment("")};
-			fhicl::Atom<bool> doDisplay{Name("doDisplay"), Comment(""), true};
-			fhicl::Atom<bool> clickToAdvance{Name("clickToAdvance"), Comment(""), true}; 
-			fhicl::Atom<bool> showEvent{Name("showEvent"), Comment(""),true};     
+    struct Config{
+      using Name=fhicl::Name;
+      using Comment=fhicl::Comment;
+      fhicl::Atom<int> diagLevel{Name("diagLevel"), Comment("for info"),0};
+      fhicl::Atom<std::string> g4ModuleLabel{Name("g4ModuleLabel"), Comment("")};
+      fhicl::Atom<bool> showEvent{Name("showEvent"), Comment(""),true};     
       fhicl::Table<Collection_Filler::Config> filler{Name("filler"),Comment("fill collections")};
-			
-	  };
+	    
+    };
 
-		typedef art::EDAnalyzer::Table<Config> Parameters;
-		explicit TEveEventDisplay(const Parameters& conf);
-		virtual ~TEveEventDisplay();
-		virtual void beginJob() override;
-		virtual void beginRun(const art::Run& run) override;
-		virtual void analyze(const art::Event& e);
-		virtual void endJob() override;
-	private:
+    typedef art::EDAnalyzer::Table<Config> Parameters;
+    explicit TEveEventDisplay(const Parameters& conf);
+    virtual ~TEveEventDisplay();
+    virtual void beginJob() override;
+    virtual void beginRun(const art::Run& run) override;
+    virtual void analyze(const art::Event& e);
+    virtual void endJob() override;
+    private:
     Config _conf;
     int _diagLevel;
     Int_t _evt; 
 
     std::string g4ModuleLabel_;
 
-    bool doDisplay_;
-    bool clickToAdvance_;
     bool showEvent_;
        
     TApplication* application_;
@@ -84,15 +80,13 @@ namespace mu2e
     bool foundEvent = false;
     void MakeTEveMu2eMainWindow();
     bool _firstLoop = true;
-	       
-	};
+         
+    };
 
 TEveEventDisplay::TEveEventDisplay(const Parameters& conf) :
 	art::EDAnalyzer(conf),
 	_diagLevel(conf().diagLevel()),
 	g4ModuleLabel_(conf().g4ModuleLabel()),
-	doDisplay_(conf().doDisplay()),
-	clickToAdvance_(conf().clickToAdvance()),
 	showEvent_(conf().showEvent()),
   _filler(conf().filler())
 	{}
@@ -101,7 +95,7 @@ TEveEventDisplay::TEveEventDisplay(const Parameters& conf) :
 TEveEventDisplay::~TEveEventDisplay(){}
 
 void TEveEventDisplay::beginJob(){
-	directory_ = gDirectory;
+  directory_ = gDirectory;
   if ( !gApplication ){
     int    tmp_argc(0);
     char** tmp_argv(0);
@@ -122,7 +116,7 @@ void TEveEventDisplay::analyze(const art::Event& event){
   //GeomHandle<mu2e::BFieldManager> bfmgr; We be required for the TEvePropagtor
   Data_Collections data;
   if(_filler.addHits_)_filler.FillRecoCollection(event, data, ComboHits);
-  if(_filler.addTracks_)_filler.FillRecoCollection(event, data, KalSeeds);
+  //if(_filler.addTracks_)_filler.FillRecoCollection(event, data, KalSeeds);
   //TODO --> if(_filler.addClusters_)_filler.FillRecoCollection(event, data, CaloCrystalHits);
   if(!_frame->isClosed()) _frame->setEvent(event, _firstLoop, data);
   _firstLoop = false;

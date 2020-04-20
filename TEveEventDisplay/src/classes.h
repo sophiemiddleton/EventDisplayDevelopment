@@ -1,9 +1,5 @@
 
 #include "TEveEventDisplay/src/dict_classes/Geom_Interface.h"
-#include "TEveEventDisplay/src/dict_classes/ParticleTrack.h"
-#include "TEveEventDisplay/src/dict_classes/Particle_Interface.h"
-#include "TEveEventDisplay/src/dict_classes/Draw_Interface.h"
-#include "TEveEventDisplay/src/dict_classes/Data_Interface.h"
 #include "TEveEventDisplay/src/dict_classes/Collection_Filler.h"
 #include "TEveEventDisplay/src/dict_classes/Data_Collections.h"
 

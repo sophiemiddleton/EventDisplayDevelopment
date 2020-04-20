@@ -31,198 +31,200 @@ namespace mu2e{
 
 	Geom_Interface::Geom_Interface(){}
 
-    void Geom_Interface::InsideDS( TGeoNode * node, bool inDSVac ){
-	    std::string _name = (node->GetVolume()->GetName());
-	    if ( node->GetMotherVolume() ) {
-		    std::string motherName(node->GetMotherVolume()->GetName());
-		    if ( motherName == "DS2Vacuum" || motherName == "DS3Vacuum" ){
-		    inDSVac = true;
-		    }
-	    }
-	    if ( inDSVac && _name.find("VirtualDetector_TT_Mid") != 0 ) {
-		    node->SetVisibility(kTRUE);
-	    } else{
-		    node->SetVisibility(kFALSE);
-	    }
-	    int ndau = node->GetNdaughters();
-	    for ( int i=0; i<ndau; ++i ){
-		    TGeoNode * dau = node->GetDaughter(i);
-		    InsideDS( dau, inDSVac );
-      	}
+  // Function to descend and remove nodes above the DS - run after HideBuilding
+  void Geom_Interface::InsideDS( TGeoNode * node, bool inDSVac ){
+  std::string _name = (node->GetVolume()->GetName());
+  if ( node->GetMotherVolume() ) {
+    std::string motherName(node->GetMotherVolume()->GetName());
+    if ( motherName == "DS2Vacuum" || motherName == "DS3Vacuum" ){
+      inDSVac = true;
+    }
+  }
+  if ( inDSVac && _name.find("VirtualDetector_TT_Mid") != 0 ) {
+    node->SetVisibility(kTRUE);
+  } else{
+    node->SetVisibility(kFALSE);
+  }
+  int ndau = node->GetNdaughters();
+  for ( int i=0; i<ndau; ++i ){
+    TGeoNode * dau = node->GetDaughter(i);
+    InsideDS( dau, inDSVac );
+  }
 
+}
+  //Function allows user to specifically hide a node by its GDML mateiral name. See Fix.gdml for the name.
+  void Geom_Interface::hideNodesByMaterial(TGeoNode* node, const std::string& mat, bool onOff) {
+
+    std::string material(node->GetVolume()->GetMaterial()->GetName());
+    if ( material.find(mat) != std::string::npos ) node->SetVisibility(onOff);
+    int ndau = node->GetNdaughters();
+    for ( int i=0; i<ndau; ++i ){
+      TGeoNode * dau = node->GetDaughter(i);
+      hideNodesByMaterial( dau, mat, onOff);
     }
 
-	void Geom_Interface::hideNodesByMaterial(TGeoNode* node, 
-					 const std::string& mat, bool onOff) {
+	}
 
-        std::string material(node->GetVolume()->GetMaterial()->GetName());
-        if ( material.find(mat) != std::string::npos ) node->SetVisibility(onOff);
-        int ndau = node->GetNdaughters();
-        for ( int i=0; i<ndau; ++i ){
-	        TGeoNode * dau = node->GetDaughter(i);
-	        hideNodesByMaterial( dau, mat, onOff);
-        }
+  //Function to hide element by its name
+  void Geom_Interface::hideNodesByName(TGeoNode* node, const std::string& str, bool onOff, int _diagLevel) {
+
+    std::string name(node->GetName());
+    if ( name.find(str) != std::string::npos ){
+      node->SetVisibility(onOff);
+      if(_diagLevel > 0) std::cout <<"hiding "<< name << std::endl;
+    }
+    int ndau = node->GetNdaughters();
+    for ( int i=0; i<ndau; ++i ){
+      TGeoNode * dau = node->GetDaughter(i);
+      hideNodesByName( dau, str, onOff, _diagLevel);
+    }
 
 	}
 
-	void Geom_Interface::hideNodesByName(TGeoNode* node, const std::string& str,
-				     bool onOff, int _diagLevel) {
-
-		std::string name(node->GetName());
-		if ( name.find(str) != std::string::npos ){
-			node->SetVisibility(onOff);
-			if(_diagLevel > 0) std::cout <<"hiding "<< name << std::endl;
-		}
-		int ndau = node->GetNdaughters();
-		for ( int i=0; i<ndau; ++i ){
-			TGeoNode * dau = node->GetDaughter(i);
-			hideNodesByName( dau, str, onOff, _diagLevel);
-		}
-
-	}
-
-
+  //Function to hide all elements which are not PS,TS, DS:
 	void Geom_Interface::SolenoidsOnly(TGeoNode* node) {
 
-		static std::vector <std::string> substrings  { "Ceiling",
-		"backfill", "dirt", "concrete", "VirtualDetector",
-		"pipeType","CRSAluminium","CRV","CRS", "ExtShield", "PSShield"};
-		for(auto& i: substrings) hideNodesByName(node,i,kFALSE, 0);
+    static std::vector <std::string> substrings  { "Ceiling",
+    "backfill", "dirt", "concrete", "VirtualDetector",
+    "pipeType","CRSAluminium","CRV","CRS", "ExtShield", "PSShield"};
+    for(auto& i: substrings) hideNodesByName(node,i,kFALSE, 0);
 
-		static std::vector <std::string> materials { "MBOverburden", "CONCRETE"};
-		for(auto& i: materials) hideNodesByMaterial(node,i,kFALSE);
-
-	}
-
-	void Geom_Interface::hideTop(TGeoNode* node, int _diagLevel) {
-	  	TString name = node->GetName();
-	  	if(_diagLevel > 0 and name.Index("Shield")>0) {
-			std::cout << name << " " <<  name.Index("mBox_") << std::endl;
-	  	}
-	  	bool test = false;
-
-		// from gg1
-		if(name.Index("mBox_45_")>=0) test = true;
-		if(name.Index("mBox_46_")>=0) test = true;
-		if(name.Index("mBox_47_")>=0) test = true;
-		if(name.Index("mBox_48_")>=0) test = true;
-		if(name.Index("mBox_49_")>=0) test = true;
-		if(name.Index("mBox_74_")>=0) test = true;
-
-		if(test) {
-			std::cout << "turning off " << name << std::endl;
-			node->SetVisibility(false);
-		}
-
-		// Descend recursively into each daughter TGeoNode.
-		int ndau = node->GetNdaughters();
-		for ( int i=0; i<ndau; ++i ){
-			TGeoNode * dau = node->GetDaughter(i);
-			hideTop( dau, _diagLevel );
-  		}
+    static std::vector <std::string> materials { "MBOverburden", "CONCRETE"};
+    for(auto& i: materials) hideNodesByMaterial(node,i,kFALSE);
 
 	}
 
+  //Funciton to hide building top
+  void Geom_Interface::hideTop(TGeoNode* node, int _diagLevel) {
+  TString name = node->GetName();
+  if(_diagLevel > 0 and name.Index("Shield")>0) {
+    std::cout << name << " " <<  name.Index("mBox_") << std::endl;
+  }
+  bool test = false;
 
-    void Geom_Interface::TrackerVolumeHeirarchy( TGeoNode * node, std::vector<CLHEP::Hep3Vector> &TransformList ){
-        std::string _name = (node->GetVolume()->GetName());
-        if( _name == "HallAir") {
-        cout<<"HallAir Origin IS "<<node->GetMotherVolume()->GetName();
-        TGeoVolume *vol = node->GetVolume();
-        TGeoBBox *shape = (TGeoBBox*)vol->GetShape();
-        Double_t master[3];
-        const Double_t *local = shape->GetOrigin();
-        if(shape!=NULL){
-	        gGeoManager->LocalToMaster(local,master);
-	        CLHEP::Hep3Vector hallToworld(master[0], master[1], master[2]);
-	        TransformList.push_back(hallToworld);
-            }
-        }
-        if( _name == "DS3Vacuum") {
-        cout<<"DS3 Origin IS "<<node->GetMotherVolume()->GetName();
-        TGeoVolume *vol = node->GetVolume();
-        TGeoBBox *shape = (TGeoBBox*)vol->GetShape();
-        Double_t master[3];
-        const Double_t *local = shape->GetOrigin();
-        if(shape!=NULL){
-	        gGeoManager->LocalToMaster(local,master);
-	        CLHEP::Hep3Vector DSTohall(master[0], master[1], master[2]);
-	        TransformList.push_back(DSTohall);
-            }
-        }
-        if( _name == "TrackerMother") {
-        cout<<"Tracker Origin IS "<<node->GetMotherVolume()->GetName();
-        TGeoVolume *vol = node->GetVolume();
-        TGeoBBox *shape = (TGeoBBox*)vol->GetShape();
-        Double_t master[3];
-        const Double_t *local = shape->GetOrigin();
-        if(shape!=NULL){
-	        gGeoManager->LocalToMaster(local,master);
-	        CLHEP::Hep3Vector TrackerToDS(master[0], master[1], master[2]);
-	        TransformList.push_back(TrackerToDS);
-            }
+  if(name.Index("mBox_45_")>=0) test = true;
+  if(name.Index("mBox_46_")>=0) test = true;
+  if(name.Index("mBox_47_")>=0) test = true;
+  if(name.Index("mBox_48_")>=0) test = true;
+  if(name.Index("mBox_49_")>=0) test = true;
+  if(name.Index("mBox_74_")>=0) test = true;
 
-        }
+  if(test) {
+    std::cout << "turning off " << name << std::endl;
+    node->SetVisibility(false);
+  }
 
-        // Descend into each daughter TGeoNode.
-        int ndau = node->GetNdaughters();
-        for ( int i=0; i<ndau; ++i ){
-        TGeoNode * dau = node->GetDaughter(i);
-        TrackerVolumeHeirarchy(dau, TransformList);
-        }
-      
+  // Descend recursively into each daughter TGeoNode.
+  int ndau = node->GetNdaughters();
+  for ( int i=0; i<ndau; ++i ){
+    TGeoNode * dau = node->GetDaughter(i);
+    hideTop( dau, _diagLevel );
+  }
+
+  }
+
+
+  void Geom_Interface::TrackerVolumeHeirarchy( TGeoNode * node, std::vector<CLHEP::Hep3Vector> &TransformList ){
+  std::string _name = (node->GetVolume()->GetName());
+  if( _name == "HallAir") {
+    cout<<"HallAir Origin IS "<<node->GetMotherVolume()->GetName();
+    TGeoVolume *vol = node->GetVolume();
+    TGeoBBox *shape = (TGeoBBox*)vol->GetShape();
+    Double_t master[3];
+    const Double_t *local = shape->GetOrigin();
+    if(shape!=NULL){
+      gGeoManager->LocalToMaster(local,master);
+      CLHEP::Hep3Vector hallToworld(master[0], master[1], master[2]);
+      TransformList.push_back(hallToworld);
+    }
+  }
+  if( _name == "DS3Vacuum") {
+  cout<<"DS3 Origin IS "<<node->GetMotherVolume()->GetName();
+    TGeoVolume *vol = node->GetVolume();
+    TGeoBBox *shape = (TGeoBBox*)vol->GetShape();
+    Double_t master[3];
+    const Double_t *local = shape->GetOrigin();
+    if(shape!=NULL){
+      gGeoManager->LocalToMaster(local,master);
+      CLHEP::Hep3Vector DSTohall(master[0], master[1], master[2]);
+      TransformList.push_back(DSTohall);
+    }
+  }
+  if( _name == "TrackerMother") {
+    cout<<"Tracker Origin IS "<<node->GetMotherVolume()->GetName();
+    TGeoVolume *vol = node->GetVolume();
+    TGeoBBox *shape = (TGeoBBox*)vol->GetShape();
+    Double_t master[3];
+    const Double_t *local = shape->GetOrigin();
+    if(shape!=NULL){
+      gGeoManager->LocalToMaster(local,master);
+      CLHEP::Hep3Vector TrackerToDS(master[0], master[1], master[2]);
+      TransformList.push_back(TrackerToDS);
     }
 
-	CLHEP::Hep3Vector Geom_Interface::GetTrackerCenter(){
+  }
+
+  // Descend into each daughter TGeoNode.
+  int ndau = node->GetNdaughters();
+  for ( int i=0; i<ndau; ++i ){
+    TGeoNode * dau = node->GetDaughter(i);
+    TrackerVolumeHeirarchy(dau, TransformList);
+  }
+
+ }
+
+  //Function to access tracker center from txt files in mu2eG4
+  CLHEP::Hep3Vector Geom_Interface::GetTrackerCenter(){
     std::string filename("Mu2eG4/geom/geom_common_current.txt");
-		SimpleConfig GeomConfig(filename);
-		double zCenter  =  GeomConfig.getDouble("mu2e.detectorSystemZ0")*CLHEP::mm;
-		double xCenter  = -GeomConfig.getDouble("mu2e.solenoidOffset")*CLHEP::mm;
-		CLHEP::Hep3Vector c(xCenter, 0, zCenter);
-		TrackMu2eOrigin = c;
-		return c;
-	}
+    SimpleConfig GeomConfig(filename);
+    double zCenter  =  GeomConfig.getDouble("mu2e.detectorSystemZ0")*CLHEP::mm;
+    double xCenter  = -GeomConfig.getDouble("mu2e.solenoidOffset")*CLHEP::mm;
+    CLHEP::Hep3Vector c(xCenter, 0, zCenter);
+    TrackMu2eOrigin = c;
+    return c;
+  }
 
 	CLHEP::Hep3Vector Geom_Interface::GetCaloCenter(int nDisk){
     std::string calfilename("Mu2eG4/geom/calorimeter_CsI.txt");
-		SimpleConfig CalConfig(calfilename);
-		double zCenter;
-		if(nDisk==0) zCenter = CalConfig.getDouble("calorimeter.caloMotherZ0")*CLHEP::mm;
-		if(nDisk==1) zCenter = CalConfig.getDouble("calorimeter.caloMotherZ1")*CLHEP::mm;
+    SimpleConfig CalConfig(calfilename);
+    double zCenter;
+    if(nDisk==0) zCenter = CalConfig.getDouble("calorimeter.caloMotherZ0")*CLHEP::mm;
+    if(nDisk==1) zCenter = CalConfig.getDouble("calorimeter.caloMotherZ1")*CLHEP::mm;
 
     std::string geomfilename("Mu2eG4/geom/geom_common_current.txt");
-		SimpleConfig GeomConfig(geomfilename);
-		double xCenter  = -GeomConfig.getDouble("mu2e.solenoidOffset")*CLHEP::mm;
-		CLHEP::Hep3Vector c(xCenter, 0, zCenter);
-		CaloMu2eOrigin = c;
-		return c;
+    SimpleConfig GeomConfig(geomfilename);
+    double xCenter  = -GeomConfig.getDouble("mu2e.solenoidOffset")*CLHEP::mm;
+    CLHEP::Hep3Vector c(xCenter, 0, zCenter);
+    CaloMu2eOrigin = c;
+    return c;
 	}
 
+//Function hard codes offset found using TrackerHeirarchy function above.
 	CLHEP::Hep3Vector Geom_Interface::GetGDMLOffsetFromMu2e(){ //Taken from Heirarchy of tracker
     double xCenter = 0;
-		double yCenter  =  0;
-		double zCenter  = 1288;
-	  CLHEP::Hep3Vector center(xCenter,yCenter,zCenter);
-		TrackerG4Origin = center;
-		return center;
+    double yCenter  =  0;
+    double zCenter  = 1288;
+    CLHEP::Hep3Vector center(xCenter,yCenter,zCenter);
+    TrackerG4Origin = center;
+    return center;
 	}
 
 	CLHEP::Hep3Vector Geom_Interface::GetGDMLTrackerCenter() {
-		//World->HallAir->Ds3->TrackerMother ->(0,0,0)->(0,0,0)->(0,0,1288)->(0,0,0) 
-		std::string filename("Mu2eG4/geom/mu2eHall.txt");
-		SimpleConfig HallConfig(filename);
-		double yCenter  = HallConfig.getDouble("yOfFloorSurface.below.mu2eOrigin")*CLHEP::mm;
-		double zCenter  = 1288;
-		double xCenter  = 0;
-		CLHEP::Hep3Vector c(xCenter, yCenter, zCenter);
-	     
-		return c;
+    //World->HallAir->Ds3->TrackerMother ->(0,0,0)->(0,0,0)->(0,0,1288)->(0,0,0) 
+    std::string filename("Mu2eG4/geom/mu2eHall.txt");
+    SimpleConfig HallConfig(filename);
+    double yCenter  = HallConfig.getDouble("yOfFloorSurface.below.mu2eOrigin")*CLHEP::mm;
+    double zCenter  = 1288;
+    double xCenter  = 0;
+    CLHEP::Hep3Vector c(xCenter, yCenter, zCenter);
+     
+    return c;
 	}
 
 	CLHEP::Hep3Vector Geom_Interface::PointToTracker(CLHEP::Hep3Vector point){
-		CLHEP::Hep3Vector Mu2eTrackerOrigin = Geom_Interface::GetTrackerCenter();
-		CLHEP::Hep3Vector PointToTracker(point.x() + Mu2eTrackerOrigin.x(), point.y()+Mu2eTrackerOrigin.y(), point.z() +Mu2eTrackerOrigin.z());
-		return PointToTracker;
+    CLHEP::Hep3Vector Mu2eTrackerOrigin = Geom_Interface::GetTrackerCenter();
+    CLHEP::Hep3Vector PointToTracker(point.x() + Mu2eTrackerOrigin.x(), point.y()+Mu2eTrackerOrigin.y(), point.z() +Mu2eTrackerOrigin.z());
+    return PointToTracker;
 
         }
 
