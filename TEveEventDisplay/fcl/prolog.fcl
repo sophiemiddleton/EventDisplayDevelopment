@@ -67,7 +67,7 @@ TEveEventDisplayCaloOnly : {
       addClusters			            : true
       addCrvHits			            : false
       addCosmicSeedFit	          : false
-      addCrystalHits              : True
+      addCrystalHits              : true
       isCosmic			              : false
   }
   }   

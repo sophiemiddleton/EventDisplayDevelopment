@@ -19,6 +19,8 @@
 #include  "TEveEventDisplay/src/dict_classes/Data_Interface.h"
 #include  "TEveEventDisplay/src/dict_classes/Collection_Filler.h"
 #include "RecoDataProducts/inc/ComboHit.hh"
+
+
 class TBox;
 class TGTextEntry;
 class TPad;
@@ -87,6 +89,7 @@ namespace mu2e{
                  void AddHelixBySegments(bool firstloop, const KalSeedCollection *seedcol);
                  void AddHelixPieceWise(bool firstloop, const KalSeedCollection *seedcol);
                  void AddComboHits(bool firstloop, const ComboHitCollection *chcol);
+                 void AddCrystalHits(bool firstloop, const CaloCrystalHitCollection *cryHitcol);
                  void SetRunGeometry(const art::Run& run, int _diagLevel);
 
 		         ClassDef(TEveMu2eMainWindow,0);

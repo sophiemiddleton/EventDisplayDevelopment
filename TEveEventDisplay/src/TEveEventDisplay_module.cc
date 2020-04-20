@@ -9,47 +9,9 @@
 #include <TList.h>
 #include <TObjArray.h>
 #include <Rtypes.h>
-#include <TPolyLine3D.h>
-#include <TCanvas.h>
+
 // ... libRIO
 #include <TFile.h>
-// ... libGui
-#include <TGString.h>
-#include <TGLabel.h>
-#include <TGIcon.h>
-#include <TGButton.h>
-#include <TGButtonGroup.h>
-#include <TGTextEntry.h>
-#include <TGTextView.h>
-#include <TGLayout.h>
-#include <TGTab.h>
-#include <TG3DLine.h>
-#include<TGLViewer.h>
-#include <TGMsgBox.h>
-#include <TRootEmbeddedCanvas.h>
-// ... libGeom
-#include <TGeoManager.h>
-#include <TGeoBoolNode.h>
-#include <TGeoNode.h>
-#include <TGeoPhysicalNode.h>
-// ... libEG
-#include <TParticle.h>
-// ... libRGL
-#include <TGLViewer.h>
-// ... libEve
-#include <TEveManager.h>
-#include <TEveEventManager.h>
-#include <TEveBrowser.h>
-#include <TEveGeoNode.h>
-#include <TEveViewer.h>
-#include <TEveScene.h>
-#include <TEveProjectionManager.h>
-#include <TEveProjectionAxes.h>
-#include <TEvePointSet.h>
-#include <TEveTrack.h>
-#include <TEveTrackPropagator.h>
-#include <TEveStraightLineSet.h>
-#include "fstream"
 
 //TEveEventDisplay Headers:
 #include  "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eMainWindow.h"
@@ -161,6 +123,7 @@ void TEveEventDisplay::analyze(const art::Event& event){
   Data_Collections data;
   if(_filler.addHits_)_filler.FillRecoCollection(event, data, ComboHits);
   if(_filler.addTracks_)_filler.FillRecoCollection(event, data, KalSeeds);
+  //TODO --> if(_filler.addClusters_)_filler.FillRecoCollection(event, data, CaloCrystalHits);
   if(!_frame->isClosed()) _frame->setEvent(event, _firstLoop, data);
   _firstLoop = false;
 

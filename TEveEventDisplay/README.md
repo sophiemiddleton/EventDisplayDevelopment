@@ -14,6 +14,16 @@ TEveEventDisplay/src/TEveEventDisplay_module.cc is the Analyzer mdoule which cur
 
 The prolog.fcl file resides in TEveEventDisplay/fcl and contains whats known as module instances for the TEveEventDisplay. Currently these are for : helix tracks, cosmic tracks or calo only events. We can add more.
 
+## Making .Art examples
+
+Please download the MDC2018 CE file form the MDC2018 Mu2e Wiki (ask me for instructions I can put them on a directory on the FNAL machine for you to use). Use the Fcl files in the ```TEveEventDisplay/ExampleXXX``` directory. Run these on the MDC Art file. The names tell you what kind of product you get in the end. To run the example fcls:
+
+```
+mu2e -c FclName.fcl MDC2018CEFileName.art --nevts 1000
+```
+
+this will produce .Art files which you can use with the EventDisplays.
+
 ## Running the code
 
 You should access some of the Art examples in TEveEventDisplay/ArtExamples. You should access fcl files in TEveEventDisplay/CallerFcls

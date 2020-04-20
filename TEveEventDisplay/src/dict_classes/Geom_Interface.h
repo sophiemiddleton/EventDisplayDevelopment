@@ -39,24 +39,21 @@
 #include "art/Framework/Principal/Event.h"
 #include "art/Framework/Principal/Run.h"
 #include "ConfigTools/inc/SimpleConfig.hh"
-
-
-class TGeoManager;
-class TGeoVolume;
-class TGMainFrame;
+#include "CalorimeterGeom/inc/Calorimeter.hh"
+#include "GeometryService/inc/GeomHandle.hh"
 
 namespace mu2e{
 	class Geom_Interface {
              
-               public:
-		  #ifndef __CINT__
-		 explicit Geom_Interface();
-		 virtual ~Geom_Interface(){};
-		 TGeoManager *_geom;
-		 TGeoManager* getGeom(TString filename) {
-			TGeoManager *geom;
-			geom = geom->TGeoManager::Import(filename);
-			return geom;
+    public:
+      #ifndef __CINT__
+      explicit Geom_Interface();
+      virtual ~Geom_Interface(){};
+      TGeoManager *_geom;
+      TGeoManager* getGeom(TString filename) {
+      TGeoManager *geom;
+      geom = geom->TGeoManager::Import(filename);
+      return geom;
  		}
 
 
@@ -87,7 +84,8 @@ namespace mu2e{
 		CLHEP::Hep3Vector TrackerG4Origin;
 		CLHEP::Hep3Vector CaloG4Origin;
 		CLHEP::Hep3Vector TrackMu2eOrigin;
-	        #endif
+    CLHEP::Hep3Vector CaloMu2eOrigin;
+	  #endif
 		ClassDef(Geom_Interface,0);
 
 	}; //end class def
