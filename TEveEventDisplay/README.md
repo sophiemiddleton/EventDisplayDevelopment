@@ -58,6 +58,9 @@ Contains base classes which inherit from TEve objects. This is the interface bet
 
 The DataCollection class has a list all the possible Mu2e data collections we might want to access. The full list is found in ```Offline/RecoDataProduct/inc```. The collections in DataCollections are set to 0 unless they are filled. The filling is done by a function ```FillRecoCollections``` in the Collection_Filler class. This is called in the module Analyze function.
 
+## classes.h and class_def
+
+Any src directory in mu2e which wants to use classes needs to list them in a classes.h and class_def.xml file. If you make a new class you must add it here. To make a new class use an exisitng class as a template. That way you wont run into errors.
 
 ### Main Window
 

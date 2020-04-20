@@ -54,39 +54,39 @@ namespace mu2e{
       TGeoManager *geom;
       geom = geom->TGeoManager::Import(filename);
       return geom;
- 		}
+      }
 
 
-		void CreateGeomManager();
-		void RemoveComponents();
-		void toForeground();
-		
+      void CreateGeomManager();
+      void RemoveComponents();
+      void toForeground();
 
-		CLHEP::Hep3Vector GetTrackerCenter();
-		CLHEP::Hep3Vector GetCaloCenter(int nDisk);
-		CLHEP::Hep3Vector GetGDMLTrackerCenter();		
-		CLHEP::Hep3Vector GetGDMLOffsetFromMu2e();
-		CLHEP::Hep3Vector PointToTracker(CLHEP::Hep3Vector point);
-		CLHEP::Hep3Vector PointToCalo(CLHEP::Hep3Vector point, int nDsk);
-		CLHEP::Hep3Vector PointToGDML(CLHEP::Hep3Vector point);
-		CLHEP::Hep3Vector TransformToG4(CLHEP::Hep3Vector vec);
-		CLHEP::Hep3Vector TransformToDet(CLHEP::Hep3Vector vec);
 
-		void InsideDS( TGeoNode * node, bool inDSVac );
-		void hideTop(TGeoNode* node, int _diagLevel);
-		void hideNodesByName(TGeoNode* node, const std::string& str, bool onOff, int _diagLevel) ;
-		void hideNodesByMaterial(TGeoNode* node, const std::string& mat, bool onOff);
-		void SolenoidsOnly(TGeoNode* node);
-    void TrackerVolumeHeirarchy( TGeoNode * node, std::vector<CLHEP::Hep3Vector> &TransformList );
+      CLHEP::Hep3Vector GetTrackerCenter();
+      CLHEP::Hep3Vector GetCaloCenter(int nDisk);
+      CLHEP::Hep3Vector GetGDMLTrackerCenter();		
+      CLHEP::Hep3Vector GetGDMLOffsetFromMu2e();
+      CLHEP::Hep3Vector PointToTracker(CLHEP::Hep3Vector point);
+      CLHEP::Hep3Vector PointToCalo(CLHEP::Hep3Vector point, int nDsk);
+      CLHEP::Hep3Vector PointToGDML(CLHEP::Hep3Vector point);
+      CLHEP::Hep3Vector TransformToG4(CLHEP::Hep3Vector vec);
+      CLHEP::Hep3Vector TransformToDet(CLHEP::Hep3Vector vec);
 
-		art::Event  *_event;
-		art::Run    *_run;
-		CLHEP::Hep3Vector TrackerG4Origin;
-		CLHEP::Hep3Vector CaloG4Origin;
-		CLHEP::Hep3Vector TrackMu2eOrigin;
-    CLHEP::Hep3Vector CaloMu2eOrigin;
-	  #endif
-		ClassDef(Geom_Interface,0);
+      void InsideDS( TGeoNode * node, bool inDSVac );
+      void hideTop(TGeoNode* node, int _diagLevel);
+      void hideNodesByName(TGeoNode* node, const std::string& str, bool onOff, int _diagLevel) ;
+      void hideNodesByMaterial(TGeoNode* node, const std::string& mat, bool onOff);
+      void SolenoidsOnly(TGeoNode* node);
+      void TrackerVolumeHeirarchy( TGeoNode * node, std::vector<CLHEP::Hep3Vector> &TransformList );
+
+      art::Event  *_event;
+      art::Run    *_run;
+      CLHEP::Hep3Vector TrackerG4Origin;
+      CLHEP::Hep3Vector CaloG4Origin;
+      CLHEP::Hep3Vector TrackMu2eOrigin;
+      CLHEP::Hep3Vector CaloMu2eOrigin;
+      #endif
+      ClassDef(Geom_Interface,0);
 
 	}; //end class def
 

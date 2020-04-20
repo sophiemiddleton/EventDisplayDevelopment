@@ -73,7 +73,7 @@ namespace mu2e{
     explicit Collection_Filler(const Config& conf);
     Collection_Filler(const Collection_Filler &);
     Collection_Filler& operator=(const Collection_Filler &);
-    
+
     //RecoDataProducts: //TODO - maybe remove these if not used!
 
     art::InputTag chTag_;
@@ -88,24 +88,12 @@ namespace mu2e{
 
     //MCDataProdutcs:
     std::string g4ModuleLabel_;
-    //TODO
 
     art::Event *_event;
     art::Run *_run;
 
-
     bool addHits_, addTracks_, addClusters_, addCrvHits_, addCosmicSeedFit_, addCRV_, isCosmic_, MCOnly_, FillAll_;
 
-    bool HasCluster(const art::Event& evt);
-
-    bool HasTrack(const art::Event& evt);
-
-    bool HasComboHits(const art::Event& evt);
-
-    void FindData(const art::Event& evt);
-
-    //TODO FindData is a function which just fills all data collections for products which are presentent.
-   
     void FillRecoCollection(const art::Event& evt, Data_Collections &data, RecoDataProductName code);
     void FillMCCollections(const art::Event& evt, Data_Collections &data, RecoDataProductName code);
 
@@ -115,11 +103,11 @@ namespace mu2e{
 
     virtual ~Collection_Filler(){};
 
-    private:
+  private:
     Config _conf;
     #endif
     ClassDef(Collection_Filler,0);
-	};
+};
 
 }
 

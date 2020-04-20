@@ -29,66 +29,66 @@ class TText;
 namespace mu2e{
 	class TEveMu2eMainWindow : public TGMainFrame {
     public:
-    #ifndef __CINT__
-    TEveMu2eMainWindow();
-    TEveMu2eMainWindow(const TEveMu2eMainWindow &);
-    TEveMu2eMainWindow& operator=(const TEveMu2eMainWindow &);
+      #ifndef __CINT__
+      TEveMu2eMainWindow();
+      TEveMu2eMainWindow(const TEveMu2eMainWindow &);
+      TEveMu2eMainWindow& operator=(const TEveMu2eMainWindow &);
 
-    TEveMu2eMainWindow(const TGWindow* p, UInt_t w, UInt_t h, fhicl::ParameterSet const &pset);
+      TEveMu2eMainWindow(const TGWindow* p, UInt_t w, UInt_t h, fhicl::ParameterSet const &pset);
 
-    virtual ~TEveMu2eMainWindow(){};
-
-
-    Bool_t ProcessMessage(Long_t msg, Long_t param1, Long_t param2);
-    void  setEvent(const art::Event& event, bool firstLoop, Data_Collections &data);
-    void  fillEvent(bool firstLoop=false);
-    bool  isClosed() const;
-    int   getEventToFind(bool &findEvent) const;
-    #endif
-    TGeoManager* geom = new TGeoManager("geom","Geom");
-
-    Geom_Interface *mu2e_geom	=new Geom_Interface(); 
-
-    int eventToFind, runToFind;
+      virtual ~TEveMu2eMainWindow(){};
 
 
-    TGTextEntry     *fTeRun,*fTeEvt;
-    TGLabel         *fTlRun,*fTlEvt;
-    Double_t        hitMarkerSize_;
-    Double_t        trkMaxR_;
-    Double_t        trkMaxZ_;
-    Double_t        trkMaxStepSize_;
-    Double_t        camRotateCenterH_;
-    Double_t        camRotateCenterV_;
-    Double_t        camDollyDelta_;
+      Bool_t ProcessMessage(Long_t msg, Long_t param1, Long_t param2);
+      void  setEvent(const art::Event& event, bool firstLoop, Data_Collections &data);
+      void  fillEvent(bool firstLoop=false);
+      bool  isClosed() const;
+      int   getEventToFind(bool &findEvent) const;
+      #endif
+      TGeoManager* geom = new TGeoManager("geom","Geom");
 
-    TGTextBuffer *_eventNumber, *_subrunNumber, *_runNumber;
-    int  _eventToFind = 0;
-    bool _showBuilding = false;//Eventually these might be FCL parameters
-    bool _showCRV=false;
-    bool _showDSOnly = true;
-    bool _showTracker = true;
-    bool _showCalo = true;
-    bool _isClosed = false;
-    bool _findEvent = true;
-    bool _firstLoop = true;
-    TEveElementList *fHitsList;
-    TEveElementList *fTrackList;
-    TEveTrackList *tList;
-    TEveElementList *test;
+      Geom_Interface *mu2e_geom	=new Geom_Interface(); 
 
-    TText  *_eventNumberText, *_subrunNumberText, *_runNumberText;
-    int _event, _subrun, _run;
+      int eventToFind, runToFind;
 
-    //TODO void AddHelixEveTracks(bool firstloop, const KalSeedCollection *seedcol);
-    void AddHelixPieceWise(bool firstloop, const KalSeedCollection *seedcol);
-    void AddComboHits(bool firstloop, const ComboHitCollection *chcol);
-    //TODO - void AddCrystalHits(bool firstloop, const CaloCrystalHitCollection *cryHitcol);
-    void SetRunGeometry(const art::Run& run, int _diagLevel);
 
-    ClassDef(TEveMu2eMainWindow,0);
+      TGTextEntry     *fTeRun,*fTeEvt;
+      TGLabel         *fTlRun,*fTlEvt;
+      Double_t        hitMarkerSize_;
+      Double_t        trkMaxR_;
+      Double_t        trkMaxZ_;
+      Double_t        trkMaxStepSize_;
+      Double_t        camRotateCenterH_;
+      Double_t        camRotateCenterV_;
+      Double_t        camDollyDelta_;
 
-	}; //end class def
+      TGTextBuffer *_eventNumber, *_subrunNumber, *_runNumber;
+      int  _eventToFind = 0;
+      bool _showBuilding = false;//Eventually these might be FCL parameters
+      bool _showCRV=false;
+      bool _showDSOnly = true;
+      bool _showTracker = true;
+      bool _showCalo = true;
+      bool _isClosed = false;
+      bool _findEvent = true;
+      bool _firstLoop = true;
+      TEveElementList *fHitsList;
+      TEveElementList *fTrackList;
+      TEveTrackList *tList;
+      TEveElementList *test;
+
+      TText  *_eventNumberText, *_subrunNumberText, *_runNumberText;
+      int _event, _subrun, _run;
+
+      //TODO void AddHelixEveTracks(bool firstloop, const KalSeedCollection *seedcol);
+      void AddHelixPieceWise(bool firstloop, const KalSeedCollection *seedcol);
+      void AddComboHits(bool firstloop, const ComboHitCollection *chcol);
+      //TODO - void AddCrystalHits(bool firstloop, const CaloCrystalHitCollection *cryHitcol);
+      void SetRunGeometry(const art::Run& run, int _diagLevel);
+
+      ClassDef(TEveMu2eMainWindow,0);
+
+    }; //end class def
 
 }//end namespace mu2e
 

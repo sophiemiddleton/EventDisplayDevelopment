@@ -40,7 +40,6 @@ namespace mu2e{
 	{
   public:
     
-
     #ifndef __CINT__
 
     explicit Data_Collections(){};
