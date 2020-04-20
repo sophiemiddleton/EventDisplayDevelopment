@@ -8,7 +8,13 @@ Here are just a few basic details.
 
 ## The Module
 
-TEveEventDisplay/src/TEveEventDisplay_module.cc is the Analyzer mdoule which currently controls the TEveEventDisplay. It is here where the navigation panel is drawn, events are accessed and plotting code is called. This is your "main" function.
+TEveEventDisplay/src/TEveEventDisplay_module.cc is the Analyzer mdoule which currently controls the TEveEventDisplay. This is your main function. The BeginJob function sets up your Frame (a TEveMu2eMainwindow Object) and it opens an Application. This is needed for the browser to appear.
+
+The BeginRun function calls the Frame's (TEveMu2eMainWindow Object) SetRunGeometry. This is where the GDML is accessed and the Geom_Interface used to descend nodes and desiplay the DS.
+
+The Analyze function fills the DataCollections ( a list of Mu2e Data Products are called Collections). The Filler is a Collection_Filler object where the DataCollection is filled.
+
+The Analyze function calls the the Frame's SetEvent function. In that function the various AddProduct (e.g. AdComboHit) are called.
 
 ## The fcl file
 
@@ -38,26 +44,23 @@ This branch is very much a "work-in-progress" way it is currently structured is 
 
 ### gdml
 
-The GDML file used here can be regenerated using: ```mu2e -c mu2eG4/fcl/gdmldump.fcl```. It contains the entire Mu2e World.
+The GDML file used here can be regenerated using: ```mu2e -c mu2eG4/fcl/gdmldump.fcl```. It contains the entire Mu2e World. We use fix.gdml as a bug in the mu2e.gdml was found in the early stages of this development.
 
 ### Geom Interface
 
-Contains callers for access to Tracker and Calo geometry. This class also contains functions to set visability of different elements absed on their names within the gdml.
+Contains callers for access to Tracker and Calo geometry. This class also contains functions to set visability of different elements based on their names within the gdml.
 
 ### TEveMu2e basis
 
-Contains base classes which inherit from TEve objects. This is the interface between TEve objects and mu2e products.
+Contains base classes which inherit from TEve objects. This is the interface between TEve objects and mu2e products. 
 
 ### Collection Filler and Data Collections
 
-Not yet used but will be as we move towards a more complex design. bsed on EventDisplay infrastructure.
+The DataCollection class has a list all the possible Mu2e data collections we might want to access. The full list is found in ```Offline/RecoDataProduct/inc```. The collections in DataCollections are set to 0 unless they are filled. The filling is done by a function ```FillRecoCollections``` in the Collection_Filler class. This is called in the module Analyze function.
 
-### Particle Interface
-
-The physics or PID world.
 
 ### Main Window
 
-This class sets up the Gui and imports the geometry. Here the plotting data functions are currently called.
+This class sets up the Gui and imports the geometry. Here the plotting data functions are currently called. you should base any work on AddComboHits.
 
 

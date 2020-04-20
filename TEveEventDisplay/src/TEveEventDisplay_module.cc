@@ -84,10 +84,10 @@ namespace mu2e
     };
 
 TEveEventDisplay::TEveEventDisplay(const Parameters& conf) :
-	art::EDAnalyzer(conf),
-	_diagLevel(conf().diagLevel()),
-	g4ModuleLabel_(conf().g4ModuleLabel()),
-	showEvent_(conf().showEvent()),
+  art::EDAnalyzer(conf),
+  _diagLevel(conf().diagLevel()),
+  g4ModuleLabel_(conf().g4ModuleLabel()),
+  showEvent_(conf().showEvent()),
   _filler(conf().filler())
 	{}
 

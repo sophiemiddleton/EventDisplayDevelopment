@@ -237,7 +237,7 @@ namespace mu2e{
   return kTRUE;
 }
 
-
+  //SetEvent is called from the Module - it is were the drawing functions are called.
   void TEveMu2eMainWindow::setEvent(const art::Event& event, bool firstLoop, Data_Collections &data)
   {
     std::cout<<"BEGINNING....PLEASE WAIT...."<<std::endl;
@@ -254,65 +254,6 @@ namespace mu2e{
     gApplication->Run(true);
    }
  
-   
-  void TEveMu2eMainWindow::AddHelixPieceWise(bool firstloop, const KalSeedCollection *seedcol){
-    std::cout<<"Adding Helix in custom pieces"<<std::endl;
-    if(seedcol!=0){
-
-    if (fTrackList == 0) {
-      fTrackList = new TEveElementList("Hits");
-      fTrackList->IncDenyDestroy();     
-    }
-    else {
-      fTrackList->DestroyElements();  
-    }
-
-
-    for(size_t k = 0; k < seedcol->size(); k++){
-      KalSeed kseed = (*seedcol)[k];
-      TEveMu2eCustomHelix *line = new TEveMu2eCustomHelix();
-
-      line->fKalSeed = kseed;
-      line->SetMomentum();
-      line->SetParticle();
-
-      unsigned int nSteps = 1000;  
-      double TrackerLength = 300.8;//cm FIXME - this should not be hardcoded this way!!
-      double kStepSize = nSteps/TrackerLength;
-      line->kStepSize = kStepSize;
-
-      for(size_t i = 0 ; i< nSteps; i++){
-      double zpos = (i*kStepSize)-TrackerLength/2;
-
-      line->SetPostionAndDirectionFromKalRep(zpos);//need to start from
-      if(i==0) {
-        CLHEP::Hep3Vector Pos(line->Position.x(), line->Position.y(), zpos+line->Position.z());
-        CLHEP::Hep3Vector InMu2e = mu2e_geom->PointToTracker(Pos);
-
-        line->SetPoint(i,InMu2e.x()/10+line->Direction.x()*line->Momentum/10,InMu2e.y()/10+line->Direction.y()*line->Momentum/10, InMu2e.z()/10-TrackerLength/2);
-
-
-      } else {
-
-        CLHEP::Hep3Vector Pos(line->Position.x(), line->Position.y(), zpos+line->Position.z());
-        CLHEP::Hep3Vector InMu2e = mu2e_geom->PointToTracker(Pos);
-        cout<<i<<endl;
-        line->SetNextPoint(InMu2e.x()/10+line->Direction.x()*line->Momentum/10,InMu2e.y()/10+line->Direction.y()*line->Momentum/10, InMu2e.z()/10-TrackerLength/2);
-
-      }
-    }
-
-      line->SetLineColor(kGreen);
-      line->SetLineWidth(3);
-      fTrackList->AddElement(line);
-      gEve->AddElement(fTrackList);
-      gEve->Redraw3D(kTRUE);
-
-
-      }
-    }
-}
-
   void TEveMu2eMainWindow::AddComboHits(bool firstloop, const ComboHitCollection *chcol){
     std::cout<<"[In AddComboHits()]"<<std::endl;
     if(chcol!=0){
@@ -372,6 +313,64 @@ namespace mu2e{
       }
 	  }
 */
+
+ void TEveMu2eMainWindow::AddHelixPieceWise(bool firstloop, const KalSeedCollection *seedcol){
+    std::cout<<"Adding Helix in custom pieces"<<std::endl;
+    if(seedcol!=0){
+
+    if (fTrackList == 0) {
+      fTrackList = new TEveElementList("Hits");
+      fTrackList->IncDenyDestroy();     
+    }
+    else {
+      fTrackList->DestroyElements();  
+    }
+
+
+    for(size_t k = 0; k < seedcol->size(); k++){
+      KalSeed kseed = (*seedcol)[k];
+      TEveMu2eCustomHelix *line = new TEveMu2eCustomHelix();
+
+      line->fKalSeed = kseed;
+      line->SetMomentum();
+      line->SetParticle();
+
+      unsigned int nSteps = 1000;  
+      double TrackerLength = 300.8;//cm FIXME - this should not be hardcoded this way!!
+      double kStepSize = nSteps/TrackerLength;
+      line->kStepSize = kStepSize;
+
+      for(size_t i = 0 ; i< nSteps; i++){
+      double zpos = (i*kStepSize)-TrackerLength/2;
+
+      line->SetPostionAndDirectionFromKalRep(zpos);//need to start from
+      if(i==0) {
+        CLHEP::Hep3Vector Pos(line->Position.x(), line->Position.y(), zpos+line->Position.z());
+        CLHEP::Hep3Vector InMu2e = mu2e_geom->PointToTracker(Pos);
+
+        line->SetPoint(i,InMu2e.x()/10+line->Direction.x()*line->Momentum/10,InMu2e.y()/10+line->Direction.y()*line->Momentum/10, InMu2e.z()/10-TrackerLength/2);
+
+
+      } else {
+
+        CLHEP::Hep3Vector Pos(line->Position.x(), line->Position.y(), zpos+line->Position.z());
+        CLHEP::Hep3Vector InMu2e = mu2e_geom->PointToTracker(Pos);
+        cout<<i<<endl;
+        line->SetNextPoint(InMu2e.x()/10+line->Direction.x()*line->Momentum/10,InMu2e.y()/10+line->Direction.y()*line->Momentum/10, InMu2e.z()/10-TrackerLength/2);
+
+      }
+    }
+
+      line->SetLineColor(kGreen);
+      line->SetLineWidth(3);
+      fTrackList->AddElement(line);
+      gEve->AddElement(fTrackList);
+      gEve->Redraw3D(kTRUE);
+
+
+      }
+    }
+}
   void TEveMu2eMainWindow::fillEvent(bool firstLoop)
    {
     // _findEvent=false;
@@ -404,8 +403,6 @@ namespace mu2e{
       _runNumberText->Draw("same");
     }
     else _runNumberText->SetTitle(eventInfoText.c_str());
-
-    //TODO Collections Called Here??
 
     this->Layout();
 
