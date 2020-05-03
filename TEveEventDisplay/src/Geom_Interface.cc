@@ -188,8 +188,8 @@ namespace mu2e{
     std::string calfilename("Mu2eG4/geom/calorimeter_CsI.txt");
     SimpleConfig CalConfig(calfilename);
     double zCenter;
-    if(nDisk==0) zCenter = CalConfig.getDouble("calorimeter.caloMotherZ0")*CLHEP::mm;
-    if(nDisk==1) zCenter = CalConfig.getDouble("calorimeter.caloMotherZ1")*CLHEP::mm;
+    if(nDisk==0) zCenter = CalConfig.getDouble("calorimeter.caloMotherZ0")*CLHEP::mm + 100;
+    if(nDisk==1) zCenter = CalConfig.getDouble("calorimeter.caloMotherZ1")*CLHEP::mm - 600;
 
     std::string geomfilename("Mu2eG4/geom/geom_common_current.txt");
     SimpleConfig GeomConfig(geomfilename);
@@ -260,6 +260,7 @@ namespace mu2e{
 
 	CLHEP::Hep3Vector Geom_Interface::PointToCalo(CLHEP::Hep3Vector point, int nDisk){
 		CLHEP::Hep3Vector Mu2eCaloOrigin = Geom_Interface::GetCaloCenter(nDisk);
+    cout<<"disk "<<nDisk<<"point"<<point<<"origin "<<Mu2eCaloOrigin<<endl;
 		CLHEP::Hep3Vector PointToCalo(point.x() + Mu2eCaloOrigin.x(), point.y()+Mu2eCaloOrigin.y(), point.z() + Mu2eCaloOrigin.z());
 		return PointToCalo;
 

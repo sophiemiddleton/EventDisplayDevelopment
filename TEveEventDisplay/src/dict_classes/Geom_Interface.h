@@ -51,9 +51,9 @@ namespace mu2e{
       virtual ~Geom_Interface(){};
       TGeoManager *_geom;
       TGeoManager* getGeom(TString filename) {
-      TGeoManager *geom;
-      geom = geom->TGeoManager::Import(filename);
-      return geom;
+        TGeoManager *geom;
+        geom = geom->TGeoManager::Import(filename);
+        return geom;
       }
 
 

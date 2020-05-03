@@ -6,7 +6,7 @@
 #include <TEvePointSet.h>
 namespace mu2e {
 
-class TEveMu2eCluster: public TEvePointSet, public CaloCluster {
+class TEveMu2eCluster: public TEvePointSet {
 
     CaloCluster* fCaloCluster;
 
@@ -16,9 +16,8 @@ class TEveMu2eCluster: public TEvePointSet, public CaloCluster {
     virtual ~TEveMu2eCluster(){};
     #endif 
 
-    void DrawCluster();
+    void DrawCluster(const std::string &pstr, double edep, CLHEP::Hep3Vector COG, TEveElementList *list); 
     void GetPositon();
-
     ClassDef(TEveMu2eCluster, 0);
 };
 }

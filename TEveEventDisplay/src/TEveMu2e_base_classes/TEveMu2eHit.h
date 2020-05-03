@@ -6,7 +6,7 @@
 #include <TObject.h>
 
 #include <TEvePointSet.h>
-
+#include <TPolyLine3D.h>
 #include "RecoDataProducts/inc/ComboHit.hh"
 
 namespace mu2e {
@@ -20,17 +20,19 @@ class TEveMu2eHit : public TEvePointSet, public ComboHit {
     explicit TEveMu2eHit();
     virtual ~TEveMu2eHit(){};
     
-    const ComboHit *fComboHit;//TODO should be a Ptr! 
+    const ComboHit *fComboHit;
 
     Int_t mColor = 2;//default color = kRed (see TColor ROOT class for other names)
     Int_t mSize= 1; 
+
+    void AddErrorBar(TEveElementList *ist, CLHEP::Hep3Vector pointInMu2e);
     void DrawHit(const std::string &pstr, Int_t b,CLHEP::Hep3Vector HitPos, TEveElementList *list); 
     void DrawHitCollection(const std::string &pstr, size_t i, std::vector<CLHEP::Hep3Vector> HitPos, TEveElementList *list); 
 
     //Access to the ComboHit members:
     XYZVec const GetPositon() { return fComboHit->pos() ;}//Just some examples - need to think what we want.
     double GetEnergy(){ return fComboHit->energyDep(); }
-    void SetErrorLine();//TODO - set an error bar on each point using combo hit errors
+
     #endif
     ClassDef(TEveMu2eHit, 0);
 };

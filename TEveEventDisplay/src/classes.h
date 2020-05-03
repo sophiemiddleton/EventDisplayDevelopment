@@ -1,8 +1,8 @@
-
+//Dictionary Classes:
 #include "TEveEventDisplay/src/dict_classes/Geom_Interface.h"
 #include "TEveEventDisplay/src/dict_classes/Collection_Filler.h"
 #include "TEveEventDisplay/src/dict_classes/Data_Collections.h"
-
+//TEveMu2e Base Classes:
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eMainWindow.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eHit.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eCluster.h"

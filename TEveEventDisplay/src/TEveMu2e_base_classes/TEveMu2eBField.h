@@ -12,6 +12,8 @@
 #include "BeamlineGeom/inc/Beamline.hh"
 #pragma GCC diagnostic pop
 
+
+//This class will be used in conjunction with the TEveTrack to make helical tracks from the field in the TS and DS.
 namespace mu2e {
 
   class TEveMu2eBField: public TEveMagField { //TEveMagField is defined in TrackPropagator
@@ -25,8 +27,8 @@ namespace mu2e {
     explicit TEveMu2eBField(){};
     virtual ~TEveMu2eBField(){};
     #endif
-    //TEveVector GetField(float X, float Y, float Z) const ;
-
+    //virtual TEveVectorD GetField(Double_t X, Double_t Y, Double_t Z) const ;
+    //virtual Double_t GetMaxFieldMagD() const;
     ClassDef(TEveMu2eBField, 0);
 };
 }

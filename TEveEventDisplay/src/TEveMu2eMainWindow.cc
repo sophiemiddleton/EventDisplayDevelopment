@@ -31,8 +31,10 @@
 
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eMainWindow.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eHit.h"
+#include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eCluster.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eHelixTrack.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eCustomHelix.h"
+#include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eBField.h"
 
 namespace fhicl
 {
@@ -53,9 +55,10 @@ using namespace mu2e;
 
 namespace mu2e{
 
-	TEveMu2eMainWindow::TEveMu2eMainWindow() : TGMainFrame(gClient->GetRoot(), 320, 320) {}
 
-  TEveMu2eMainWindow::TEveMu2eMainWindow(const TGWindow* p, UInt_t w, UInt_t h, fhicl::ParameterSet const &pset) : 
+	TEveMu2eMainWindow::TEveMu2eMainWindow() : TGMainFrame(gClient->GetRoot(), 320, 320){}
+
+  TEveMu2eMainWindow::TEveMu2eMainWindow(const TGWindow* p, UInt_t w, UInt_t h, fhicl::ParameterSet _pset): 
     TGMainFrame(p, w, h),
     fTeRun(0),
     fTeEvt(0),
@@ -63,6 +66,7 @@ namespace mu2e{
     fTlEvt(0),
     fHitsList(0),
     fTrackList(0),
+    fClusterList(0),
     tList(0)
     {
      
@@ -166,6 +170,94 @@ namespace mu2e{
       glv->CurrentCamera().Dolly(camDollyDelta_,kFALSE,kFALSE);
     }
 
+  void TEveMu2eMainWindow::StartTrackerProjectionTab(){
+    // Create detector and event scenes for ortho views
+    tracker2Dproj->fDetXYScene = gEve->SpawnNewScene("Det XY Scene", "");
+    tracker2Dproj->fDetRZScene = gEve->SpawnNewScene("Det RZ Scene", "");
+    tracker2Dproj->fEvtXYScene = gEve->SpawnNewScene("Evt XY Scene", "");
+    tracker2Dproj->fEvtRZScene = gEve->SpawnNewScene("Evt RZ Scene", "");
+
+    // Create XY/RZ tracker2Dprojection mgrs, draw projected axes, & add them to scenes
+    tracker2Dproj->fXYMgr = new TEveProjectionManager(TEveProjection::kPT_RPhi);
+    TEveProjectionAxes* axes_xy = new TEveProjectionAxes(tracker2Dproj->fXYMgr);
+    tracker2Dproj->fDetXYScene->AddElement(axes_xy);
+    gEve->AddToListTree(axes_xy,kTRUE);
+    gEve->AddToListTree(tracker2Dproj->fXYMgr,kTRUE);
+
+    tracker2Dproj->fRZMgr = new TEveProjectionManager(TEveProjection::kPT_RhoZ);
+    TEveProjectionAxes* axes_rz = new TEveProjectionAxes(tracker2Dproj->fRZMgr);
+    tracker2Dproj->fDetRZScene->AddElement(axes_rz);
+    gEve->AddToListTree(axes_rz,kTRUE);
+    gEve->AddToListTree(tracker2Dproj->fRZMgr,kTRUE);
+
+    // Create side-by-side ortho XY & RZ views in new tab & add det/evt scenes
+    TEveWindowSlot *slot = 0;
+    TEveWindowPack *pack = 0;
+
+    slot = TEveWindow::CreateWindowInTab(gEve->GetBrowser()->GetTabRight());
+    pack = slot->MakePack();
+    pack->SetElementName("Ortho Views");
+    pack->SetHorizontal();
+    pack->SetShowTitleBar(kFALSE);
+
+    pack->NewSlot()->MakeCurrent();
+    tracker2Dproj->fXYView = gEve->SpawnNewViewer("XY View", "");
+    tracker2Dproj->fXYView->GetGLViewer()->SetCurrentCamera(TGLViewer::kCameraOrthoXOY);
+    tracker2Dproj->fXYView->AddScene(tracker2Dproj->fDetXYScene);
+    tracker2Dproj->fXYView->AddScene(tracker2Dproj->fEvtXYScene);
+
+    pack->NewSlot()->MakeCurrent();
+    tracker2Dproj->fRZView = gEve->SpawnNewViewer("RZ View", "");
+    tracker2Dproj->fRZView->GetGLViewer()->SetCurrentCamera(TGLViewer::kCameraOrthoXOY);
+    tracker2Dproj->fRZView->AddScene(tracker2Dproj->fDetRZScene);
+    tracker2Dproj->fRZView->AddScene(tracker2Dproj->fEvtRZScene);
+
+    gEve->GetBrowser()->GetTabRight()->SetTab(0);
+
+  }
+
+  void TEveMu2eMainWindow::PrepareTrackerProjectionTab(const art::Run& run){
+    tracker2Dproj->fDetXYScene->DestroyElements();
+    tracker2Dproj->fDetRZScene->DestroyElements();
+    TEveElementList *orthodet = new TEveElementList("OrthoDet");
+
+    GeomHandle<Tracker> trkr;
+    TubsParams envelope(trkr->getInnerTrackerEnvelopeParams());
+    TGeoVolume* topvol = geom->GetTopVolume();
+   
+    TGeoMaterial *matSi = new TGeoMaterial("Si", 28.085,14,2.33);
+    TGeoMedium *Si = new TGeoMedium("Silicon",2, matSi);
+
+    Double_t dz{envelope.zHalfLength()/10};
+    Double_t rmin{envelope.innerRadius()/10};
+    Double_t rmax{envelope.outerRadius()/10};
+   // TGeoVolume *tr = geom->MakeTube("tr", Si, rmin, rmax, dz);
+    TEveGeoShape *tr = new TEveGeoShape();
+    tr->SetShape(new TGeoTube(rmin, rmax, dz));
+    tr->SetMainColor(kPink+7);
+    orthodet->AddElement(tr);
+      
+    // ... Create tracker out of Silicon using the composite shape defined above
+    TGeoShape *gs = new TGeoTube("tracker 2D",rmin,rmax,dz); 
+    TGeoVolume *tracker = new TGeoVolume("Tracker",gs, Si);
+    tracker->SetVisLeaves(kFALSE);
+    tracker->SetInvisible();
+    topvol->AddNode(tracker, 1, new TGeoTranslation(-390.4,0, +1017.1));
+    gEve->AddGlobalElement(orthodet);
+
+    // ... Import elements of the list into the projected views
+    tracker2Dproj->fXYMgr->ImportElements(orthodet, tracker2Dproj->fDetXYScene);
+    tracker2Dproj->fRZMgr->ImportElements(orthodet, tracker2Dproj->fDetRZScene);
+
+    // ... Turn OFF rendering of duplicate detector in main 3D view
+    gEve->GetGlobalScene()->FindChild("OrthoDet")->SetRnrState(kFALSE);
+
+    // ... Turn ON rendering of detector in RPhi and RZ views
+    tracker2Dproj->fDetXYScene->FindChild("OrthoDet [P]")->SetRnrState(kTRUE);
+    tracker2Dproj->fDetRZScene->FindChild("OrthoDet [P]")->SetRnrState(kTRUE);
+  }
+
+
   void TEveMu2eMainWindow::SetRunGeometry(const art::Run& run, int _diagLevel){
     if(gGeoManager){
       gGeoManager->GetListOfNodes()->Delete();
@@ -193,18 +285,20 @@ namespace mu2e{
 
     setRecursiveColorTransp(etopnode->GetNode()->GetVolume(), kWhite-10,70);
 
-    mu2e_geom->SolenoidsOnly(topnode);
-    mu2e_geom->hideTop(topnode, _diagLevel);
-    mu2e_geom->InsideDS(topnode, false );
+    if(!this->_showBuilding){   
+      mu2e_geom->SolenoidsOnly(topnode);
+      mu2e_geom->hideTop(topnode, _diagLevel);
+    }
+    if(this->_showDSOnly) mu2e_geom->InsideDS(topnode, false );
 
     //Add static detector geometry to global scene
     gEve->AddGlobalElement(etopnode);
     geom->Draw("ogl");
-    }
+  }
 
   
-    Bool_t TEveMu2eMainWindow::ProcessMessage(Long_t msg, Long_t param1, Long_t param2){
-      switch (GET_MSG(msg))
+  Bool_t TEveMu2eMainWindow::ProcessMessage(Long_t msg, Long_t param1, Long_t param2){
+    switch (GET_MSG(msg))
       {
         
         case kC_COMMAND:
@@ -233,9 +327,9 @@ namespace mu2e{
                 break;
       }
       break;
+    }
+    return kTRUE;
   }
-  return kTRUE;
-}
 
   //SetEvent is called from the Module - it is were the drawing functions are called.
   void TEveMu2eMainWindow::setEvent(const art::Event& event, bool firstLoop, Data_Collections &data)
@@ -246,7 +340,8 @@ namespace mu2e{
     _run=event.id().run();
     _firstLoop = firstLoop;
     AddComboHits(firstLoop, data.chcol);
-    //AddHelixPieceWise(firstLoop, data.kalseedcol);
+    AddCaloClusters(firstLoop, data.clustercol);
+    AddHelixPieceWise(firstLoop, data.kalseedcol);
     //TODO - add your functions here AddCrystalHits(firstLoop, data.cryHitcol);
     gSystem->ProcessEvents();
     gClient->NeedRedraw(fTeRun);
@@ -273,6 +368,7 @@ namespace mu2e{
       CLHEP::Hep3Vector pointInMu2e = mu2e_geom->PointToTracker(HitPos);
 
       teve_hit->DrawHit("ComboHits",  1, pointInMu2e, HitList);
+      //TODO teve_hit->AddErrorBar(fHitsList, pointInMu2e);
       fHitsList->AddElement(HitList);  
       gEve->AddElement(fHitsList);
       gEve->Redraw3D(kTRUE);  
@@ -281,7 +377,7 @@ namespace mu2e{
      }
 	  }
 
-   /* TODO --> You can start from this example: Edit as you wish:
+
   void TEveMu2eMainWindow::AddCrystalHits(bool firstloop, const CaloCrystalHitCollection *cryHitcol){
       std::cout<<"[In AddCaloCrystalHits()]"<<std::endl;
       cout<<cryHitcol->size()<<endl;
@@ -297,7 +393,6 @@ namespace mu2e{
 
         TEveElementList *HitList = new TEveElementList("CrystalHits");
         for(unsigned int i=0; i<cryHitcol->size();i++){
-          //if(i%50 !=0) continue;
           TEveMu2eHit *teve_hit = new TEveMu2eHit();
           CaloCrystalHit const  &hit = (*cryHitcol)[i];
           int diskId = cal.crystal(hit.id()).diskId();
@@ -308,11 +403,34 @@ namespace mu2e{
           fHitsList->AddElement(HitList);  
           gEve->AddElement(fHitsList);
           gEve->Redraw3D(kTRUE);    
-          
         }
       }
-	  }
-*/
+	}
+
+   void TEveMu2eMainWindow::AddCaloClusters(bool firstloop, const CaloClusterCollection *clustercol){
+      
+      if(clustercol!=0){
+	     if (fClusterList == 0) {
+		      fClusterList = new TEveElementList("Hits");
+		      fClusterList->IncDenyDestroy();     
+	      }
+	      else {
+		       fClusterList->DestroyElements();  
+	       }
+        TEveElementList *ClusterList = new TEveElementList("CaloClusters");
+        for(unsigned int i=0; i<clustercol->size();i++){
+          TEveMu2eCluster *teve_cluster = new TEveMu2eCluster();
+          CaloCluster const  &cluster= (*clustercol)[i];
+          CLHEP::Hep3Vector COG(cluster.cog3Vector().x(),cluster.cog3Vector().y(), cluster.cog3Vector().z());
+	        CLHEP::Hep3Vector pointInMu2e = mu2e_geom->PointToCalo(COG,cluster.diskId());
+          double edep = cluster.energyDep();
+          teve_cluster->DrawCluster("CaloClusters", edep, pointInMu2e, ClusterList);
+          fClusterList->AddElement(ClusterList);  
+          gEve->AddElement(fClusterList);
+          gEve->Redraw3D(kTRUE);    
+        }
+      }
+	}
 
  void TEveMu2eMainWindow::AddHelixPieceWise(bool firstloop, const KalSeedCollection *seedcol){
     std::cout<<"Adding Helix in custom pieces"<<std::endl;
@@ -371,6 +489,91 @@ namespace mu2e{
       }
     }
 }
+/*
+void TEveMu2eMainWindow::AddHelixEveTracks(bool firstloop, const KalSeedCollection *seedcol){
+      std::cout<<"Adding Helix using TEveTracks"<<std::endl;
+      if(seedcol!=0){
+        if (tList == 0) {
+          tList = new TEveTrackList("Tracks");
+          tList->SetLineWidth(4);
+        } else{
+          tList->DestroyElements();
+        }
+        GeomHandle<mu2e::BFieldManager> bf;
+        TEveMu2eBField *field = new TEveMu2eBField();
+        for(size_t k = 0; k < seedcol->size(); k++){
+            KalSeed kseed = (*seedcol)[k];
+
+            const std::vector<KalSegment> &segments = kseed.segments();
+            size_t nSeg = segments.size();
+            const KalSegment &Firstseg = kseed.segments().front();
+            const KalSegment &Lastseg = kseed.segments().back();
+            double fltlen_1 = Firstseg.fmin();
+            double fltlen_N = Lastseg.fmax();
+            XYZVec mom1, mom2;
+            Firstseg.mom(fltlen_1, mom1);
+            Lastseg.mom(fltlen_N, mom2);
+            double mommag1 = sqrt(mom1.Mag2());
+            double mommag2 = sqrt(mom2.Mag2());
+           // double t = kseed.t0().t0();
+           // double flt0 = kseed.flt0()
+            //double velocity = kseed.particle().beta((p1+p2)/2)*CLHEP::c_light;
+
+            TEveRecTrack t;
+            //TEveTrackPropagator *propagator = tList->GetPropagator();
+            TEveTrackPropagator* trkProp = tList->GetPropagator();
+          
+		        CLHEP::Hep3Vector field = bf.getBField(0,0,0);
+	
+		        //trkProp->SetMagField(field);
+            t.fBeta = kseed.particle().beta((mommag1+mommag2)/2);
+            t.fSign = kseed.particle().charge();
+            TEveTrack *trk = new TEveTrack(&t);
+            
+            for(size_t i=0; i<nSeg; i++){
+              const KalSegment &seg = segments.at(i);
+              fltlen_1 = seg.fmin();    
+              fltlen_N = seg.fmax();
+              if(i!=0){
+                double fltMaxPrev = segments.at(i-1).fmax();
+                fltlen_1 = (fltlen_1+fltMaxPrev)/2;
+              }
+              if(i+1<nSeg){
+                double fltMaxNext = segments.at(i+1).fmin();
+                fltlen_N = (fltlen_N+fltMaxNext)/2;
+              }
+              XYZVec pos1, pos2;
+              seg.helix().position(fltlen_1,pos1);
+              seg.helix().position(fltlen_N,pos2);
+              
+              CLHEP::Hep3Vector Pos1(pos1.x(), pos1.y(), pos1.z());
+		          CLHEP::Hep3Vector P1InMu2e = mu2e_geom->PointToTracker(Pos1);
+              TEveVector evepos1(P1InMu2e.x()/10, P1InMu2e.y()/10, P1InMu2e.z()/10);
+
+              CLHEP::Hep3Vector Pos2(pos2.x(), pos2.y(), pos2.z());
+		          CLHEP::Hep3Vector P2InMu2e = mu2e_geom->PointToTracker(Pos2);
+              TEveVector evepos2(P2InMu2e.x()/10, P2InMu2e.y()/10, P1InMu2e.z()/10);
+
+              TEveVector evemom(mom1.x(),mom1.y(),mom1.z());
+              trk->AddPathMark(TEvePathMark(TEvePathMark::kReference, evepos1, evemom));
+              trk->AddPathMark(TEvePathMark(TEvePathMark::kReference, evepos2, evemom));
+              trk->SetMainColor(kCyan);
+		          tList->AddElement(trk);
+            }
+     
+              tList->MakeTracks();
+	            tList->SetLineColor(kGreen);
+		          gEve->AddElement(tList);
+              gEve->Redraw3D(kTRUE);
+
+        }
+      }
+   }
+*/
+
+
+
+
   void TEveMu2eMainWindow::fillEvent(bool firstLoop)
    {
     // _findEvent=false;

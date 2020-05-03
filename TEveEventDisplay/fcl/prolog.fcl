@@ -20,10 +20,10 @@ TEveEventDisplayHelix : {
       HelixSeedCollection       :  "HelixFinderDe:Negative"
       KalSeedCollection         :  "KFFDeM"
       addHits 			            : false
-      addTracks 			          : true
+      addTracks 			          : false
       addCrvHits			          : false
       addCosmicSeedFit	        : false
-      addClusters			          : false
+      addClusters			          : true
       isCosmic			            : false
     }
   }   
@@ -67,7 +67,7 @@ TEveEventDisplayCaloOnly : {
       addClusters			            : true
       addCrvHits			            : false
       addCosmicSeedFit	          : false
-      addCrystalHits              : true
+      addCrystalHits              : false
       isCosmic			              : false
   }
   }   

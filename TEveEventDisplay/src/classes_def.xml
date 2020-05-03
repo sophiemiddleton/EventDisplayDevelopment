@@ -1,13 +1,13 @@
 <lcgdict>
- <class name="mu2e::Geom_Interface"/>
- <class name="mu2e::Collection_Filler"/>
+  <class name="mu2e::Geom_Interface"/>
+  <class name="mu2e::Collection_Filler"/>
   <class name="mu2e::Data_Collections"/>
- <class name="mu2e::TEveMu2eMainWindow"/>
+  <class name="mu2e::TEveMu2eMainWindow"/>
   <class name="mu2e::TEveMu2eHit"/>
- <class name="mu2e::TEveMu2eCluster"/>
+  <class name="mu2e::TEveMu2eCluster"/>
   <class name="mu2e::TEveMu2eStraightTrack"/>
- <class name="mu2e::TEveMu2eHelixTrack"/>
- <class name="mu2e::TEveMu2eCustomHelix"/>
+  <class name="mu2e::TEveMu2eHelixTrack"/>
+  <class name="mu2e::TEveMu2eCustomHelix"/>
   <class name="mu2e::TEveMu2eBField"/>
   <class name="mu2e::TEveMu2e2DProjection"/>
 </lcgdict>

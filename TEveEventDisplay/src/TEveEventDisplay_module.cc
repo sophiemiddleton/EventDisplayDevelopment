@@ -50,7 +50,6 @@ namespace mu2e
       fhicl::Atom<std::string> g4ModuleLabel{Name("g4ModuleLabel"), Comment("")};
       fhicl::Atom<bool> showEvent{Name("showEvent"), Comment(""),true};     
       fhicl::Table<Collection_Filler::Config> filler{Name("filler"),Comment("fill collections")};
-	    
     };
 
     typedef art::EDAnalyzer::Table<Config> Parameters;
@@ -73,7 +72,7 @@ namespace mu2e
     TDirectory*   directory_ = nullptr;   
 
     Collection_Filler _filler;
-
+ 
     TEveMu2eMainWindow *_frame;
     fhicl::ParameterSet _pset;
 
@@ -102,11 +101,13 @@ void TEveEventDisplay::beginJob(){
     application_ = new TApplication( "noapplication", &tmp_argc, tmp_argv );
   }
   _frame = new TEveMu2eMainWindow(gClient->GetRoot(), 1000,600, _pset);
+  _frame->StartTrackerProjectionTab();
 }
 
 
 void TEveEventDisplay::beginRun(const art::Run& run){
   _frame->SetRunGeometry(run, _diagLevel);
+  _frame->PrepareTrackerProjectionTab(run);
 }
 
 
@@ -116,8 +117,8 @@ void TEveEventDisplay::analyze(const art::Event& event){
   //GeomHandle<mu2e::BFieldManager> bfmgr; We be required for the TEvePropagtor
   Data_Collections data;
   if(_filler.addHits_)_filler.FillRecoCollection(event, data, ComboHits);
-  //if(_filler.addTracks_)_filler.FillRecoCollection(event, data, KalSeeds);
-  //TODO --> if(_filler.addClusters_)_filler.FillRecoCollection(event, data, CaloCrystalHits);
+  if(_filler.addTracks_)_filler.FillRecoCollection(event, data, KalSeeds);
+  if(_filler.addClusters_)_filler.FillRecoCollection(event, data, CaloClusters);
   if(!_frame->isClosed()) _frame->setEvent(event, _firstLoop, data);
   _firstLoop = false;
 
