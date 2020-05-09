@@ -194,14 +194,14 @@ namespace mu2e{
 
   void CosmicTrackFinder::produce(art::Event& event ) {
      
-     if (_debug != 0) std::cout<<"Producing Cosmic Track in  Finder..."<<std::endl;
+     //if (_debug != 0) std::cout<<"Producing Cosmic Track in  Finder..."<<std::endl;
      unique_ptr<CosmicTrackSeedCollection> seed_col(new CosmicTrackSeedCollection());
      
      _stResult.clearMCVariables();
-     int _iev=event.id().event();
-      if (_debug > 0){
-          std::cout<<"ST Finder Event #"<<_iev<<std::endl;
-      } 
+     //int _iev=event.id().event();
+     // if (_debug > 0){
+     //     std::cout<<"ST Finder Event #"<<_iev<<std::endl;
+     // } 
      
      auto const& chH = event.getValidHandle<ComboHitCollection>(_chToken);
      const ComboHitCollection& chcol(*chH);
@@ -226,9 +226,9 @@ namespace mu2e{
       nGoodTClusterHits     = goodHitsTimeCluster(tclust,chcol );
     
       if ( nGoodTClusterHits < _minNHitsTimeCluster)         continue;
-      if (_debug > 0){
-          std::cout<<"time clusters "<<_iev<<std::endl;
-      }
+      //if (_debug > 0){
+      //    std::cout<<"time clusters "<<_iev<<std::endl;
+     // }
        CosmicTrackSeed tseed ;
       _stResult.clearTempVariables();
       _stResult._tseed              = tseed;
@@ -240,9 +240,9 @@ namespace mu2e{
       
       OrderHitsY(_stResult); 
 
-      if (_debug != 0){
-	 std::cout<<"#filtered SHits"<<_stResult._nFiltStrawHits<<" #filter CHits "<<_stResult._nFiltComboHits<<std::endl;
-      }
+     // if (_debug != 0){
+	// std::cout<<"#filtered SHits"<<_stResult._nFiltStrawHits<<" #filter CHits "<<_stResult._nFiltComboHits<<std::endl;
+      //}
       if (_stResult._nFiltComboHits < _minnch ) 	continue;
       if (_stResult._nFiltStrawHits < _minnsh)          continue;
       _stResult._tseed._status.merge(TrkFitFlag::Straight);
@@ -310,9 +310,9 @@ namespace mu2e{
 			     	tmpResult._tseed._trkstrawhits.push_back(tshs); 
 	     		}  
 	     		}
-	              
+	             
                       if( _tfit.goodTrack(tmpResult._tseed._track) == false) continue;
-		      _tfit.DriftFit(tmpResult);
+		      
 		      
 		      //Add tmp to seed list:
 		      track_seed_vec.push_back(tmpResult._tseed);
@@ -320,19 +320,20 @@ namespace mu2e{
 		      CosmicTrackSeedCollection* col = seed_col.get();
 		      
 		      if (track_seed_vec.size() == 0)     continue;
+		      
 		      col->push_back(tmpResult._tseed);  
 			          
               }
         }
     }
- 
+  std::cout<<"Adding track"<<std::endl;
   event.put(std::move(seed_col));    
   }
 
   void CosmicTrackFinder::fillGoodHits(CosmicTrackFinderData& trackData){
-    if (_debug != 0) {
-	std::cout<<"Filling good hits..."<<std::endl;
-    }
+    //if (_debug != 0) {
+	//std::cout<<"Filling good hits..."<<std::endl;
+    //}
     ComboHit*     hit(0);
     for (unsigned f=0; f<trackData._chHitsToProcess.size(); ++f){
       hit = &trackData._chHitsToProcess[f];
@@ -354,7 +355,7 @@ void CosmicTrackFinder::OrderHitsYMC(CosmicTrackFinderData& TrackData, art::Even
       ordDigiCol.push_back(mcd1); 
     }
    
-    if (_debug != 0) std::cout<<"Number of Digis: "<<ordDigiCol.size()<<std::endl;
+   // if (_debug != 0) std::cout<<"Number of Digis: "<<ordDigiCol.size()<<std::endl;
     std::sort(ordDigiCol.begin(), ordDigiCol.end(),ycomp_digi());
 
     for (unsigned i=0; i<ordDigiCol.size(); ++i) { 
@@ -366,9 +367,9 @@ void CosmicTrackFinder::OrderHitsYMC(CosmicTrackFinderData& TrackData, art::Even
 }
 
   void CosmicTrackFinder::OrderHitsY(CosmicTrackFinderData& TrackData){
-    if (_debug != 0){
-	 std::cout<<"Ordering Hits..."<<std::endl;
-    }
+   // if (_debug != 0){
+//	 std::cout<<"Ordering Hits..."<<std::endl;
+   // }
     const vector<StrawHitIndex>& shIndices = TrackData._timeCluster->hits();
     mu2e::CosmicTrackFinderData::ChannelID cx, co;
 
@@ -385,7 +386,7 @@ void CosmicTrackFinder::OrderHitsYMC(CosmicTrackFinderData& TrackData, art::Even
       ordChCol.push_back(ComboHit(ch)); 
     }
    
-    if (_debug != 0) std::cout<<"Number of ComboHits: "<<ordChCol.size()<<std::endl;
+  //  if (_debug != 0) std::cout<<"Number of ComboHits: "<<ordChCol.size()<<std::endl;
     std::sort(ordChCol.begin(), ordChCol.end(),ycomp());
     for (unsigned i=0; i<ordChCol.size(); ++i) { 
       ComboHit& ch = ordChCol[i];

@@ -6,7 +6,7 @@
 #include <TObject.h>
 
 #include <TEvePointSet.h>
-#include <TPolyLine3D.h>
+#include <TEveLine.h>
 #include "RecoDataProducts/inc/ComboHit.hh"
 
 namespace mu2e {
@@ -21,8 +21,8 @@ class TEveMu2eHit : public TEvePointSet, public ComboHit {
     virtual ~TEveMu2eHit(){};
     
     const ComboHit *fComboHit;
-
-    Int_t mColor = 2;//default color = kRed (see TColor ROOT class for other names)
+    TEveLine *error;
+    Int_t mColor = kBlue;//default color = kRed (see TColor ROOT class for other names)
     Int_t mSize= 1; 
 
     void AddErrorBar(TEveElementList *ist, CLHEP::Hep3Vector pointInMu2e);

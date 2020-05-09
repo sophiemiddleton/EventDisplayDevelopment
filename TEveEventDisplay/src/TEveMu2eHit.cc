@@ -6,9 +6,9 @@ namespace mu2e{
 
 	TEveMu2eHit::TEveMu2eHit(){}
 
- /* void TEveMu2eHit::AddErrorBar(TEveElementList *list, CLHEP::Hep3Vector pointInMu2e){
-    TPolyLine3D *errors = new TPolyLine3D;
-    errors->SetLineColor(kRed);
+ void TEveMu2eHit::AddErrorBar(TEveElementList *list, CLHEP::Hep3Vector pointInMu2e){
+   
+    error->SetLineColor(kRed);
     auto const &chit = this->fComboHit;
     auto const& p = chit->pos();
     auto const& w = chit->wdir();
@@ -19,10 +19,10 @@ namespace mu2e{
     double z2 = pointInMu2e.z() + (p.z()-s*w.z());
     double y1 = pointInMu2e.y() - (p.y()+s*w.y());
     double y2 = pointInMu2e.z() + (p.y()-s*w.y());
-    errors->SetPoint(0, x1,y1,z1);
-    errors->SetNextPoint(x2,y2,z2);
-    list->AddElement(errors);
-  }*/
+    error->SetPoint(0, x1,y1,z1);
+    error->SetNextPoint(x2,y2,z2);
+    list->AddElement(error);
+  }
   
   void TEveMu2eHit::DrawHit(const std::string &pstr, Int_t n, CLHEP::Hep3Vector pointInMu2e, TEveElementList *HitList)
   	{

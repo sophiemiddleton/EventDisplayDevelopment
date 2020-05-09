@@ -76,8 +76,11 @@ namespace mu2e{
       bool _firstLoop = true;
 
       TEveMu2e2DProjection *tracker2Dproj = new TEveMu2e2DProjection();
+      TEveMu2e2DProjection *calo2Dproj = new TEveMu2e2DProjection();
 
-      TEveElementList *fHitsList;
+      TEveElementList *fHitsList2D;
+      TEveElementList *fHitsList3D;
+      TEveElementList *fCrystalHitList;
       TEveElementList *fTrackList;
       TEveElementList *fClusterList;
       TEveTrackList *tList;
@@ -96,6 +99,7 @@ namespace mu2e{
       void AddHelixEveTracks(bool firstloop, const KalSeedCollection *seedcol);
       void AddHelixPieceWise(bool firstloop, const KalSeedCollection *seedcol);
       void AddComboHits(bool firstloop, const ComboHitCollection *chcol);
+      void AddCosmicTrack(bool firstloop, const CosmicTrackSeedCollection *cosmiccol);
       void AddCrystalHits(bool firstloop, const CaloCrystalHitCollection *cryHitcol);
       void AddCaloClusters(bool firstloop, const CaloClusterCollection *clustercol);
 

@@ -28,7 +28,7 @@
 #include <TEveScene.h>
 #include <TEveProjectionManager.h>
 #include <TEveProjectionAxes.h>
-
+#include <TEveStraightLineSet.h>
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eMainWindow.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eHit.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eCluster.h"
@@ -64,7 +64,9 @@ namespace mu2e{
     fTeEvt(0),
     fTlRun(0),
     fTlEvt(0),
-    fHitsList(0),
+    fHitsList2D(0),
+    fHitsList3D(0),
+    fCrystalHitList(0),
     fTrackList(0),
     fClusterList(0),
     tList(0)
@@ -234,7 +236,7 @@ namespace mu2e{
    // TGeoVolume *tr = geom->MakeTube("tr", Si, rmin, rmax, dz);
     TEveGeoShape *tr = new TEveGeoShape();
     tr->SetShape(new TGeoTube(rmin, rmax, dz));
-    tr->SetMainColor(kPink+7);
+    tr->SetMainTransparency(100);
     orthodet->AddElement(tr);
       
     // ... Create tracker out of Silicon using the composite shape defined above
@@ -352,43 +354,79 @@ namespace mu2e{
   void TEveMu2eMainWindow::AddComboHits(bool firstloop, const ComboHitCollection *chcol){
     std::cout<<"[In AddComboHits()]"<<std::endl;
     if(chcol!=0){
-    if (fHitsList == 0) {
-      fHitsList = new TEveElementList("Hits");
-      fHitsList->IncDenyDestroy();     
+    if (fHitsList3D== 0) {
+      fHitsList3D = new TEveElementList("Hits");
+      fHitsList3D->IncDenyDestroy();     
     }
     else {
-      fHitsList->DestroyElements();  
+      fHitsList3D->DestroyElements();  
     }
-    TEveElementList *HitList = new TEveElementList("ComboHits");
+    if (fHitsList2D== 0) {
+      fHitsList2D = new TEveElementList("Hits");
+      fHitsList2D->IncDenyDestroy();     
+    }
+    else {
+      fHitsList2D->DestroyElements();  
+    }
+    TEveElementList *HitList2D = new TEveElementList("ComboHits2D");
+    TEveElementList *HitList3D = new TEveElementList("ComboHits3D");
     for(size_t i=0; i<chcol->size();i++){
 
       TEveMu2eHit *teve_hit = new TEveMu2eHit();
       ComboHit hit = (*chcol)[i];
       CLHEP::Hep3Vector HitPos(hit.pos().x(), hit.pos().y(), hit.pos().z());
       CLHEP::Hep3Vector pointInMu2e = mu2e_geom->PointToTracker(HitPos);
-
-      teve_hit->DrawHit("ComboHits",  1, pointInMu2e, HitList);
+      teve_hit->DrawHit("ComboHits3D",  1, pointInMu2e, HitList3D);
+      teve_hit->DrawHit("ComboHits2D",  1, HitPos, HitList2D);
       //TODO teve_hit->AddErrorBar(fHitsList, pointInMu2e);
-      fHitsList->AddElement(HitList);  
-      gEve->AddElement(fHitsList);
-      gEve->Redraw3D(kTRUE);  
+      fHitsList2D->AddElement(HitList2D); 
+      fHitsList2D->AddElement(HitList3D); 
+      // ... Import elements of the list into the projected views
+      tracker2Dproj->fXYMgr->ImportElements(fHitsList2D, tracker2Dproj->fDetXYScene); 
+      tracker2Dproj->fRZMgr->ImportElements(fHitsList2D, tracker2Dproj->fDetRZScene);
 
+      gEve->AddElement(fHitsList2D);
+      gEve->AddElement(fHitsList3D);
+      gEve->Redraw3D(kTRUE);  
+      
       }
      }
 	  }
 
+  void AddCosmicTrack(bool firstloop, const CosmicTrackSeedCollection *_cosmiccol){
+    std::cout<<"[In AddCosmicTrack() ] found Track "<<std::endl;
+		TEveStraightLineSet *CosmicTrackList = new TEveStraightLineSet();
+		for(size_t ist = 0; ist < _cosmiccol->size(); ++ist){
+			CosmicTrackSeed sts =(*_cosmiccol)[ist];
+			CosmicTrack st = sts._track;
+			
+			CosmicTrackList->SetLineColor(kGreen);
+			Float_t tz1 = -150;
+			Float_t tz2 = 150;
+			Float_t tx1 = st.InitParams.A0  + st.InitParams.A1*tz1;
+			Float_t tx2 = st.InitParams.A0  + st.InitParams.A1*tz2;
+			Float_t ty1 = st.InitParams.B0  + st.InitParams.B1*tz1;
+			Float_t ty2 = st.InitParams.B0  + st.InitParams.B1*tz2; 	
+			CosmicTrackList->AddLine(tx1, ty1, tz1, tx2, ty2, tz2);
+		
+			cout<<st.InitParams.A0<<"track "<<st.InitParams.A1<<st.InitParams.B1<<st.InitParams.B0<<endl;
+			gEve->AddElement(CosmicTrackList);
+		  gEve->Redraw3D(kTRUE);
+		
+	  }
+  }
 
   void TEveMu2eMainWindow::AddCrystalHits(bool firstloop, const CaloCrystalHitCollection *cryHitcol){
       std::cout<<"[In AddCaloCrystalHits()]"<<std::endl;
       cout<<cryHitcol->size()<<endl;
       Calorimeter const &cal = *(GeomHandle<Calorimeter>());
       if(cryHitcol!=0){
-	     if (fHitsList == 0) {
-		      fHitsList = new TEveElementList("Hits");
-		      fHitsList->IncDenyDestroy();     
+	     if (fCrystalHitList == 0) {
+		      fCrystalHitList = new TEveElementList("Hits");
+		      fCrystalHitList->IncDenyDestroy();     
 	      }
 	      else {
-		       fHitsList->DestroyElements();  
+		       fCrystalHitList->DestroyElements();  
 	       }
 
         TEveElementList *HitList = new TEveElementList("CrystalHits");
@@ -400,8 +438,8 @@ namespace mu2e{
 	        CLHEP::Hep3Vector pointInMu2e = mu2e_geom->PointToCalo(HitPos,diskId);
          
           teve_hit->DrawHit("CrystalHits",  1, pointInMu2e, HitList);
-          fHitsList->AddElement(HitList);  
-          gEve->AddElement(fHitsList);
+          fCrystalHitList->AddElement(HitList);  
+          gEve->AddElement(fCrystalHitList);
           gEve->Redraw3D(kTRUE);    
         }
       }

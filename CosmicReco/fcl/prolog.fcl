@@ -43,6 +43,7 @@ CHD : {
 	StrawHitFlagCollection : "FlagBkgHits:ComboHits"
 	TimeOffsets : {inputs : [ @sequence::DigiCompression.NoCosmicTimeMaps ]}
 }
+
 CosmicTrackFinder : {
     module_type		: CosmicTrackFinder
     ComboHitCollection     : "makePH"
@@ -55,7 +56,7 @@ CosmicTrackFinder : {
 	module_type : CosmicAnalyzer
 	ComboHitCollection : "makePH"
 	TimeClusterCollection : TimeClusterFinderCosmics
-        CosmicTrackSeedCollection : CosmicTrackFinder
+    CosmicTrackSeedCollection : CosmicTrackFinder
 	StrawDigiMCCollection : "compressDigiMCs"
 	TimeOffsets : {inputs : [ @sequence::DigiCompression.NoCosmicTimeMaps ]}
   }
@@ -89,6 +90,7 @@ CosmicMuonInfo : {
 	maxBackground : 9999  # Make a small number to limit digis not from the muon
 	  }
 }
+
 CosmicTracking : {
   producers :{
     TimeClusterFinderCosmics  : @local::TimeClusterFinderCosmics
