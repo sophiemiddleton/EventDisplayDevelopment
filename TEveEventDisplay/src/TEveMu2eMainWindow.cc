@@ -26,6 +26,7 @@
 #include <TEveGeoNode.h>
 #include <TEveViewer.h>
 #include <TEveScene.h>
+#include<TEveParamList.h>
 #include <TEveProjectionManager.h>
 #include <TEveProjectionAxes.h>
 #include <TEveStraightLineSet.h>
@@ -67,8 +68,10 @@ namespace mu2e{
     fHitsList2D(0),
     fHitsList3D(0),
     fCrystalHitList(0),
-    fTrackList(0),
-    fClusterList(0),
+    fTrackList2D(0),
+    fTrackList3D(0),
+    fClusterList2D(0),
+    fClusterList3D(0),
     tList(0)
     {
      
@@ -108,6 +111,10 @@ namespace mu2e{
         // TGGroupFrame *options = new TGGroupFrame(navFrame, "Options", kVerticalFrame);
         // options->SetTitlePos(TGGroupFrame::kLeft);
         // navFrame->AddFrame(options);
+
+        TEveParamList *edep = new TEveParamList("CaloEnergySelection");
+        gEve->AddToListTree(edep,0);
+        edep->AddParameter(TEveParamList::FloatConfig_t("Min Energy Depositied",20,0,100));
 
         // ... Create run num text entry widget and connect to "GotoEvent" rcvr in visutils
         TGHorizontalFrame* runoFrame = new TGHorizontalFrame(evtidFrame);
@@ -172,6 +179,52 @@ namespace mu2e{
       glv->CurrentCamera().Dolly(camDollyDelta_,kFALSE,kFALSE);
     }
 
+    void TEveMu2eMainWindow::StartCaloProjectionTab(){
+    // Create detector and event scenes for ortho views
+    calo2Dproj->fDetXYScene = gEve->SpawnNewScene("Calo XY Scene", "");
+    calo2Dproj->fDetRZScene = gEve->SpawnNewScene("Calo RZ Scene", "");
+    calo2Dproj->fEvtXYScene = gEve->SpawnNewScene("Calo Evt XY Scene", "");
+    calo2Dproj->fEvtRZScene = gEve->SpawnNewScene("Calo Evt RZ Scene", "");
+
+    // Create XY/RZ calo2Dprojection mgrs, draw projected axes, & add them to scenes
+    calo2Dproj->fXYMgr = new TEveProjectionManager(TEveProjection::kPT_RPhi);
+    TEveProjectionAxes* axes_xy = new TEveProjectionAxes(calo2Dproj->fXYMgr);
+    calo2Dproj->fDetXYScene->AddElement(axes_xy);
+    gEve->AddToListTree(axes_xy,kTRUE);
+    gEve->AddToListTree(calo2Dproj->fXYMgr,kTRUE);
+
+    calo2Dproj->fRZMgr = new TEveProjectionManager(TEveProjection::kPT_RPhi);
+    TEveProjectionAxes* axes_rz = new TEveProjectionAxes(calo2Dproj->fRZMgr);
+    calo2Dproj->fDetRZScene->AddElement(axes_rz);
+    gEve->AddToListTree(axes_rz,kTRUE);
+    gEve->AddToListTree(calo2Dproj->fRZMgr,kTRUE);
+
+    // Create side-by-side ortho XY & RZ views in new tab & add det/evt scenes
+    TEveWindowSlot *slot = 0;
+    TEveWindowPack *pack = 0;
+
+    slot = TEveWindow::CreateWindowInTab(gEve->GetBrowser()->GetTabRight());
+    pack = slot->MakePack();
+    pack->SetElementName("Calo Views");
+    pack->SetHorizontal();
+    pack->SetShowTitleBar(kFALSE);
+
+    pack->NewSlot()->MakeCurrent();
+    calo2Dproj->fXYView = gEve->SpawnNewViewer("Disk0 View", "");
+    calo2Dproj->fXYView->GetGLViewer()->SetCurrentCamera(TGLViewer::kCameraOrthoXOY);
+    calo2Dproj->fXYView->AddScene(calo2Dproj->fDetXYScene);
+    calo2Dproj->fXYView->AddScene(calo2Dproj->fEvtXYScene);
+
+    pack->NewSlot()->MakeCurrent();
+    calo2Dproj->fRZView = gEve->SpawnNewViewer("Disk1 View", "");
+    calo2Dproj->fRZView->GetGLViewer()->SetCurrentCamera(TGLViewer::kCameraOrthoXOY);
+    calo2Dproj->fRZView->AddScene(calo2Dproj->fDetRZScene);
+    calo2Dproj->fRZView->AddScene(calo2Dproj->fEvtRZScene);
+
+    gEve->GetBrowser()->GetTabRight()->SetTab(0);
+
+  }
+
   void TEveMu2eMainWindow::StartTrackerProjectionTab(){
     // Create detector and event scenes for ortho views
     tracker2Dproj->fDetXYScene = gEve->SpawnNewScene("Det XY Scene", "");
@@ -198,7 +251,7 @@ namespace mu2e{
 
     slot = TEveWindow::CreateWindowInTab(gEve->GetBrowser()->GetTabRight());
     pack = slot->MakePack();
-    pack->SetElementName("Ortho Views");
+    pack->SetElementName("Tracker Views");
     pack->SetHorizontal();
     pack->SetShowTitleBar(kFALSE);
 
@@ -218,12 +271,130 @@ namespace mu2e{
 
   }
 
+
+  void TEveMu2eMainWindow::PrepareCaloProjectionTab(const art::Run& run){
+    calo2Dproj->fDetXYScene->DestroyElements();
+    calo2Dproj->fDetRZScene->DestroyElements();
+    TEveElementList *orthodet0 = new TEveElementList("OrthoDet0");
+    TEveElementList *orthodet1 = new TEveElementList("OrthoDet1");
+    Calorimeter const &cal = *(GeomHandle<Calorimeter>());
+    const Disk& disk0 = cal.disk(0);
+    const Disk& disk1 = cal.disk(1);
+    
+    TGeoVolume* topvol = geom->GetTopVolume();
+   
+    TGeoMaterial *matSi = new TGeoMaterial("Si", 28.085,14,2.33);
+    TGeoMedium *Si = new TGeoMedium("Silicon",2, matSi);
+
+    Double_t dz0{disk0.geomInfo().crateDeltaZ()/10};
+    Double_t dz1{disk1.geomInfo().crateDeltaZ()/10};
+    Double_t rmin{disk0.innerRadius()/10};
+    Double_t rmax{disk0.outerRadius()/10};
+    cout<<"calo "<<rmin<<" "<<rmax<<" "<<dz1<<endl;
+    TEveGeoShape *calShape0 = new TEveGeoShape();
+    TEveGeoShape *calShape1 = new TEveGeoShape();
+
+    calShape0->SetShape(new TGeoTube(rmin, rmax, dz0));
+    calShape0->SetMainTransparency(100);
+    calShape1->SetShape(new TGeoTube(rmin, rmax, dz1));
+    calShape1->SetMainTransparency(100);
+    orthodet0->AddElement(calShape0);
+    orthodet1->AddElement(calShape1);
+
+    // ... Create cal out of Silicon using the composite shape defined above
+    TGeoShape *g0 = new TGeoTube("calo 2D disk0",rmin,rmax,dz0); 
+    TGeoVolume *calo0= new TGeoVolume("Calorimeter D0",g0, Si);
+    calo0->SetVisLeaves(kFALSE);
+    calo0->SetInvisible();
+
+    TGeoShape *g1 = new TGeoTube("calo 2D disk1",rmin,rmax,dz1); 
+    TGeoVolume *calo1= new TGeoVolume("Calorimeter D1",g1, Si);
+    calo1->SetVisLeaves(kFALSE);
+    calo1->SetInvisible();
+
+    CLHEP::Hep3Vector calo0Pos(0,0,dz0);
+    CLHEP::Hep3Vector pointInMu2e0 = mu2e_geom->PointToCalo(calo0Pos,0);
+    topvol->AddNode(calo0, 1, new TGeoTranslation(-390.4,0,-1194.2));
+
+    CLHEP::Hep3Vector calo1Pos(0,0,dz1);
+    CLHEP::Hep3Vector pointInMu2e1 = mu2e_geom->PointToCalo(calo1Pos,1);
+    topvol->AddNode(calo1, 1, new TGeoTranslation(-390.4,0,1262.0));
+   
+  
+    //...Add in the crystals:
+    for(unsigned int i = 0; i <674 ; i++){
+	    Crystal const &crystal = cal.crystal(i);
+      double crystalXLen = crystal.size().x();
+      double crystalYLen = crystal.size().y();
+      double crystalZLen = crystal.size().z();
+
+      CLHEP::Hep3Vector crystalPos   = cal.geomUtil().mu2eToDiskFF(0,crystal.position());
+      Double_t origin[3];
+      origin [0] = crystalPos.x()/10;
+      origin [1] = crystalPos.y()/10;
+      origin [2] = crystalPos.z()/10;
+
+      TEveGeoShape *crystalShape   = new TEveGeoShape();
+      crystalShape->SetMainTransparency(100);
+      crystalShape->SetShape(new TGeoBBox("crystal", (crystalXLen/2)/10, (crystalYLen/2)/10, (crystalZLen/2)/10, origin));//Add position in loop
+      orthodet0->AddElement(crystalShape);
+      
+      TGeoShape *c = new TGeoBBox("crystal", (crystalXLen/2)/10, (crystalYLen/2)/10, (crystalZLen/2)/10);
+      TGeoVolume *cry= new TGeoVolume("cry",c, Si);
+      cry->SetVisLeaves(kFALSE);
+      cry->SetInvisible();
+      topvol->AddNode(cry, 1, new TGeoTranslation(crystalPos.x()/10,crystalPos.y()/10,crystalPos.z()/10));
+		
+	  }
+
+     //...Add in the crystals:
+    for(unsigned int i = 0; i <674 ; i++){
+	    Crystal const &crystal = cal.crystal(i);
+      double crystalXLen = crystal.size().x();
+      double crystalYLen = crystal.size().y();
+      double crystalZLen = crystal.size().z();
+
+      CLHEP::Hep3Vector crystalPos   = cal.geomUtil().mu2eToDiskFF(1,crystal.position());
+      Double_t origin[3];
+      origin [0] = crystalPos.x()/10;
+      origin [1] = crystalPos.y()/10;
+      origin [2] = crystalPos.z()/10;
+
+      TEveGeoShape *crystalShape   = new TEveGeoShape();
+      crystalShape->SetMainTransparency(100);
+      crystalShape->SetShape(new TGeoBBox("crystal1", (crystalXLen/2)/10, (crystalYLen/2)/10, (crystalZLen/2)/10, origin));//Add position in loop
+      orthodet1->AddElement(crystalShape);
+      
+      TGeoShape *c = new TGeoBBox("crystal1", (crystalXLen/2)/10, (crystalYLen/2)/10, (crystalZLen/2)/10);
+      TGeoVolume *cry= new TGeoVolume("cry1",c, Si);
+      cry->SetVisLeaves(kFALSE);
+      cry->SetInvisible();
+      topvol->AddNode(cry, 1, new TGeoTranslation(crystalPos.x()/10,crystalPos.y()/10,crystalPos.z()/10));
+		
+	  }
+
+    gEve->AddGlobalElement(orthodet0);
+    gEve->AddGlobalElement(orthodet1);
+
+    // ... Import elements of the list into the projected views
+    calo2Dproj->fXYMgr->ImportElements(orthodet0, calo2Dproj->fDetXYScene);
+    calo2Dproj->fRZMgr->ImportElements(orthodet1, calo2Dproj->fDetRZScene);
+
+    // ... Turn OFF rendering of duplicate detector in main 3D view
+    gEve->GetGlobalScene()->FindChild("OrthoDet")->SetRnrState(kFALSE);
+
+    // ... Turn ON rendering of detector in RPhi and RZ views
+    calo2Dproj->fDetXYScene->FindChild("OrthoDet0 [P]")->SetRnrState(kTRUE);
+    calo2Dproj->fDetRZScene->FindChild("OrthoDet1 [P]")->SetRnrState(kTRUE);
+  }
+
   void TEveMu2eMainWindow::PrepareTrackerProjectionTab(const art::Run& run){
     tracker2Dproj->fDetXYScene->DestroyElements();
     tracker2Dproj->fDetRZScene->DestroyElements();
     TEveElementList *orthodet = new TEveElementList("OrthoDet");
 
     GeomHandle<Tracker> trkr;
+    
     TubsParams envelope(trkr->getInnerTrackerEnvelopeParams());
     TGeoVolume* topvol = geom->GetTopVolume();
    
@@ -233,18 +404,20 @@ namespace mu2e{
     Double_t dz{envelope.zHalfLength()/10};
     Double_t rmin{envelope.innerRadius()/10};
     Double_t rmax{envelope.outerRadius()/10};
-   // TGeoVolume *tr = geom->MakeTube("tr", Si, rmin, rmax, dz);
     TEveGeoShape *tr = new TEveGeoShape();
     tr->SetShape(new TGeoTube(rmin, rmax, dz));
+
     tr->SetMainTransparency(100);
     orthodet->AddElement(tr);
       
     // ... Create tracker out of Silicon using the composite shape defined above
-    TGeoShape *gs = new TGeoTube("tracker 2D",rmin,rmax,dz); 
+    TGeoShape *gs = new TGeoTube("tracker 2D",rmin,rmax,dz+1288); 
     TGeoVolume *tracker = new TGeoVolume("Tracker",gs, Si);
     tracker->SetVisLeaves(kFALSE);
     tracker->SetInvisible();
-    topvol->AddNode(tracker, 1, new TGeoTranslation(-390.4,0, +1017.1));
+    CLHEP::Hep3Vector trackerPos(0,0,dz);
+    CLHEP::Hep3Vector pointInMu2e = mu2e_geom->PointToTracker(trackerPos);
+    topvol->AddNode(tracker, 1, new TGeoTranslation(pointInMu2e.x()/10,pointInMu2e.y()/10, pointInMu2e.z()/10));
     gEve->AddGlobalElement(orthodet);
 
     // ... Import elements of the list into the projected views
@@ -308,9 +481,7 @@ namespace mu2e{
           {
             case kCM_BUTTON: 
                  if(param1==1111)
-                 {
-                 
-                    
+                 {                 
                  }
                  if(param1==1001)//Forward
                  {
@@ -370,22 +541,25 @@ namespace mu2e{
     }
     TEveElementList *HitList2D = new TEveElementList("ComboHits2D");
     TEveElementList *HitList3D = new TEveElementList("ComboHits3D");
+    
     for(size_t i=0; i<chcol->size();i++){
-
-      TEveMu2eHit *teve_hit = new TEveMu2eHit();
       ComboHit hit = (*chcol)[i];
+      TEveMu2eHit *teve_hit2D = new TEveMu2eHit(hit);
+      TEveMu2eHit *teve_hit3D = new TEveMu2eHit(hit);
+
       CLHEP::Hep3Vector HitPos(hit.pos().x(), hit.pos().y(), hit.pos().z());
       CLHEP::Hep3Vector pointInMu2e = mu2e_geom->PointToTracker(HitPos);
-      teve_hit->DrawHit("ComboHits3D",  1, pointInMu2e, HitList3D);
-      teve_hit->DrawHit("ComboHits2D",  1, HitPos, HitList2D);
-      //TODO teve_hit->AddErrorBar(fHitsList, pointInMu2e);
+
+      teve_hit3D->DrawHit3D("ComboHits3D",  1, pointInMu2e, HitList3D);
+      teve_hit2D->DrawHit2D("ComboHits2D",  1, HitPos, HitList2D);
+
       fHitsList2D->AddElement(HitList2D); 
-      fHitsList2D->AddElement(HitList3D); 
+      fHitsList3D->AddElement(HitList3D); 
       // ... Import elements of the list into the projected views
       tracker2Dproj->fXYMgr->ImportElements(fHitsList2D, tracker2Dproj->fDetXYScene); 
       tracker2Dproj->fRZMgr->ImportElements(fHitsList2D, tracker2Dproj->fDetRZScene);
 
-      gEve->AddElement(fHitsList2D);
+      //gEve->AddElement(fHitsList2D);
       gEve->AddElement(fHitsList3D);
       gEve->Redraw3D(kTRUE);  
       
@@ -437,7 +611,7 @@ namespace mu2e{
           CLHEP::Hep3Vector HitPos(cal.geomUtil().mu2eToDiskFF(diskId, cal.crystal(hit.id()).position()));
 	        CLHEP::Hep3Vector pointInMu2e = mu2e_geom->PointToCalo(HitPos,diskId);
          
-          teve_hit->DrawHit("CrystalHits",  1, pointInMu2e, HitList);
+          teve_hit->DrawHit3D("CrystalHits",  1, pointInMu2e, HitList);
           fCrystalHitList->AddElement(HitList);  
           gEve->AddElement(fCrystalHitList);
           gEve->Redraw3D(kTRUE);    
@@ -448,23 +622,43 @@ namespace mu2e{
    void TEveMu2eMainWindow::AddCaloClusters(bool firstloop, const CaloClusterCollection *clustercol){
       
       if(clustercol!=0){
-	     if (fClusterList == 0) {
-		      fClusterList = new TEveElementList("Hits");
-		      fClusterList->IncDenyDestroy();     
+	     if (fClusterList3D == 0) {
+		      fClusterList3D = new TEveElementList("Clusters3D");
+		      fClusterList3D->IncDenyDestroy();     
 	      }
 	      else {
-		       fClusterList->DestroyElements();  
+		       fClusterList3D->DestroyElements();  
 	       }
-        TEveElementList *ClusterList = new TEveElementList("CaloClusters");
+        TEveElementList *ClusterList3D = new TEveElementList("CaloClusters");
+        if (fClusterList2D == 0) {
+          fClusterList2D = new TEveElementList("Clusters2D");
+          fClusterList2D->IncDenyDestroy();     
+        }
+        else {
+         fClusterList2D->DestroyElements();  
+        }
+        TEveElementList *ClusterList2D = new TEveElementList("CaloClusters");
         for(unsigned int i=0; i<clustercol->size();i++){
-          TEveMu2eCluster *teve_cluster = new TEveMu2eCluster();
+
           CaloCluster const  &cluster= (*clustercol)[i];
+          TEveMu2eCluster *teve_cluster3D = new TEveMu2eCluster(cluster);
+          TEveMu2eCluster *teve_cluster2D = new TEveMu2eCluster(cluster);
+
           CLHEP::Hep3Vector COG(cluster.cog3Vector().x(),cluster.cog3Vector().y(), cluster.cog3Vector().z());
 	        CLHEP::Hep3Vector pointInMu2e = mu2e_geom->PointToCalo(COG,cluster.diskId());
-          double edep = cluster.energyDep();
-          teve_cluster->DrawCluster("CaloClusters", edep, pointInMu2e, ClusterList);
-          fClusterList->AddElement(ClusterList);  
-          gEve->AddElement(fClusterList);
+          teve_cluster3D->DrawCluster("CaloCluster3D", pointInMu2e, ClusterList3D);
+          fClusterList3D->AddElement(ClusterList3D);  
+
+          teve_cluster2D->DrawCluster("CaloCluster2D", COG, ClusterList2D);
+          fClusterList2D->AddElement(ClusterList2D); 
+          
+          if(cluster.diskId()==0)  calo2Dproj->fXYMgr->ImportElements(fClusterList2D, calo2Dproj->fDetXYScene); 
+
+          if(cluster.diskId()==1) calo2Dproj->fRZMgr->ImportElements(fClusterList2D, calo2Dproj->fDetRZScene);
+     
+         
+        
+          gEve->AddElement(fClusterList3D);
           gEve->Redraw3D(kTRUE);    
         }
       }
@@ -474,12 +668,20 @@ namespace mu2e{
     std::cout<<"Adding Helix in custom pieces"<<std::endl;
     if(seedcol!=0){
 
-    if (fTrackList == 0) {
-      fTrackList = new TEveElementList("Hits");
-      fTrackList->IncDenyDestroy();     
+    if (fTrackList3D == 0) {
+      fTrackList3D = new TEveElementList("Helix3D");
+      fTrackList3D->IncDenyDestroy();     
     }
     else {
-      fTrackList->DestroyElements();  
+      fTrackList3D->DestroyElements();  
+    }
+
+    if (fTrackList2D == 0) {
+      fTrackList2D  = new TEveElementList("Helix2D");
+      fTrackList2D->IncDenyDestroy();     
+    }
+    else {
+      fTrackList2D->DestroyElements();  
     }
 
 
@@ -511,103 +713,30 @@ namespace mu2e{
 
         CLHEP::Hep3Vector Pos(line->Position.x(), line->Position.y(), zpos+line->Position.z());
         CLHEP::Hep3Vector InMu2e = mu2e_geom->PointToTracker(Pos);
-        cout<<i<<endl;
+ 
         line->SetNextPoint(InMu2e.x()/10+line->Direction.x()*line->Momentum/10,InMu2e.y()/10+line->Direction.y()*line->Momentum/10, InMu2e.z()/10-TrackerLength/2);
 
       }
     }
+  /*TEveMu2eTrkEllipse *TrkEllipse = new TEveMu2eTrkEllipse();
+    TrkEllipse->SetX1(kseed.helix()->helix().centerx()/10);
+    TrkEllipse->SetY1(kseed.helix()->helix().centery()/10);
+    TrkEllipse->SetR1(kseed.helix()->helix().radius()/10);
+    TrkEllipse->SetLineColor(kYellow); 
+    
+    fTrackList2D->AddElement(TrkEllipse);*/
+    tracker2Dproj->fXYMgr->ImportElements(fTrackList2D, tracker2Dproj->fDetXYScene); 
 
-      line->SetLineColor(kGreen);
-      line->SetLineWidth(3);
-      fTrackList->AddElement(line);
-      gEve->AddElement(fTrackList);
-      gEve->Redraw3D(kTRUE);
+   line->SetLineColor(kGreen);
+    line->SetLineWidth(3);
+    fTrackList3D->AddElement(line);
+    gEve->AddElement(fTrackList3D);
+    gEve->Redraw3D(kTRUE);
 
 
       }
     }
 }
-/*
-void TEveMu2eMainWindow::AddHelixEveTracks(bool firstloop, const KalSeedCollection *seedcol){
-      std::cout<<"Adding Helix using TEveTracks"<<std::endl;
-      if(seedcol!=0){
-        if (tList == 0) {
-          tList = new TEveTrackList("Tracks");
-          tList->SetLineWidth(4);
-        } else{
-          tList->DestroyElements();
-        }
-        GeomHandle<mu2e::BFieldManager> bf;
-        TEveMu2eBField *field = new TEveMu2eBField();
-        for(size_t k = 0; k < seedcol->size(); k++){
-            KalSeed kseed = (*seedcol)[k];
-
-            const std::vector<KalSegment> &segments = kseed.segments();
-            size_t nSeg = segments.size();
-            const KalSegment &Firstseg = kseed.segments().front();
-            const KalSegment &Lastseg = kseed.segments().back();
-            double fltlen_1 = Firstseg.fmin();
-            double fltlen_N = Lastseg.fmax();
-            XYZVec mom1, mom2;
-            Firstseg.mom(fltlen_1, mom1);
-            Lastseg.mom(fltlen_N, mom2);
-            double mommag1 = sqrt(mom1.Mag2());
-            double mommag2 = sqrt(mom2.Mag2());
-           // double t = kseed.t0().t0();
-           // double flt0 = kseed.flt0()
-            //double velocity = kseed.particle().beta((p1+p2)/2)*CLHEP::c_light;
-
-            TEveRecTrack t;
-            //TEveTrackPropagator *propagator = tList->GetPropagator();
-            TEveTrackPropagator* trkProp = tList->GetPropagator();
-          
-		        CLHEP::Hep3Vector field = bf.getBField(0,0,0);
-	
-		        //trkProp->SetMagField(field);
-            t.fBeta = kseed.particle().beta((mommag1+mommag2)/2);
-            t.fSign = kseed.particle().charge();
-            TEveTrack *trk = new TEveTrack(&t);
-            
-            for(size_t i=0; i<nSeg; i++){
-              const KalSegment &seg = segments.at(i);
-              fltlen_1 = seg.fmin();    
-              fltlen_N = seg.fmax();
-              if(i!=0){
-                double fltMaxPrev = segments.at(i-1).fmax();
-                fltlen_1 = (fltlen_1+fltMaxPrev)/2;
-              }
-              if(i+1<nSeg){
-                double fltMaxNext = segments.at(i+1).fmin();
-                fltlen_N = (fltlen_N+fltMaxNext)/2;
-              }
-              XYZVec pos1, pos2;
-              seg.helix().position(fltlen_1,pos1);
-              seg.helix().position(fltlen_N,pos2);
-              
-              CLHEP::Hep3Vector Pos1(pos1.x(), pos1.y(), pos1.z());
-		          CLHEP::Hep3Vector P1InMu2e = mu2e_geom->PointToTracker(Pos1);
-              TEveVector evepos1(P1InMu2e.x()/10, P1InMu2e.y()/10, P1InMu2e.z()/10);
-
-              CLHEP::Hep3Vector Pos2(pos2.x(), pos2.y(), pos2.z());
-		          CLHEP::Hep3Vector P2InMu2e = mu2e_geom->PointToTracker(Pos2);
-              TEveVector evepos2(P2InMu2e.x()/10, P2InMu2e.y()/10, P1InMu2e.z()/10);
-
-              TEveVector evemom(mom1.x(),mom1.y(),mom1.z());
-              trk->AddPathMark(TEvePathMark(TEvePathMark::kReference, evepos1, evemom));
-              trk->AddPathMark(TEvePathMark(TEvePathMark::kReference, evepos2, evemom));
-              trk->SetMainColor(kCyan);
-		          tList->AddElement(trk);
-            }
-     
-              tList->MakeTracks();
-	            tList->SetLineColor(kGreen);
-		          gEve->AddElement(tList);
-              gEve->Redraw3D(kTRUE);
-
-        }
-      }
-   }
-*/
 
 
 

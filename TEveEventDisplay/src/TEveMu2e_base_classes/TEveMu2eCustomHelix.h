@@ -11,7 +11,7 @@
 
 namespace mu2e {
 
-class   TEveMu2eCustomHelix: public TEveElement, public TPolyLine3D { //public THelix
+class   TEveMu2eCustomHelix: public TEveElement, public TPolyLine3D { 
 
 
   public:
@@ -25,6 +25,8 @@ class   TEveMu2eCustomHelix: public TEveElement, public TPolyLine3D { //public T
     HelixSeed fHelixSeed;
 
     void DrawHelixTrack();
+    void Draw2DProjection();
+
     void SetPostionAndDirectionFromHelixSeed(double zpos){
       fHelixSeed.helix().position(Position);
       fHelixSeed.helix().direction(zpos, Direction);

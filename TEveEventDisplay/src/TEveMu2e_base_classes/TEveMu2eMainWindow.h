@@ -6,6 +6,8 @@
 #include <TText.h>
 //libGeom
 #include <TGeoManager.h>
+#include <TBox.h>
+#include <TGeoBBox.h>
 //TEve
 #include <TEveTrack.h>
 #include <TEveManager.h>
@@ -22,6 +24,7 @@
 #include  "TEveEventDisplay/src/dict_classes/Geom_Interface.h"
 #include  "TEveEventDisplay/src/dict_classes/Collection_Filler.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2e2DProjection.h"
+#include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eTrkEllipse.h"
 #include "RecoDataProducts/inc/ComboHit.hh"
 
 
@@ -45,6 +48,10 @@ namespace mu2e{
 
       void StartTrackerProjectionTab();
       void PrepareTrackerProjectionTab(const art::Run& run);
+
+      void StartCaloProjectionTab();
+      void PrepareCaloProjectionTab(const art::Run& run);
+
       void SetRunGeometry(const art::Run& run, int _diagLevel);
       Bool_t ProcessMessage(Long_t msg, Long_t param1, Long_t param2);
       void  setEvent(const art::Event& event, bool firstLoop, Data_Collections &data);
@@ -81,9 +88,13 @@ namespace mu2e{
       TEveElementList *fHitsList2D;
       TEveElementList *fHitsList3D;
       TEveElementList *fCrystalHitList;
-      TEveElementList *fTrackList;
-      TEveElementList *fClusterList;
+      TEveElementList *fTrackList2D;
+      TEveElementList *fTrackList3D;
+      TEveElementList *fClusterList2D;
+      TEveElementList *fClusterList3D;
       TEveTrackList *tList;
+  
+
       //TODO - these should be set in the fcl file
       bool _showBuilding = false;
       bool _showDSOnly = true;

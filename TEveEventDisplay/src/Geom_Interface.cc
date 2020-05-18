@@ -187,7 +187,7 @@ namespace mu2e{
 	CLHEP::Hep3Vector Geom_Interface::GetCaloCenter(int nDisk){
     std::string calfilename("Mu2eG4/geom/calorimeter_CsI.txt");
     SimpleConfig CalConfig(calfilename);
-    double zCenter;
+    double zCenter = 0;
     if(nDisk==0) zCenter = CalConfig.getDouble("calorimeter.caloMotherZ0")*CLHEP::mm + 100;
     if(nDisk==1) zCenter = CalConfig.getDouble("calorimeter.caloMotherZ1")*CLHEP::mm - 600;
 

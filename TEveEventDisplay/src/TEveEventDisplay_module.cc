@@ -102,12 +102,14 @@ void TEveEventDisplay::beginJob(){
   }
   _frame = new TEveMu2eMainWindow(gClient->GetRoot(), 1000,600, _pset);
   _frame->StartTrackerProjectionTab();
+  _frame->StartCaloProjectionTab();
 }
 
 
 void TEveEventDisplay::beginRun(const art::Run& run){
   _frame->SetRunGeometry(run, _diagLevel);
   _frame->PrepareTrackerProjectionTab(run);
+  _frame->PrepareCaloProjectionTab(run);
 }
 
 

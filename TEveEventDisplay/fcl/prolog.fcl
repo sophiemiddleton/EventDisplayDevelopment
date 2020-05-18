@@ -20,7 +20,7 @@ TEveEventDisplayHelix : {
       HelixSeedCollection       :  "HelixFinderDe:Negative"
       KalSeedCollection         :  "KFFDeM"
       addHits 			            : false
-      addTracks 			          : false
+      addTracks 			          : true
       addCrvHits			          : false
       addCosmicSeedFit	        : false
       addClusters			          : true
@@ -39,6 +39,7 @@ TEveEventDisplayCosmics : {
       CosmicTrackSeedCollection 	: "CosmicTrackFinder"
       CaloClusterCollection		    : NULL
       CaloCrystalHitCollection    : NULL
+      #CrvCoincidenceClusterCollection : "CrvCoincidenceClusterFinder"
       HelixSeedCollection         : NULL
       KalSeedCollection           : NULL
       addHits 			              : true
