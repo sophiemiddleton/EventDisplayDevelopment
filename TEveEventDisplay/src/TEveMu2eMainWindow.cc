@@ -181,10 +181,10 @@ namespace mu2e{
 
     void TEveMu2eMainWindow::StartCaloProjectionTab(){
     // Create detector and event scenes for ortho views
-    calo2Dproj->fDetXYScene = gEve->SpawnNewScene("Calo XY Scene", "");
-    calo2Dproj->fDetRZScene = gEve->SpawnNewScene("Calo RZ Scene", "");
-    calo2Dproj->fEvtXYScene = gEve->SpawnNewScene("Calo Evt XY Scene", "");
-    calo2Dproj->fEvtRZScene = gEve->SpawnNewScene("Calo Evt RZ Scene", "");
+    calo2Dproj->fDetXYScene = gEve->SpawnNewScene("Calo XY D0 Scene", "");
+    calo2Dproj->fDetRZScene = gEve->SpawnNewScene("Calo XY D1 Scene", "");
+    calo2Dproj->fEvtXYScene = gEve->SpawnNewScene("Calo Evt XY D0 Scene", "");
+    calo2Dproj->fEvtRZScene = gEve->SpawnNewScene("Calo Evt XY D1 Scene", "");
 
     // Create XY/RZ calo2Dprojection mgrs, draw projected axes, & add them to scenes
     calo2Dproj->fXYMgr = new TEveProjectionManager(TEveProjection::kPT_RPhi);
@@ -199,7 +199,7 @@ namespace mu2e{
     gEve->AddToListTree(axes_rz,kTRUE);
     gEve->AddToListTree(calo2Dproj->fRZMgr,kTRUE);
 
-    // Create side-by-side ortho XY & RZ views in new tab & add det/evt scenes
+    // Create side-by-side ortho D1, D2 views in new tab & add det/evt scenes
     TEveWindowSlot *slot = 0;
     TEveWindowPack *pack = 0;
 
@@ -277,20 +277,20 @@ namespace mu2e{
     calo2Dproj->fDetRZScene->DestroyElements();
     TEveElementList *orthodet0 = new TEveElementList("OrthoDet0");
     TEveElementList *orthodet1 = new TEveElementList("OrthoDet1");
+
+    TGeoMaterial *matSi = new TGeoMaterial("Si", 28.085,14,2.33);
+    TGeoMedium *Si = new TGeoMedium("Silicon",2, matSi);
+    TGeoVolume* topvol = geom->GetTopVolume(); 
+
     Calorimeter const &cal = *(GeomHandle<Calorimeter>());
     const Disk& disk0 = cal.disk(0);
     const Disk& disk1 = cal.disk(1);
     
-    TGeoVolume* topvol = geom->GetTopVolume();
-   
-    TGeoMaterial *matSi = new TGeoMaterial("Si", 28.085,14,2.33);
-    TGeoMedium *Si = new TGeoMedium("Silicon",2, matSi);
-
     Double_t dz0{disk0.geomInfo().crateDeltaZ()/10};
     Double_t dz1{disk1.geomInfo().crateDeltaZ()/10};
     Double_t rmin{disk0.innerRadius()/10};
     Double_t rmax{disk0.outerRadius()/10};
-    cout<<"calo "<<rmin<<" "<<rmax<<" "<<dz1<<endl;
+
     TEveGeoShape *calShape0 = new TEveGeoShape();
     TEveGeoShape *calShape1 = new TEveGeoShape();
 
@@ -314,14 +314,14 @@ namespace mu2e{
 
     CLHEP::Hep3Vector calo0Pos(0,0,dz0);
     CLHEP::Hep3Vector pointInMu2e0 = mu2e_geom->PointToCalo(calo0Pos,0);
-    topvol->AddNode(calo0, 1, new TGeoTranslation(-390.4,0,-1194.2));
+    topvol->AddNode(calo0, 1, new TGeoTranslation(-390.4,0,1194.2));
 
     CLHEP::Hep3Vector calo1Pos(0,0,dz1);
     CLHEP::Hep3Vector pointInMu2e1 = mu2e_geom->PointToCalo(calo1Pos,1);
     topvol->AddNode(calo1, 1, new TGeoTranslation(-390.4,0,1262.0));
    
   
-    //...Add in the crystals:
+    //...Add in the crystals in D0:
     for(unsigned int i = 0; i <674 ; i++){
 	    Crystal const &crystal = cal.crystal(i);
       double crystalXLen = crystal.size().x();
@@ -336,18 +336,18 @@ namespace mu2e{
 
       TEveGeoShape *crystalShape   = new TEveGeoShape();
       crystalShape->SetMainTransparency(100);
-      crystalShape->SetShape(new TGeoBBox("crystal", (crystalXLen/2)/10, (crystalYLen/2)/10, (crystalZLen/2)/10, origin));//Add position in loop
+      crystalShape->SetShape(new TGeoBBox("crystalD0", (crystalXLen/2)/10, (crystalYLen/2)/10, (crystalZLen/2)/10, origin));
       orthodet0->AddElement(crystalShape);
       
-      TGeoShape *c = new TGeoBBox("crystal", (crystalXLen/2)/10, (crystalYLen/2)/10, (crystalZLen/2)/10);
-      TGeoVolume *cry= new TGeoVolume("cry",c, Si);
+      TGeoShape *c = new TGeoBBox("crystalD0", (crystalXLen/2)/10, (crystalYLen/2)/10, (crystalZLen/2)/10);
+      TGeoVolume *cry= new TGeoVolume("cryD0",c, Si);
       cry->SetVisLeaves(kFALSE);
       cry->SetInvisible();
       topvol->AddNode(cry, 1, new TGeoTranslation(crystalPos.x()/10,crystalPos.y()/10,crystalPos.z()/10));
 		
 	  }
 
-     //...Add in the crystals:
+    //...Add in crystals to D1:
     for(unsigned int i = 0; i <674 ; i++){
 	    Crystal const &crystal = cal.crystal(i);
       double crystalXLen = crystal.size().x();
@@ -362,11 +362,11 @@ namespace mu2e{
 
       TEveGeoShape *crystalShape   = new TEveGeoShape();
       crystalShape->SetMainTransparency(100);
-      crystalShape->SetShape(new TGeoBBox("crystal1", (crystalXLen/2)/10, (crystalYLen/2)/10, (crystalZLen/2)/10, origin));//Add position in loop
+      crystalShape->SetShape(new TGeoBBox("crystalD1", (crystalXLen/2)/10, (crystalYLen/2)/10, (crystalZLen/2)/10, origin));
       orthodet1->AddElement(crystalShape);
       
-      TGeoShape *c = new TGeoBBox("crystal1", (crystalXLen/2)/10, (crystalYLen/2)/10, (crystalZLen/2)/10);
-      TGeoVolume *cry= new TGeoVolume("cry1",c, Si);
+      TGeoShape *c = new TGeoBBox("crystalD1", (crystalXLen/2)/10, (crystalYLen/2)/10, (crystalZLen/2)/10);
+      TGeoVolume *cry= new TGeoVolume("cryD1",c, Si);
       cry->SetVisLeaves(kFALSE);
       cry->SetInvisible();
       topvol->AddNode(cry, 1, new TGeoTranslation(crystalPos.x()/10,crystalPos.y()/10,crystalPos.z()/10));
