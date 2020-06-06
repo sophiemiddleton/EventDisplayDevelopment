@@ -179,6 +179,12 @@ namespace mu2e{
       glv->CurrentCamera().Dolly(camDollyDelta_,kFALSE,kFALSE);
     }
 
+  /* TODO
+    void TEveMu2eMainWindow::CreateDetectors(const art::Run& run){
+    Mu2eCalo->DrawCaloDetector(run, geom);
+    Mu2eTracker->DrawTrackerDetector(run, geom);
+  }*/
+
     void TEveMu2eMainWindow::StartCaloProjectionTab(){
     // Create detector and event scenes for ortho views
     calo2Dproj->fDetXYScene = gEve->SpawnNewScene("Calo XY D0 Scene", "");
@@ -277,101 +283,8 @@ namespace mu2e{
     calo2Dproj->fDetRZScene->DestroyElements();
     TEveElementList *orthodet0 = new TEveElementList("OrthoDet0");
     TEveElementList *orthodet1 = new TEveElementList("OrthoDet1");
-
-    TGeoMaterial *matSi = new TGeoMaterial("Si", 28.085,14,2.33);
-    TGeoMedium *Si = new TGeoMedium("Silicon",2, matSi);
     TGeoVolume* topvol = geom->GetTopVolume(); 
-
-    Calorimeter const &cal = *(GeomHandle<Calorimeter>());
-    const Disk& disk0 = cal.disk(0);
-    const Disk& disk1 = cal.disk(1);
-    
-    Double_t dz0{disk0.geomInfo().crateDeltaZ()/10};
-    Double_t dz1{disk1.geomInfo().crateDeltaZ()/10};
-    Double_t rmin{disk0.innerRadius()/10};
-    Double_t rmax{disk0.outerRadius()/10};
-
-    TEveGeoShape *calShape0 = new TEveGeoShape();
-    TEveGeoShape *calShape1 = new TEveGeoShape();
-
-    calShape0->SetShape(new TGeoTube(rmin, rmax, dz0));
-    calShape0->SetMainTransparency(100);
-    calShape1->SetShape(new TGeoTube(rmin, rmax, dz1));
-    calShape1->SetMainTransparency(100);
-    orthodet0->AddElement(calShape0);
-    orthodet1->AddElement(calShape1);
-
-    // ... Create cal out of Silicon using the composite shape defined above
-    TGeoShape *g0 = new TGeoTube("calo 2D disk0",rmin,rmax,dz0); 
-    TGeoVolume *calo0= new TGeoVolume("Calorimeter D0",g0, Si);
-    calo0->SetVisLeaves(kFALSE);
-    calo0->SetInvisible();
-
-    TGeoShape *g1 = new TGeoTube("calo 2D disk1",rmin,rmax,dz1); 
-    TGeoVolume *calo1= new TGeoVolume("Calorimeter D1",g1, Si);
-    calo1->SetVisLeaves(kFALSE);
-    calo1->SetInvisible();
-
-    CLHEP::Hep3Vector calo0Pos(0,0,dz0);
-    CLHEP::Hep3Vector pointInMu2e0 = mu2e_geom->PointToCalo(calo0Pos,0);
-    topvol->AddNode(calo0, 1, new TGeoTranslation(-390.4,0,1194.2));
-
-    CLHEP::Hep3Vector calo1Pos(0,0,dz1);
-    CLHEP::Hep3Vector pointInMu2e1 = mu2e_geom->PointToCalo(calo1Pos,1);
-    topvol->AddNode(calo1, 1, new TGeoTranslation(-390.4,0,1262.0));
-   
-  
-    //...Add in the crystals in D0:
-    for(unsigned int i = 0; i <674 ; i++){
-	    Crystal const &crystal = cal.crystal(i);
-      double crystalXLen = crystal.size().x();
-      double crystalYLen = crystal.size().y();
-      double crystalZLen = crystal.size().z();
-
-      CLHEP::Hep3Vector crystalPos   = cal.geomUtil().mu2eToDiskFF(0,crystal.position());
-      Double_t origin[3];
-      origin [0] = crystalPos.x()/10;
-      origin [1] = crystalPos.y()/10;
-      origin [2] = crystalPos.z()/10;
-
-      TEveGeoShape *crystalShape   = new TEveGeoShape();
-      crystalShape->SetMainTransparency(100);
-      crystalShape->SetShape(new TGeoBBox("crystalD0", (crystalXLen/2)/10, (crystalYLen/2)/10, (crystalZLen/2)/10, origin));
-      orthodet0->AddElement(crystalShape);
-      
-      TGeoShape *c = new TGeoBBox("crystalD0", (crystalXLen/2)/10, (crystalYLen/2)/10, (crystalZLen/2)/10);
-      TGeoVolume *cry= new TGeoVolume("cryD0",c, Si);
-      cry->SetVisLeaves(kFALSE);
-      cry->SetInvisible();
-      topvol->AddNode(cry, 1, new TGeoTranslation(crystalPos.x()/10,crystalPos.y()/10,crystalPos.z()/10));
-		
-	  }
-
-    //...Add in crystals to D1:
-    for(unsigned int i = 0; i <674 ; i++){
-	    Crystal const &crystal = cal.crystal(i);
-      double crystalXLen = crystal.size().x();
-      double crystalYLen = crystal.size().y();
-      double crystalZLen = crystal.size().z();
-
-      CLHEP::Hep3Vector crystalPos   = cal.geomUtil().mu2eToDiskFF(1,crystal.position());
-      Double_t origin[3];
-      origin [0] = crystalPos.x()/10;
-      origin [1] = crystalPos.y()/10;
-      origin [2] = crystalPos.z()/10;
-
-      TEveGeoShape *crystalShape   = new TEveGeoShape();
-      crystalShape->SetMainTransparency(100);
-      crystalShape->SetShape(new TGeoBBox("crystalD1", (crystalXLen/2)/10, (crystalYLen/2)/10, (crystalZLen/2)/10, origin));
-      orthodet1->AddElement(crystalShape);
-      
-      TGeoShape *c = new TGeoBBox("crystalD1", (crystalXLen/2)/10, (crystalYLen/2)/10, (crystalZLen/2)/10);
-      TGeoVolume *cry= new TGeoVolume("cryD1",c, Si);
-      cry->SetVisLeaves(kFALSE);
-      cry->SetInvisible();
-      topvol->AddNode(cry, 1, new TGeoTranslation(crystalPos.x()/10,crystalPos.y()/10,crystalPos.z()/10));
-		
-	  }
+    Mu2eCalo->DrawCaloDetector(run, topvol,orthodet0,orthodet1);
 
     gEve->AddGlobalElement(orthodet0);
     gEve->AddGlobalElement(orthodet1);
@@ -392,32 +305,9 @@ namespace mu2e{
     tracker2Dproj->fDetXYScene->DestroyElements();
     tracker2Dproj->fDetRZScene->DestroyElements();
     TEveElementList *orthodet = new TEveElementList("OrthoDet");
-
-    GeomHandle<Tracker> trkr;
-    
-    TubsParams envelope(trkr->getInnerTrackerEnvelopeParams());
     TGeoVolume* topvol = geom->GetTopVolume();
-   
-    TGeoMaterial *matSi = new TGeoMaterial("Si", 28.085,14,2.33);
-    TGeoMedium *Si = new TGeoMedium("Silicon",2, matSi);
+    Mu2eTracker->DrawTrackerDetector(run, topvol, orthodet);
 
-    Double_t dz{envelope.zHalfLength()/10};
-    Double_t rmin{envelope.innerRadius()/10};
-    Double_t rmax{envelope.outerRadius()/10};
-    TEveGeoShape *tr = new TEveGeoShape();
-    tr->SetShape(new TGeoTube(rmin, rmax, dz));
-
-    tr->SetMainTransparency(100);
-    orthodet->AddElement(tr);
-      
-    // ... Create tracker out of Silicon using the composite shape defined above
-    TGeoShape *gs = new TGeoTube("tracker 2D",rmin,rmax,dz+1288); 
-    TGeoVolume *tracker = new TGeoVolume("Tracker",gs, Si);
-    tracker->SetVisLeaves(kFALSE);
-    tracker->SetInvisible();
-    CLHEP::Hep3Vector trackerPos(0,0,dz);
-    CLHEP::Hep3Vector pointInMu2e = mu2e_geom->PointToTracker(trackerPos);
-    topvol->AddNode(tracker, 1, new TGeoTranslation(pointInMu2e.x()/10,pointInMu2e.y()/10, pointInMu2e.z()/10));
     gEve->AddGlobalElement(orthodet);
 
     // ... Import elements of the list into the projected views
@@ -655,9 +545,7 @@ namespace mu2e{
           if(cluster.diskId()==0)  calo2Dproj->fXYMgr->ImportElements(fClusterList2D, calo2Dproj->fDetXYScene); 
 
           if(cluster.diskId()==1) calo2Dproj->fRZMgr->ImportElements(fClusterList2D, calo2Dproj->fDetRZScene);
-     
-         
-        
+    
           gEve->AddElement(fClusterList3D);
           gEve->Redraw3D(kTRUE);    
         }

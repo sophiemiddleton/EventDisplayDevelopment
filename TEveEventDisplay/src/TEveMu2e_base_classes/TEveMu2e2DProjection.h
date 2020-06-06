@@ -3,7 +3,8 @@
 
 #include <TObject.h>
 #include <TEveProjectionManager.h>
-
+#include <TEveViewer.h>
+#include <TEveScene.h>
 
 namespace mu2e {
 

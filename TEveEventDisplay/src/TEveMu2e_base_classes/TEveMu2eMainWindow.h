@@ -26,7 +26,8 @@
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2e2DProjection.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eTrkEllipse.h"
 #include "RecoDataProducts/inc/ComboHit.hh"
-
+#include "TEveEventDisplay/src/shape_classes/TEveMu2eCalorimeter.h"
+#include "TEveEventDisplay/src/shape_classes/TEveMu2eTracker.h"
 
 class TBox;
 class TGTextEntry;
@@ -48,7 +49,6 @@ namespace mu2e{
 
       void StartTrackerProjectionTab();
       void PrepareTrackerProjectionTab(const art::Run& run);
-
       void StartCaloProjectionTab();
       void PrepareCaloProjectionTab(const art::Run& run);
 
@@ -84,6 +84,8 @@ namespace mu2e{
 
       TEveMu2e2DProjection *tracker2Dproj = new TEveMu2e2DProjection();
       TEveMu2e2DProjection *calo2Dproj = new TEveMu2e2DProjection();
+      TEveMu2eCalorimeter *Mu2eCalo = new TEveMu2eCalorimeter();
+      TEveMu2eTracker *Mu2eTracker  = new TEveMu2eTracker();
 
       TEveElementList *fHitsList2D;
       TEveElementList *fHitsList3D;

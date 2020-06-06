@@ -11,5 +11,7 @@
   <class name="mu2e::TEveMu2eBField"/>
   <class name="mu2e::TEveMu2e2DProjection"/>
   <class name="mu2e::TEveMu2eTrkEllipse"/>
+  <class name="mu2e::TEveMu2eTracker"/>
+  <class name="mu2e::TEveMu2eCalorimeter"/>
 </lcgdict>
 
