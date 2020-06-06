@@ -6,6 +6,12 @@
 
 BEGIN_PROLOG
 
+EventFilter : {
+    module_type : EventFilter
+    Sequential : true
+}
+
+
 TEveEventDisplayHelix : {
     module_type : TEveEventDisplay
     g4ModuleLabel        		    : "g4run"
@@ -78,7 +84,10 @@ TEveDis : {
 			TEveEventDisplayCosmics  : @local::TEveEventDisplayCosmics
  			TEveEventDisplayHelix    : @local::TEveEventDisplayHelix
 			TEveEventDisplayCaloOnly : @local::TEveEventDisplayCaloOnly
-		    } 
+	} 
+  filters : {
+      EventFilter : @local::EventFilter
+  }
 	seqCosmics 	: [TEveEventDisplayCosmics]
 	seqHelix   	: [TEveEventDisplayHelix]
 	seqCaloOnly     : [TEveEventDisplayCaloOnly]

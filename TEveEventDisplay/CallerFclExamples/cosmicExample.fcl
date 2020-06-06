@@ -51,14 +51,18 @@ physics :
 		@table::TrkHitReco.producers
 		TimeClusterFinderCosmics : @local::TimeClusterFinderCosmics
 		CosmicTrackFinder : @local::CosmicTrackFinder} 
-  analyzers : { @table::CosmicTracking.analyzers
-		@table::TEveDis.analyzers
-	      }
-  filters :   { @table::CosmicTracking.filters}
+  analyzers : { 
+       @table::CosmicTracking.analyzers
+		   @table::TEveDis.analyzers
+	}
+  filters :   { 
+       @table::CosmicTracking.filters
+       @table::TEveDis.filters
+  }
 }
 # for MDC2018g and earlier, correct the time maps.  Comment these out for MDC2018h and beyond
 
-physics.RecoPath : [ @sequence::TrkHitReco.PrepareHits, @sequence::CosmicTracking.FindCosmics] 
+physics.RecoPath : [EventFilter, @sequence::TrkHitReco.PrepareHits, @sequence::CosmicTracking.FindCosmics] 
 physics.producers.TimeClusterFinderCosmics.UseCaloCluster : false
 physics.producers.TimeClusterFinderCosmics.UseCaloClusterPosition : false
 
