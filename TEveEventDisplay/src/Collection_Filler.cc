@@ -35,7 +35,7 @@ namespace mu2e{
     
   void Collection_Filler::FillRecoCollection(const art::Event& evt, Data_Collections &data, RecoDataProductName CollectionName){
 
-  if(FillAll_ or(addHits_ and CollectionName==ComboHits)){ 
+  if(FillAll_ or(addHits_ and CollectionName == ComboHits)){ 
     auto chH = evt.getValidHandle<mu2e::ComboHitCollection>(chTag_);
     data.chcol = chH.product();
   }

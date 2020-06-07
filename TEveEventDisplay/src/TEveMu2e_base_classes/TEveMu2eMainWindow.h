@@ -51,6 +51,8 @@ namespace mu2e{
       void PrepareTrackerProjectionTab(const art::Run& run);
       void StartCaloProjectionTab();
       void PrepareCaloProjectionTab(const art::Run& run);
+      void StartCRVProjectionTab();
+      void PrepareCRVProjectionTab(const art::Run& run);
 
       void SetRunGeometry(const art::Run& run, int _diagLevel);
       Bool_t ProcessMessage(Long_t msg, Long_t param1, Long_t param2);
@@ -84,6 +86,7 @@ namespace mu2e{
 
       TEveMu2e2DProjection *tracker2Dproj = new TEveMu2e2DProjection();
       TEveMu2e2DProjection *calo2Dproj = new TEveMu2e2DProjection();
+      TEveMu2e2DProjection *CRV2Dproj = new TEveMu2e2DProjection();
       TEveMu2eCalorimeter *Mu2eCalo = new TEveMu2eCalorimeter();
       TEveMu2eTracker *Mu2eTracker  = new TEveMu2eTracker();
 
