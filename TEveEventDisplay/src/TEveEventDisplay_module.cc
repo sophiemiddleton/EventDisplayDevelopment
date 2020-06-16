@@ -103,6 +103,7 @@ void TEveEventDisplay::beginJob(){
   _frame = new TEveMu2eMainWindow(gClient->GetRoot(), 1000,600, _pset);
   _frame->StartTrackerProjectionTab();
   _frame->StartCaloProjectionTab();
+  _frame->StartCRVProjectionTab();
 }
 
 
@@ -110,6 +111,7 @@ void TEveEventDisplay::beginRun(const art::Run& run){
   _frame->SetRunGeometry(run, _diagLevel);
   _frame->PrepareTrackerProjectionTab(run);
   _frame->PrepareCaloProjectionTab(run);
+ // _frame->PrepareCRVProjectionTab(run);
 }
 
 
@@ -119,6 +121,7 @@ void TEveEventDisplay::analyze(const art::Event& event){
   //GeomHandle<mu2e::BFieldManager> bfmgr; We be required for the TEvePropagtor
   Data_Collections data;
   if(_filler.addHits_)_filler.FillRecoCollection(event, data, ComboHits);
+  if(_filler.addCrvHits_)_filler.FillRecoCollection(event, data, CRVCoincidences);
   if(_filler.addTracks_)_filler.FillRecoCollection(event, data, KalSeeds);
   if(_filler.addClusters_)_filler.FillRecoCollection(event, data, CaloClusters);
   if(!_frame->isClosed()) _frame->setEvent(event, _firstLoop, data);

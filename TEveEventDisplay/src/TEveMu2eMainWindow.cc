@@ -179,11 +179,37 @@ namespace mu2e{
       glv->CurrentCamera().Dolly(camDollyDelta_,kFALSE,kFALSE);
     }
 
-  /* TODO
-    void TEveMu2eMainWindow::CreateDetectors(const art::Run& run){
-    Mu2eCalo->DrawCaloDetector(run, geom);
-    Mu2eTracker->DrawTrackerDetector(run, geom);
-  }*/
+    void TEveMu2eMainWindow::StartCRVProjectionTab(){
+      // Create detector and event scenes for ortho views
+      CRV2Dproj->fDetXYScene = gEve->SpawnNewScene("CRV Top", "");
+      CRV2Dproj->fEvtXYScene = gEve->SpawnNewScene("CRV Top event", "");
+
+      // Create XY/RZ calo2Dprojection mgrs, draw projected axes, & add them to scenes
+      CRV2Dproj->fXYMgr = new TEveProjectionManager(TEveProjection::kPT_RPhi);
+      TEveProjectionAxes* axes_xy = new TEveProjectionAxes(CRV2Dproj->fXYMgr);
+      CRV2Dproj->fDetXYScene->AddElement(axes_xy);
+      gEve->AddToListTree(axes_xy,kTRUE);
+      gEve->AddToListTree(CRV2Dproj->fXYMgr,kTRUE);
+
+      // Create side-by-side ortho D1, D2 views in new tab & add det/evt scenes
+      TEveWindowSlot *slot = 0;
+      TEveWindowPack *pack = 0;
+
+      slot = TEveWindow::CreateWindowInTab(gEve->GetBrowser()->GetTabRight());
+      pack = slot->MakePack();
+      pack->SetElementName("CRV Views");
+      pack->SetHorizontal();
+      pack->SetShowTitleBar(kFALSE);
+
+      pack->NewSlot()->MakeCurrent();
+      CRV2Dproj->fXYView = gEve->SpawnNewViewer("CRV View", "");
+      CRV2Dproj->fXYView->GetGLViewer()->SetCurrentCamera(TGLViewer::kCameraOrthoXOY);
+      CRV2Dproj->fXYView->AddScene(CRV2Dproj->fDetXYScene);
+      CRV2Dproj->fXYView->AddScene(CRV2Dproj->fEvtXYScene);
+
+      gEve->GetBrowser()->GetTabRight()->SetTab(0);
+
+}
 
     void TEveMu2eMainWindow::StartCaloProjectionTab(){
     // Create detector and event scenes for ortho views

@@ -13,5 +13,6 @@
   <class name="mu2e::TEveMu2eTrkEllipse"/>
   <class name="mu2e::TEveMu2eTracker"/>
   <class name="mu2e::TEveMu2eCalorimeter"/>
+  <class name="mu2e::TEveMu2eCRVEvent"/>
 </lcgdict>
 

@@ -45,12 +45,12 @@ TEveEventDisplayCosmics : {
       CosmicTrackSeedCollection 	: "CosmicTrackFinder"
       CaloClusterCollection		    : NULL
       CaloCrystalHitCollection    : NULL
-      #CrvCoincidenceClusterCollection : "CrvCoincidenceClusterFinder"
+      CrvCoincidenceClusterCollection : "CrvCoincidenceClusterFinder"
       HelixSeedCollection         : NULL
       KalSeedCollection           : NULL
       addHits 			              : true
       addTracks 			            : false
-      addCrvHits			            : false
+      addCrvHits			            : true
       addCosmicSeedFit	          : false
       isCosmic			              : true
    }
