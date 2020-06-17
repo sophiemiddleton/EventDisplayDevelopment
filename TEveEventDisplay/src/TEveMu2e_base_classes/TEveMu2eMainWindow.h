@@ -92,16 +92,6 @@ namespace mu2e{
       TEveMu2eCalorimeter *Mu2eCalo = new TEveMu2eCalorimeter();
       TEveMu2eTracker *Mu2eTracker  = new TEveMu2eTracker();
 
-      TEveElementList *fHitsList2D;
-      TEveElementList *fHitsList3D;
-      TEveElementList *fCrystalHitList;
-      TEveElementList *fTrackList2D;
-      TEveElementList *fTrackList3D;
-      TEveElementList *fClusterList2D;
-      TEveElementList *fClusterList3D;
-      TEveElementList *fCrvList2D;
-      TEveElementList *fCrvList3D;
-
       //TODO - these should be set in the fcl file
       bool _showBuilding = false;
       bool _showDSOnly = true;
@@ -111,14 +101,6 @@ namespace mu2e{
 
       TText  *_eventNumberText, *_subrunNumberText, *_runNumberText;
       int _event, _subrun, _run;
-
-      void AddCRVInfo(bool firstloop, const CrvRecoPulseCollection *crvcol);
-      void AddHelixPieceWise(bool firstloop, const KalSeedCollection *seedcol);
-      void AddComboHits(bool firstloop, const ComboHitCollection *chcol);
-      void AddCosmicTrack(bool firstloop, const CosmicTrackSeedCollection *cosmiccol);
-      void AddCrystalHits(bool firstloop, const CaloCrystalHitCollection *cryHitcol);
-      void AddCaloClusters(bool firstloop, const CaloClusterCollection *clustercol);
-
 
      ClassDef(TEveMu2eMainWindow,0);
 

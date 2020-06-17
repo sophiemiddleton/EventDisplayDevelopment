@@ -31,35 +31,35 @@
 #include "TEveEventDisplay/src/shape_classes/TEveMu2eTracker.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eHit.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eCRVEvent.h"
-
-
-class TGTextEntry;
-
+#include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eCluster.h"
+#include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eCustomHelix.h"
 namespace mu2e{
 	class TEveMu2eDataInterface {
     public:
       
       #ifndef __CINT__
-      TEveMu2eDataInterface() : fHitsList2D(0), fHitsList3D(0){};
+      TEveMu2eDataInterface() : fHitsList2D(0),fHitsList3D(0),fCrystalHitList(0),fTrackList2D(0),fTrackList3D(0), fClusterList2D(0), fClusterList3D(0),fCrvList2D(0),fCrvList3D(0){};
       TEveMu2eDataInterface(const TEveMu2eDataInterface &);
       TEveMu2eDataInterface& operator=(const TEveMu2eDataInterface &);
       virtual ~TEveMu2eDataInterface(){};
       #endif
       TEveElementList *fHitsList2D;
       TEveElementList *fHitsList3D;
-      //TODO - these should be set in the fcl file
-      bool _showBuilding = false;
-      bool _showDSOnly = true;
-      bool _showTracker = false;
-      bool _showCalo = false;
-      bool _showCRV = false;
+      TEveElementList *fCrystalHitList;
+      TEveElementList *fTrackList2D;
+      TEveElementList *fTrackList3D;
+      TEveElementList *fClusterList2D;
+      TEveElementList *fClusterList3D;
+      TEveElementList *fCrvList2D;
+      TEveElementList *fCrvList3D;
 
-      void AddCRVInfo(bool firstloop, const CrvRecoPulseCollection *crvcol, TEveElementList *fHitsList2D, TEveElementList *fHitsList3D);
-      void AddComboHits(bool firstloop, const ComboHitCollection *chcol, TEveElementList *fHitsList2D, TEveElementList *fHitsList3D, Geom_Interface *mu2e_geom,TEveMu2e2DProjection *tracker2Dproj);
+
+      void AddCRVInfo(bool firstloop, const CrvRecoPulseCollection *crvcol);
+      void AddComboHits(bool firstloop, const ComboHitCollection *chcol, Geom_Interface *mu2e_geom,TEveMu2e2DProjection *tracker2Dproj);
+      void AddCaloClusters(bool firstloop, const CaloClusterCollection *clustercol,Geom_Interface *mu2e_geom,TEveMu2e2DProjection *calo2Dproj);
+      void AddCrystalHits(bool firstloop, const CaloCrystalHitCollection *cryHitcol, Geom_Interface *mu2e_geom,TEveMu2e2DProjection *calo2Dproj);
       void AddCosmicTrack(bool firstloop, const CosmicTrackSeedCollection *cosmiccol);
-      void AddCrystalHits(bool firstloop, const CaloCrystalHitCollection *cryHitcol, TEveElementList *fHitsList2D, TEveElementList *fHitsList3D);
-      void AddCaloClusters(bool firstloop, const CaloClusterCollection *clustercol, TEveElementList *fHitsList2D, TEveElementList *fHitsList3D);
-      void AddHelixPieceWise(bool firstloop, const KalSeedCollection *seedcol, TEveElementList *fHitsList2D, TEveElementList *fHitsList3D);
+      void AddHelixPieceWise(bool firstloop, const KalSeedCollection *seedcol, Geom_Interface *mu2e_geom,TEveMu2e2DProjection *trackerDproj);
 
      ClassDef(TEveMu2eDataInterface,0);
 
