@@ -1,29 +1,37 @@
-
 #ifndef Data_Collections_h
 #define Data_Collections_h
+//Cosmics:
 #include "RecoDataProducts/inc/CosmicTrackSeed.hh"
-#include "RecoDataProducts/inc/ComboHit.hh"
+//Calo:
 #include "RecoDataProducts/inc/CaloCrystalHitCollection.hh"
 #include "RecoDataProducts/inc/CaloHitCollection.hh"
-#include "RecoDataProducts/inc/CrvCoincidenceClusterCollection.hh"
+//MC Products:
 #include "MCDataProducts/inc/PhysicalVolumeInfoCollection.hh"
 #include "MCDataProducts/inc/PhysicalVolumeInfoMultiCollection.hh"
 #include "MCDataProducts/inc/MCTrajectoryCollection.hh"
 #include "MCDataProducts/inc/SimParticleCollection.hh"
 #include "MCDataProducts/inc/StepPointMCCollection.hh"
+//Kalman Tracks
 #include "RecoDataProducts/inc/KalSeed.hh"
+#include "RecoDataProducts/inc/KalRepCollection.hh"
+#include "RecoDataProducts/inc/TrkExtTrajCollection.hh"
+//Tracker Hits:
 #include "RecoDataProducts/inc/StrawHitCollection.hh"
 #include "RecoDataProducts/inc/StrawHitFlagCollection.hh"
 #include "RecoDataProducts/inc/StrawHitPositionCollection.hh"
 #include "RecoDataProducts/inc/StrawDigiCollection.hh"
-#include "RecoDataProducts/inc/CrvDigiCollection.hh"
+#include "RecoDataProducts/inc/ComboHit.hh"
+//CRV:
+#include "RecoDataProducts/inc/CrvRecoPulseCollection.hh"
+#include "RecoDataProducts/inc/CrvCoincidenceClusterCollection.hh"
+//Art:
 #include "art/Framework/Principal/Event.h"
 #include "art/Framework/Principal/Run.h"
 #include "fhiclcpp/types/Atom.h"
 #include "fhiclcpp/types/Sequence.h"
 #include "fhiclcpp/types/Table.h"
 
-#include<TObject.h>
+#include <TObject.h>
 #include <TROOT.h>
 #include <TGComboBox.h>
 #include <TGListBox.h>
@@ -31,9 +39,6 @@
 #include <vector>
 
 using namespace CLHEP;
-#include "RecoDataProducts/inc/KalRepCollection.hh"
-#include "RecoDataProducts/inc/TrkExtTrajCollection.hh"
-
 
 namespace mu2e{
 	class Data_Collections
@@ -49,7 +54,7 @@ namespace mu2e{
     //RecoDataProducts:
 
     const ComboHitCollection *chcol = 0;
-    const CrvCoincidenceClusterCollection* crvcoincol = 0;
+    const CrvRecoPulseCollection* crvcoincol = 0;
     const CosmicTrackSeedCollection* cosmiccol = 0;
     const GenParticleCollection* gencol = 0;
     const CaloClusterCollection* clustercol = 0;

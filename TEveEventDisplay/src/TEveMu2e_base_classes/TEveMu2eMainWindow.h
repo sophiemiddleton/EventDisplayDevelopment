@@ -20,14 +20,15 @@
 #include "art/Framework/Principal/Run.h"
 #include "ConfigTools/inc/SimpleConfig.hh"
 #include "GeometryService/inc/GeomHandle.hh"
+#include "RecoDataProducts/inc/ComboHit.hh"
 //TEveMu2e
-#include  "TEveEventDisplay/src/dict_classes/Geom_Interface.h"
-#include  "TEveEventDisplay/src/dict_classes/Collection_Filler.h"
+#include "TEveEventDisplay/src/dict_classes/Geom_Interface.h"
+#include "TEveEventDisplay/src/dict_classes/Collection_Filler.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2e2DProjection.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eTrkEllipse.h"
-#include "RecoDataProducts/inc/ComboHit.hh"
 #include "TEveEventDisplay/src/shape_classes/TEveMu2eCalorimeter.h"
 #include "TEveEventDisplay/src/shape_classes/TEveMu2eTracker.h"
+#include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eDataInterface.h"
 
 class TBox;
 class TGTextEntry;
@@ -60,10 +61,11 @@ namespace mu2e{
       void  fillEvent(bool firstLoop=false);
       bool  isClosed() const;
       int   getEventToFind(bool &findEvent) const;
-
       #endif
+
       TGeoManager* geom = new TGeoManager("geom","Geom");
       Geom_Interface *mu2e_geom	=new Geom_Interface(); 
+      TEveMu2eDataInterface *pass_data	=new TEveMu2eDataInterface(); 
 
       int eventToFind, runToFind;
 
@@ -97,8 +99,8 @@ namespace mu2e{
       TEveElementList *fTrackList3D;
       TEveElementList *fClusterList2D;
       TEveElementList *fClusterList3D;
-      TEveTrackList *tList;
-  
+      TEveElementList *fCrvList2D;
+      TEveElementList *fCrvList3D;
 
       //TODO - these should be set in the fcl file
       bool _showBuilding = false;
@@ -107,12 +109,10 @@ namespace mu2e{
       bool _showCalo = false;
       bool _showCRV = false;
 
-      TEveElementList *test;
-
       TText  *_eventNumberText, *_subrunNumberText, *_runNumberText;
       int _event, _subrun, _run;
 
-      void AddHelixEveTracks(bool firstloop, const KalSeedCollection *seedcol);
+      void AddCRVInfo(bool firstloop, const CrvRecoPulseCollection *crvcol);
       void AddHelixPieceWise(bool firstloop, const KalSeedCollection *seedcol);
       void AddComboHits(bool firstloop, const ComboHitCollection *chcol);
       void AddCosmicTrack(bool firstloop, const CosmicTrackSeedCollection *cosmiccol);

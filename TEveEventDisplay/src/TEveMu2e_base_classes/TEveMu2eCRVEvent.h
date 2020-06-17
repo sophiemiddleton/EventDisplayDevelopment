@@ -8,7 +8,11 @@
 #include <TEvePointSet.h>
 #include <TEveLine.h>
 #include "RecoDataProducts/inc/CrvCoincidenceCluster.hh"
-
+#include "CosmicRayShieldGeom/inc/CosmicRayShield.hh"
+#include "DataProducts/inc/CRSScintillatorBarIndex.hh"
+#include "GeometryService/inc/GeomHandle.hh"
+#include "RecoDataProducts/inc/CrvRecoPulseCollection.hh"
+ 
 namespace mu2e {
 
 class TEveMu2eCRVEvent : public TEvePointSet {
@@ -16,11 +20,12 @@ class TEveMu2eCRVEvent : public TEvePointSet {
   public:
     #ifndef __CINT__
     explicit TEveMu2eCRVEvent();
-    TEveMu2eCRVEvent(CrvCoincidenceCluster chit) : fCrvCoincidenceCluster(chit){};
+    TEveMu2eCRVEvent(CrvRecoPulseCollection chit) : fCrvRecoPulseCollection(chit){};
     virtual ~TEveMu2eCRVEvent(){};
     
     CrvCoincidenceCluster fCrvCoincidenceCluster; 
-   
+    CrvRecoPulseCollection fCrvRecoPulseCollection;
+
     Int_t mColor = kBlue;
     Int_t mSize= 1; 
 

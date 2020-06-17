@@ -121,7 +121,7 @@ void TEveEventDisplay::analyze(const art::Event& event){
   //GeomHandle<mu2e::BFieldManager> bfmgr; We be required for the TEvePropagtor
   Data_Collections data;
   if(_filler.addHits_)_filler.FillRecoCollection(event, data, ComboHits);
-  if(_filler.addCrvHits_)_filler.FillRecoCollection(event, data, CRVCoincidences);
+  if(_filler.addCrvHits_)_filler.FillRecoCollection(event, data, CRVRecoPulses);
   if(_filler.addTracks_)_filler.FillRecoCollection(event, data, KalSeeds);
   if(_filler.addClusters_)_filler.FillRecoCollection(event, data, CaloClusters);
   if(!_frame->isClosed()) _frame->setEvent(event, _firstLoop, data);

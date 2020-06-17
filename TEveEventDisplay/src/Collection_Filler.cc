@@ -2,14 +2,11 @@
 #include <TSystem.h>
 // ... libRIO
 #include <TFile.h>
-
 #include "TEveEventDisplay/src/dict_classes/Collection_Filler.h"
 #include "art/Framework/Principal/SubRun.h"
 
 using namespace mu2e;
 namespace mu2e{
-
-
 
   Collection_Filler::Collection_Filler(const Config& conf) :
     chTag_(conf.chTag()),
@@ -59,8 +56,8 @@ namespace mu2e{
     auto chH = evt.getValidHandle<mu2e::KalSeedCollection>(kalseedTag_);
     data.kalseedcol = chH.product();
   }
-  if(FillAll_ or (addCRV_ and CollectionName==CRVCoincidences)){
-    auto chH = evt.getValidHandle<mu2e::CrvCoincidenceClusterCollection>(crvcoinTag_);
+  if(FillAll_ or (addCRV_ and CollectionName==CRVRecoPulses)){
+    auto chH = evt.getValidHandle<mu2e::CrvRecoPulseCollection>(crvcoinTag_);
     data.crvcoincol = chH.product();
   }
   }

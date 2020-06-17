@@ -19,7 +19,7 @@ TEveEventDisplayHelix : {
       ComboHitCollection 		    : "makeSH"
       GenParticleCollection 		: "compressDigiMCs" #generate"
       StrawDigiCollection		    :  "selectRecoMC"
-      CrvCoincidenceClusterCollection	  : NULL
+      CrvRecoPulseCollection	  : NULL
       CosmicTrackSeedCollection :  NULL
       CaloClusterCollection		  :  "CaloClusterFromProtoCluster"
       CaloCrystalHitCollection  :  "CaloCrystalHitFromHit"
@@ -41,11 +41,11 @@ TEveEventDisplayCosmics : {
       ComboHitCollection 		      : "makePH"
       GenParticleCollection 	    : "compressDigiMCs" 
       StrawDigiCollection		      :  "makeSD"
-      CrvCoincidenceClusterCollection		        : NULL
+      CrvRecoPulseCollection		        : NULL
       CosmicTrackSeedCollection 	: "CosmicTrackFinder"
       CaloClusterCollection		    : NULL
       CaloCrystalHitCollection    : NULL
-      CrvCoincidenceClusterCollection : "CrvCoincidenceClusterFinder"
+#      CrvCoincidenceClusterCollection : "CrvCoincidenceClusterFinder"
       HelixSeedCollection         : NULL
       KalSeedCollection           : NULL
       addHits 			              : true
@@ -63,7 +63,7 @@ TEveEventDisplayCaloOnly : {
       ComboHitCollection 		      : NULL
       GenParticleCollection 		  : NULL
       StrawDigiCollection		      : NULL
-      CrvCoincidenceClusterCollection		        : NULL
+      CrvRecoPulseCollection		  : NULL
       CosmicTrackSeedCollection 	: NULL
       CaloClusterCollection		    : "CaloClusterFromProtCluster"
       CaloCrystalHitCollection    : "CaloCrystalHitFromHit"
