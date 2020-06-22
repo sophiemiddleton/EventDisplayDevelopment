@@ -6,6 +6,10 @@ Please read the wiki tab for details.
 
 Here are just a few basic details.
 
+## MDC2018 .v. 2020
+
+Historiclly we developed this infrastructure using MDC2018 data. The Main2020 branch shows that the TEve code is independent of the Offline version and thus can be used with MDC2018 data and recent data
+
 ## The Module
 
 TEveEventDisplay/src/TEveEventDisplay_module.cc is the Analyzer mdoule which currently controls the TEveEventDisplay. This is your main function. The BeginJob function sets up your Frame (a TEveMu2eMainwindow Object) and it opens an Application. This is needed for the browser to appear.
