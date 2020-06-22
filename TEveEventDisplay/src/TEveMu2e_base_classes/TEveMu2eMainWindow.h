@@ -28,6 +28,7 @@
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eTrkEllipse.h"
 #include "TEveEventDisplay/src/shape_classes/TEveMu2eCalorimeter.h"
 #include "TEveEventDisplay/src/shape_classes/TEveMu2eTracker.h"
+#include "TEveEventDisplay/src/shape_classes/TEveMu2eCRV.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eDataInterface.h"
 
 class TBox;
@@ -91,6 +92,7 @@ namespace mu2e{
       TEveMu2e2DProjection *CRV2Dproj = new TEveMu2e2DProjection();
       TEveMu2eCalorimeter *Mu2eCalo = new TEveMu2eCalorimeter();
       TEveMu2eTracker *Mu2eTracker  = new TEveMu2eTracker();
+      TEveMu2eCRV *Mu2eCRV = new TEveMu2eCRV();
 
       //TODO - these should be set in the fcl file
       bool _showBuilding = false;

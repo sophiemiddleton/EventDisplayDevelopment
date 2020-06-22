@@ -6,25 +6,23 @@ namespace mu2e{
 
 	TEveMu2eHit::TEveMu2eHit(){}
 
-  
   void TEveMu2eHit::DrawHit3D(const std::string &pstr, Int_t n, CLHEP::Hep3Vector pointInMu2e, TEveElementList *HitList)
   	{
-		  std::string hstr=" hit %d";
-		  std::string dstr=" hit# %d\nLayer: %d";
-		  std::string strlst=pstr+hstr;
-		  std::string strlab=pstr+dstr;
+      std::string hstr=" hit %d";
+      std::string dstr=" hit# %d\nLayer: %d";
+      std::string strlst=pstr+hstr;
+      std::string strlab=pstr+dstr;
 
-		  this->SetTitle(Form(strlab.c_str(),n,hstr));
+      this->SetTitle(Form(strlab.c_str(),n,hstr));
 
-		  std::cout<<"in mu2e :3D "<<n<<" "<<pointInMu2e.x()/10<<" "<<pointInMu2e.y()/10<<" "<<pointInMu2e.z()/10<<std::endl;
+      std::cout<<"in mu2e :3D "<<n<<" "<<pointInMu2e.x()/10<<" "<<pointInMu2e.y()/10<<" "<<pointInMu2e.z()/10<<std::endl;
 
-		  this->SetNextPoint(pointInMu2e.x()/10, pointInMu2e.y()/10, pointInMu2e.z()/10); 
-		  this->SetMarkerColor(mColor);
-		  this->SetMarkerSize(mSize);
-
+      this->SetNextPoint(pointInMu2e.x()/10, pointInMu2e.y()/10, pointInMu2e.z()/10); 
+      this->SetMarkerColor(mColor);
+      this->SetMarkerSize(mSize);
+      this->SetPickable(kTRUE);
       if(AddErrorBar){ 
         TEveLine *error = new TEveLine();
-
         auto const& p = fComboHit.pos();
         auto const& w = fComboHit.wdir();
         auto const& s = fComboHit.wireRes();
@@ -46,20 +44,19 @@ namespace mu2e{
 	  }
   void TEveMu2eHit::DrawHit2D(const std::string &pstr, Int_t n, CLHEP::Hep3Vector pointInMu2e, TEveElementList *HitList)
   	{
-		  std::string hstr=" hit %d";
-		  std::string dstr=" hit# %d\nLayer: %d";
-		  std::string strlst=pstr+hstr;
-		  std::string strlab=pstr+dstr;
+      std::string hstr=" hit %d";
+      std::string dstr=" hit# %d\nLayer: %d";
+      std::string strlst=pstr+hstr;
+      std::string strlab=pstr+dstr;
 
-		  this->SetTitle(Form(strlab.c_str(),n,hstr));
+      this->SetTitle(Form(strlab.c_str(),n,hstr));
 
-		  this->SetNextPoint(pointInMu2e.x()/10, pointInMu2e.y()/10, pointInMu2e.z()/10); 
-		  this->SetMarkerColor(mColor);
-		  this->SetMarkerSize(mSize);
-
+      this->SetNextPoint(pointInMu2e.x()/10, pointInMu2e.y()/10, pointInMu2e.z()/10); 
+      this->SetMarkerColor(mColor);
+      this->SetMarkerSize(mSize);
+      this->SetPickable(kTRUE);
       if(AddErrorBar){ 
         TEveLine *error = new TEveLine();
-
         auto const& p = fComboHit.pos();
         auto const& w = fComboHit.wdir();
         auto const& s = fComboHit.wireRes();
@@ -77,28 +74,26 @@ namespace mu2e{
         HitList->AddElement(error);
       }
 		  HitList->AddElement(this);
-
 	  }
 
    void TEveMu2eHit::DrawHitCollection(const std::string &pstr, size_t n, std::vector<CLHEP::Hep3Vector> pointInMu2e, TEveElementList *HitList)
   	{
-	    for(auto const& hit : pointInMu2e){
-		    
-		    std::string hstr=" hit %d";
-		    std::string dstr=" hit# %d\nLayer: %d";
-		    std::string strlst=pstr+hstr;
-		    std::string strlab=pstr+dstr;
+	    for(auto const& hit : pointInMu2e){   
+        std::string hstr=" hit %d";
+        std::string dstr=" hit# %d\nLayer: %d";
+        std::string strlst=pstr+hstr;
+        std::string strlab=pstr+dstr;
 
-		    TEvePointSet* h = new TEvePointSet(Form(strlst.c_str(),n));
-		    h->SetTitle(Form(strlab.c_str(),n,hstr));
+        TEvePointSet* h = new TEvePointSet(Form(strlst.c_str(),n));
+        h->SetTitle(Form(strlab.c_str(),n,hstr));
 
-		    std::cout<<"in mu2e : "<<n<<" "<<hit.x()/10<<" "<<hit.y()/10<<" "<<hit.z()/10<<std::endl;
+        std::cout<<"in mu2e : "<<n<<" "<<hit.x()/10<<" "<<hit.y()/10<<" "<<hit.z()/10<<std::endl;
 
 
-		    h->SetNextPoint(hit.x()/10, hit.y()/10, hit.z()/10); 
-		    h->SetMarkerColor(mColor);
-		    h->SetMarkerSize(mSize);
-		    HitList->AddElement(h);
+        h->SetNextPoint(hit.x()/10, hit.y()/10, hit.z()/10); 
+        h->SetMarkerColor(mColor);
+        h->SetMarkerSize(mSize);
+        HitList->AddElement(h);
 	   }
     }
   }

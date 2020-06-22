@@ -9,16 +9,16 @@ namespace mu2e{
   void TEveMu2eCluster::DrawCluster(const std::string &pstr,  CLHEP::Hep3Vector cog, TEveElementList *ClusterList)
   	{
       double edep = fCaloCluster.energyDep();
-      
 
-		  std::string hstr=" cluster %d";
-		  std::string dstr=" cluster# %d\nLayer: %d";
-		  std::string strlst=pstr+hstr+std::to_string(edep);
-		  std::string strlab=pstr+dstr;
 
-		  this->SetTitle(Form(strlab.c_str(),1,hstr));
+      std::string hstr=" cluster %d";
+      std::string dstr=" cluster# %d\nLayer: %d";
+      std::string strlst=pstr+hstr+std::to_string(edep);
+      std::string strlab=pstr+dstr;
 
-		  std::cout<<"in mu2e : "<<" "<<cog.x()/10<<" "<<cog.y()/10<<" "<<cog.z()/10<<std::endl;
+      this->SetTitle(Form(strlab.c_str(),1,hstr));
+
+      std::cout<<"in mu2e : "<<" "<<cog.x()/10<<" "<<cog.y()/10<<" "<<cog.z()/10<<std::endl;
 
       Int_t mColor, mSize;
       if(edep<15) mColor = kCyan;
@@ -28,14 +28,14 @@ namespace mu2e{
       if(edep>=40 and edep < 50) mColor = kRed;
       if(edep>=50) mColor = kRed+2;
       mSize = 2;
-		  this->SetNextPoint(cog.x()/10, cog.y()/10, cog.z()/10); 
-		  this->SetMarkerColor(mColor);
+      this->SetNextPoint(cog.x()/10, cog.y()/10, cog.z()/10); 
+      this->SetMarkerColor(mColor);
       this->SetMarkerStyle(4);
-		  this->SetMarkerSize(mSize);
-      
+      this->SetMarkerSize(mSize);
+      this->SetPickable(kTRUE);
 
-		  ClusterList->AddElement(this);
-	  }
+      ClusterList->AddElement(this);
+      }
 
 
 }

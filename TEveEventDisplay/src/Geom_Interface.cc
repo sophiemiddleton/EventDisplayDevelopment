@@ -29,6 +29,7 @@
 using namespace mu2e;
 namespace mu2e{
 
+
 	Geom_Interface::Geom_Interface(){}
 
   // Function to descend and remove nodes above the DS - run after HideBuilding
@@ -52,6 +53,8 @@ namespace mu2e{
   }
 
 }
+
+
   //Function allows user to specifically hide a node by its GDML mateiral name. See Fix.gdml for the name.
   void Geom_Interface::hideNodesByMaterial(TGeoNode* node, const std::string& mat, bool onOff) {
 
@@ -80,13 +83,35 @@ namespace mu2e{
     }
 
 	}
+  
+   void Geom_Interface::showNodesByName(TGeoNode* node, const std::string& str, bool onOff){
+	
+	std::string name(node->GetName());
+	if ( name.find(str) != std::string::npos ){
+	    node->SetVisibility(onOff);
+	}
+	int ndau = node->GetNdaughters();
+	for (int i=0; i<ndau; ++i){
+	   TGeoNode * dau = node->GetDaughter(i);
+	   showNodesByName(dau, str, onOff);
+	}
+
+	}
+
+  //Function to show CRV. Run after InsideDS
+  void Geom_Interface::InsideCRV( TGeoNode * node, bool inCRVVac ){
+	static std::vector <std::string> substrings {"CRSAluminum", "CRV", "CRS"};
+	for(auto& i: substrings) showNodesByName(node, i, kTRUE);
+
+	}
 
   //Function to hide all elements which are not PS,TS, DS:
 	void Geom_Interface::SolenoidsOnly(TGeoNode* node) {
 
     static std::vector <std::string> substrings  { "Ceiling",
     "backfill", "dirt", "concrete", "VirtualDetector",
-    "pipeType","CRSAluminium","CRV","CRS", "ExtShield", "PSShield"};
+    "pipeType","ExtShield", "PSShield"};
+//,"CRSAluminium","CRV","CRS", 
     for(auto& i: substrings) hideNodesByName(node,i,kFALSE, 0);
 
     static std::vector <std::string> materials { "MBOverburden", "CONCRETE"};

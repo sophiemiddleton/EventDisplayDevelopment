@@ -9,7 +9,6 @@ namespace mu2e{
     void TEveMu2eCalorimeter::DrawCaloDetector(art::Run const& run, TGeoVolume* topvol, TEveElementList *orthodet0,TEveElementList *orthodet1){
       TGeoMaterial *matSi = new TGeoMaterial("Si", 28.085,14,2.33);
       TGeoMedium *Si = new TGeoMedium("Silicon",2, matSi);
-      
 
       Calorimeter const &cal = *(GeomHandle<Calorimeter>());
       const Disk& disk0 = cal.disk(0);
@@ -42,13 +41,10 @@ namespace mu2e{
       calo1->SetInvisible();
 
       CLHEP::Hep3Vector calo0Pos(0,0,dz0);
-
       topvol->AddNode(calo0, 1, new TGeoTranslation(-390.4,0,1194.2));
 
       CLHEP::Hep3Vector calo1Pos(0,0,dz1);
-
       topvol->AddNode(calo1, 1, new TGeoTranslation(-390.4,0,1262.0));
-
 
       //...Add in the crystals in D0:
       for(unsigned int i = 0; i <674 ; i++){

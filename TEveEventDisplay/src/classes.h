@@ -17,3 +17,4 @@
 //TEveMu2e Detectors:
 #include "TEveEventDisplay/src/shape_classes/TEveMu2eTracker.h"
 #include "TEveEventDisplay/src/shape_classes/TEveMu2eCalorimeter.h"
+#include "TEveEventDisplay/src/shape_classes/TEveMu2eCRV.h"

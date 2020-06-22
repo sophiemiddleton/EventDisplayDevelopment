@@ -340,6 +340,31 @@ namespace mu2e{
     tracker2Dproj->fDetRZScene->FindChild("OrthoDet [P]")->SetRnrState(kTRUE);
   }
 
+  void TEveMu2eMainWindow::PrepareCRVProjectionTab(const art::Run& run){
+    CRV2Dproj->fDetXYScene->DestroyElements();
+    CRV2Dproj->fDetRZScene->DestroyElements();
+    TGeoVolume* topvol = geom->GetTopVolume();	
+    TEveElementList *orthodets0 = new TEveElementList("OrthoDet");
+    TEveElementList *orthodets1 = new TEveElementList("OrthoDet");
+    TEveElementList *orthodets2 = new TEveElementList("OrthoDet");
+    TEveElementList *orthodetlist[] = {orthodets0, orthodets1, orthodets2};
+
+    Mu2eCRV->DrawCRVDetector(run, topvol, orthodetlist);
+
+    for (unsigned int i=0; i<3; i++){
+      gEve->AddGlobalElement(orthodetlist[i]);
+      CRV2Dproj->fXYMgr->ImportElements(orthodetlist[i], CRV2Dproj->fDetXYScene);
+      CRV2Dproj->fRZMgr->ImportElements(orthodetlist[i], CRV2Dproj->fDetRZScene);
+    }
+
+    // ... Turn OFF rendering of duplicate detector in main 3D view
+    gEve->GetGlobalScene()->FindChild("OrthoDet")->SetRnrState(kFALSE);
+
+    // ... Turn ON rendering of detector in RPhi and RZ views
+    CRV2Dproj->fDetXYScene->FindChild("OrthoDets0 [P]")->SetRnrState(kTRUE);
+    CRV2Dproj->fDetRZScene->FindChild("OrthoDets1 [P]")->SetRnrState(kTRUE);
+
+  }
 
   void TEveMu2eMainWindow::SetRunGeometry(const art::Run& run, int _diagLevel){
     if(gGeoManager){
@@ -373,7 +398,7 @@ namespace mu2e{
       mu2e_geom->hideTop(topnode, _diagLevel);
     }
     if(this->_showDSOnly) mu2e_geom->InsideDS(topnode, false );
-
+    if(this->_showCRV) mu2e_geom->InsideCRV(topnode, true);
     //Add static detector geometry to global scene
     gEve->AddGlobalElement(etopnode);
     geom->Draw("ogl");

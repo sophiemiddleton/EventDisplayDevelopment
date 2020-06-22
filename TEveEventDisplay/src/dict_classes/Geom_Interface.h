@@ -75,6 +75,8 @@ namespace mu2e{
       void InsideDS( TGeoNode * node, bool inDSVac );
       void hideTop(TGeoNode* node, int _diagLevel);
       void hideNodesByName(TGeoNode* node, const std::string& str, bool onOff, int _diagLevel) ;
+      void showNodesByName(TGeoNode* node, const std::string& str, bool onOff);
+      void InsideCRV( TGeoNode * node, bool inCRVVac);
       void hideNodesByMaterial(TGeoNode* node, const std::string& mat, bool onOff);
       void SolenoidsOnly(TGeoNode* node);
       void TrackerVolumeHeirarchy( TGeoNode * node, std::vector<CLHEP::Hep3Vector> &TransformList );
