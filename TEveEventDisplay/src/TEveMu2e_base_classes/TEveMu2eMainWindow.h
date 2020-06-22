@@ -99,7 +99,7 @@ namespace mu2e{
       bool _showDSOnly = true;
       bool _showTracker = false;
       bool _showCalo = false;
-      bool _showCRV = false;
+      bool _showCRV = true;
 
       TText  *_eventNumberText, *_subrunNumberText, *_runNumberText;
       int _event, _subrun, _run;

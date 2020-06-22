@@ -7,7 +7,7 @@ namespace mu2e{
 	TEveMu2eCRV::TEveMu2eCRV(){};
 
 	void TEveMu2eCRV::DrawCRVDetector(art::Run const& run, TGeoVolume* topvol, TEveElementList *orthodetlist[]){
-    //material TODO:Change this
+    /*//material TODO:Change this
     TGeoMaterial *matSi = new TGeoMaterial("Si", 28.085,14,2.33);
     TGeoMedium *Si = new TGeoMedium("Silicon",2, matSi);
     std::vector<double> halflen;
@@ -32,7 +32,7 @@ namespace mu2e{
       CLHEP::Hep3Vector crv0Pos(0,0,halflen[2]);
       //TODO:Change the translation
       topvol->AddNode(crv0, 1, new TGeoTranslation(-390.4,0,1194.2));
-		}
+		}*/
 
 	}
 
