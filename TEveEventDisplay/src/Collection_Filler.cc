@@ -22,7 +22,6 @@ namespace mu2e{
     addClusters_(conf.addClusters()),
     addCrvHits_(conf.addCrvHits()),
     addCosmicSeedFit_(conf.addCosmicSeedFit()),
-    addCRV_(conf.addCRV()),
     isCosmic_(conf.isCosmic()),
     MCOnly_(conf.MCOnly()),
     FillAll_(conf.FillAll())
@@ -56,7 +55,7 @@ namespace mu2e{
     auto chH = evt.getValidHandle<mu2e::KalSeedCollection>(kalseedTag_);
     data.kalseedcol = chH.product();
   }
-  if(FillAll_ or (addCRV_ and CollectionName==CRVRecoPulses)){
+  if(FillAll_ or (addCrvHits_ and CollectionName==CRVRecoPulses)){
     auto chH = evt.getValidHandle<mu2e::CrvRecoPulseCollection>(crvcoinTag_);
     data.crvcoincol = chH.product();
   }

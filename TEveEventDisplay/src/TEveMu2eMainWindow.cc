@@ -341,20 +341,24 @@ namespace mu2e{
   }
 
   void TEveMu2eMainWindow::PrepareCRVProjectionTab(const art::Run& run){
+    std::cout<<"PrepareCRV"<<std::endl;
     CRV2Dproj->fDetXYScene->DestroyElements();
-    CRV2Dproj->fDetRZScene->DestroyElements();
-    TGeoVolume* topvol = geom->GetTopVolume();	
+    CRV2Dproj->fEvtXYScene->DestroyElements();
+    std::cout<<"2Dprojection"<<std::endl;
+    TGeoVolume* topvol = geom->GetTopVolume();
+    std::cout<<"Geometry"<<std::endl;	
     TEveElementList *orthodets0 = new TEveElementList("OrthoDet");
-    TEveElementList *orthodets1 = new TEveElementList("OrthoDet");
-    TEveElementList *orthodets2 = new TEveElementList("OrthoDet");
-    TEveElementList *orthodetlist[] = {orthodets0, orthodets1, orthodets2};
-
+    //TEveElementList *orthodets1 = new TEveElementList("OrthoDet");
+    //TEveElementList *orthodets2 = new TEveElementList("OrthoDet");
+    TEveElementList *orthodetlist[] = {orthodets0};
+    std::cout<<"DrawCRVDetector1"<<std::endl;
+    // orthodets1, orthodets2
     Mu2eCRV->DrawCRVDetector(run, topvol, orthodetlist);
 
-    for (unsigned int i=0; i<3; i++){
-      gEve->AddGlobalElement(orthodetlist[i]);
-      CRV2Dproj->fXYMgr->ImportElements(orthodetlist[i], CRV2Dproj->fDetXYScene);
-      CRV2Dproj->fRZMgr->ImportElements(orthodetlist[i], CRV2Dproj->fDetRZScene);
+    for (unsigned int i=0; i<1; i++){
+    gEve->AddGlobalElement(orthodetlist[i]);
+    CRV2Dproj->fXYMgr->ImportElements(orthodetlist[i], CRV2Dproj->fDetXYScene);
+    //CRV2Dproj->fRZMgr->ImportElements(orthodetlist[i], CRV2Dproj->fDetRZScene);
     }
 
     // ... Turn OFF rendering of duplicate detector in main 3D view
@@ -444,6 +448,7 @@ namespace mu2e{
     _subrun=event.id().subRun();
     _run=event.id().run();
     _firstLoop = firstLoop;
+    pass_data->AddCRVInfo(firstLoop, data.crvcoincol, mu2e_geom, CRV2Dproj);
     pass_data->AddComboHits(firstLoop, data.chcol, mu2e_geom, tracker2Dproj);
     pass_data->AddCaloClusters(firstLoop, data.clustercol, mu2e_geom, calo2Dproj);
     pass_data->AddHelixPieceWise(firstLoop, data.kalseedcol,mu2e_geom, tracker2Dproj);

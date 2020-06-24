@@ -68,7 +68,6 @@ namespace mu2e{
       fhicl::Atom<bool> addCrvHits{Name("addCrvHits"), Comment("set to add crv hits"),false};	
       fhicl::Atom<bool> addCrystallHits{Name("addCrystalHits"), Comment("for calo cry hits"), false};
       fhicl::Atom<bool> addCosmicSeedFit{Name("addCosmicSeedFit"), Comment("for fitted cosmic track"), false};
-      fhicl::Atom<bool> addCRV{Name("addCoRV"), Comment("for CRV reco"), false};
       fhicl::Atom<bool> isCosmic{Name("isCosmic"), Comment("flag for cosmic track v helix track"), false};
       fhicl::Atom<bool> MCOnly{Name("MCOnly"), Comment("set to see only MC Data Products"), false};
       fhicl::Atom<bool> FillAll{Name("FillAll"), Comment("to see all available products"), false};		
@@ -99,7 +98,7 @@ namespace mu2e{
     art::Event *_event;
     art::Run *_run;
 
-    bool addHits_, addTracks_, addClusters_, addCrvHits_, addCosmicSeedFit_, addCRV_, isCosmic_, MCOnly_, FillAll_;
+    bool addHits_, addTracks_, addClusters_, addCrvHits_, addCosmicSeedFit_, isCosmic_, MCOnly_, FillAll_;
 
     void FillRecoCollection(const art::Event& evt, Data_Collections &data, RecoDataProductName code);
     void FillMCCollections(const art::Event& evt, Data_Collections &data, RecoDataProductName code);

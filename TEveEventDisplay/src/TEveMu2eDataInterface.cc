@@ -7,9 +7,9 @@
 using namespace mu2e;
 namespace mu2e{
  
-  void TEveMu2eDataInterface::AddCRVInfo(bool firstloop, const CrvRecoPulseCollection *crvcol){
+  void TEveMu2eDataInterface::AddCRVInfo(bool firstloop, const CrvRecoPulseCollection *crvcoincol, Geom_Interface *mu2e_geom, TEveMu2e2DProjection *CRV2Dproj){
     std::cout<<"[In AddCCRVInfo()]"<<std::endl;
-    if(crvcol!=0){
+    if(crvcoincol!=0){
     if (fCrvList3D== 0) {
       fCrvList3D = new TEveElementList("Hits");
       fCrvList3D->IncDenyDestroy();     
@@ -24,18 +24,32 @@ namespace mu2e{
     else {
       fCrvList2D->DestroyElements();  
     }
-    //TEveElementList *CrvList2D = new TEveElementList("Crv2D");
+    TEveElementList *CrvList3D = new TEveElementList("Crv3D");
     GeomHandle<CosmicRayShield> CRS;
 
-    for(unsigned int i=0; i <crvcol->size(); i++)
+    for(unsigned int i=0; i <crvcoincol->size(); i++)
     {
-      const CrvRecoPulse &crvRecoPulse = crvcol->at(i);
+      const CrvRecoPulse &crvRecoPulse = crvcoincol->at(i);
+      //TEveCRVEvent *teve_crv2D = new TEveMu2eCRVEvent(crvRecoPulse);
+      TEveMu2eCRVEvent *teve_crv3D = new TEveMu2eCRVEvent(crvRecoPulse);
       const CRSScintillatorBarIndex &crvBarIndex = crvRecoPulse.GetScintillatorBarIndex();
       const CRSScintillatorBar &crvCounter = CRS->getBar(crvBarIndex);
       CLHEP::Hep3Vector crvCounterPos = crvCounter.getPosition(); //The Position we need!
-      //double time = crvRecoPulse.GetPulseTime();
+      double time = crvRecoPulse.GetPulseTime();
       //int PEs = crvRecoPulse.GetPEs();
+      std::cout<<"CRV INFO "<<time<<std::endl;
+      CLHEP::Hep3Vector pointInMu2e = crvCounterPos;
 
+      teve_crv3D->DrawHit3D("CRVHits3D",  1, pointInMu2e, CrvList3D);
+      std::cout<<"[Got to this point]"<<std::endl;
+      //teve_crv2D->DrawHit2D("CRVHits2D",  1, HitPos, CrvList2D);
+
+      //fCrvList2D->AddElement(CrvList2D); 
+      fCrvList3D->AddElement(CrvList3D); 
+      // ... Import elements of the list into the projected views
+      //CRV2Dproj->fXYMgr->ImportElements(fCrvList2D, tracker2Dproj->fDetXYScene)
+      gEve->AddElement(fCrvList3D);
+      gEve->Redraw3D(kTRUE); 
     }
     }
   }

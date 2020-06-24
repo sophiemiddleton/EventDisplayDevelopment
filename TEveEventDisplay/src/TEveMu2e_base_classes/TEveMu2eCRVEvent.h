@@ -1,5 +1,3 @@
-
-
 #ifndef TEveMu2eCRVEvent_h
 #define TEveMu2eCRVEvent_h
 
@@ -20,11 +18,12 @@ class TEveMu2eCRVEvent : public TEvePointSet {
   public:
     #ifndef __CINT__
     explicit TEveMu2eCRVEvent();
-    TEveMu2eCRVEvent(CrvRecoPulseCollection chit) : fCrvRecoPulseCollection(chit){};
+    TEveMu2eCRVEvent(CrvRecoPulse chit) : fCrvRecoPulse(chit){};
     virtual ~TEveMu2eCRVEvent(){};
     
+   
     CrvCoincidenceCluster fCrvCoincidenceCluster; 
-    CrvRecoPulseCollection fCrvRecoPulseCollection;
+    CrvRecoPulse fCrvRecoPulse;
 
     Int_t mColor = kBlue;
     Int_t mSize= 1; 

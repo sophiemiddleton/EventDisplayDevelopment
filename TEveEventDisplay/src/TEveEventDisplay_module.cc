@@ -118,7 +118,6 @@ void TEveEventDisplay::beginRun(const art::Run& run){
 void TEveEventDisplay::analyze(const art::Event& event){
   std::cout<<"[In TEveEventDisplay::analyze()]"<<std::endl;
   foundEvent = true;
-  //GeomHandle<mu2e::BFieldManager> bfmgr; We be required for the TEvePropagtor
   Data_Collections data;
   if(_filler.addHits_)_filler.FillRecoCollection(event, data, ComboHits);
   if(_filler.addCrvHits_)_filler.FillRecoCollection(event, data, CRVRecoPulses);
