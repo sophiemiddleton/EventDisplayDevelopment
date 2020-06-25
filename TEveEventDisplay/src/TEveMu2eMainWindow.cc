@@ -216,7 +216,7 @@ namespace mu2e{
 */
 }
 
-    void TEveMu2eMainWindow::StartCaloProjectionTab(){
+  void TEveMu2eMainWindow::StartCaloProjectionTab(){
     // Create detector and event scenes for ortho views
     calo2Dproj->fDetXYScene = gEve->SpawnNewScene("Calo XY D0 Scene", "");
     calo2Dproj->fDetRZScene = gEve->SpawnNewScene("Calo XY D1 Scene", "");
@@ -260,14 +260,14 @@ namespace mu2e{
 
     gEve->GetBrowser()->GetTabRight()->SetTab(0);
 
-  }
+    }
 
   void TEveMu2eMainWindow::StartTrackerProjectionTab(){
     // Create detector and event scenes for ortho views
-    tracker2Dproj->fDetXYScene = gEve->SpawnNewScene("Det XY Scene", "");
-    tracker2Dproj->fDetRZScene = gEve->SpawnNewScene("Det RZ Scene", "");
-    tracker2Dproj->fEvtXYScene = gEve->SpawnNewScene("Evt XY Scene", "");
-    tracker2Dproj->fEvtRZScene = gEve->SpawnNewScene("Evt RZ Scene", "");
+    tracker2Dproj->fDetXYScene = gEve->SpawnNewScene("Tracker Det XY Scene", "");
+    tracker2Dproj->fDetRZScene = gEve->SpawnNewScene("Tracker Det RZ Scene", "");
+    tracker2Dproj->fEvtXYScene = gEve->SpawnNewScene("Tracker Evt XY Scene", "");
+    tracker2Dproj->fEvtRZScene = gEve->SpawnNewScene("Tracker Evt RZ Scene", "");
 
     // Create XY/RZ tracker2Dprojection mgrs, draw projected axes, & add them to scenes
     tracker2Dproj->fXYMgr = new TEveProjectionManager(TEveProjection::kPT_RPhi);
@@ -293,13 +293,13 @@ namespace mu2e{
     pack->SetShowTitleBar(kFALSE);
 
     pack->NewSlot()->MakeCurrent();
-    tracker2Dproj->fXYView = gEve->SpawnNewViewer("XY View", "");
+    tracker2Dproj->fXYView = gEve->SpawnNewViewer("Tracker XY View", "");
     tracker2Dproj->fXYView->GetGLViewer()->SetCurrentCamera(TGLViewer::kCameraOrthoXOY);
     tracker2Dproj->fXYView->AddScene(tracker2Dproj->fDetXYScene);
     tracker2Dproj->fXYView->AddScene(tracker2Dproj->fEvtXYScene);
 
     pack->NewSlot()->MakeCurrent();
-    tracker2Dproj->fRZView = gEve->SpawnNewViewer("RZ View", "");
+    tracker2Dproj->fRZView = gEve->SpawnNewViewer("Tracker RZ View", "");
     tracker2Dproj->fRZView->GetGLViewer()->SetCurrentCamera(TGLViewer::kCameraOrthoXOY);
     tracker2Dproj->fRZView->AddScene(tracker2Dproj->fDetRZScene);
     tracker2Dproj->fRZView->AddScene(tracker2Dproj->fEvtRZScene);
@@ -308,12 +308,11 @@ namespace mu2e{
 
   }
 
-
   void TEveMu2eMainWindow::PrepareCaloProjectionTab(const art::Run& run){
     calo2Dproj->fDetXYScene->DestroyElements();
     calo2Dproj->fDetRZScene->DestroyElements();
-    TEveElementList *orthodet0 = new TEveElementList("OrthoDet0");
-    TEveElementList *orthodet1 = new TEveElementList("OrthoDet1");
+    TEveElementList *orthodet0 = new TEveElementList("CaloOrthoDet0");
+    TEveElementList *orthodet1 = new TEveElementList("CaloOrthoDet1");
     TGeoVolume* topvol = geom->GetTopVolume(); 
     Mu2eCalo->DrawCaloDetector(run, topvol,orthodet0,orthodet1);
 
@@ -328,8 +327,8 @@ namespace mu2e{
     gEve->GetGlobalScene()->FindChild("OrthoDet")->SetRnrState(kFALSE);
 
     // ... Turn ON rendering of detector in RPhi and RZ views
-    calo2Dproj->fDetXYScene->FindChild("OrthoDet0 [P]")->SetRnrState(kTRUE);
-    calo2Dproj->fDetRZScene->FindChild("OrthoDet1 [P]")->SetRnrState(kTRUE);
+    calo2Dproj->fDetXYScene->FindChild("CaloOrthoDet0 [P]")->SetRnrState(kTRUE);
+    calo2Dproj->fDetRZScene->FindChild("CaloOrthoDet1 [P]")->SetRnrState(kTRUE);
   }
 
   void TEveMu2eMainWindow::PrepareTrackerProjectionTab(const art::Run& run){
@@ -354,40 +353,34 @@ namespace mu2e{
   }
 
   void TEveMu2eMainWindow::PrepareCRVProjectionTab(const art::Run& run){
-    std::cout<<"PrepareCRV"<<std::endl;
-    CRV2Dproj->fDetXYScene->DestroyElements();
-    CRV2Dproj->fEvtXYScene->DestroyElements();
-    std::cout<<"2Dprojection"<<std::endl;
-    TGeoVolume* topvol = geom->GetTopVolume();
-    std::cout<<"Geometry"<<std::endl;	
-    TEveElementList *orthodetT1 = new TEveElementList("CRVT1OrthoDet");
-    TEveElementList *orthodetT2 = new TEveElementList("CRVT2OrthoDet");
-    TEveElementList *orthodetT3 = new TEveElementList("CRVT3OrthoDet");
-    TEveElementList *orthodetT4 = new TEveElementList("CRVT4OrthoDet");
-    //TEveElementList *orthodet2 = new TEveElementList("OrthoDet");
-    TEveElementList *orthodetlist[] = {orthodetT1, orthodetT2, orthodetT3, orthodetT4};
-    std::cout<<"DrawCRVDetector1"<<std::endl;
-    // 
-    Mu2eCRV->DrawCRVDetector(run, topvol, orthodetlist);
-     std::cout<<"DrawCRVDetector6"<<std::endl;
-    for (unsigned int i=0; i<4; i++){
-        gEve->AddGlobalElement(orthodetlist[i]);
-    }
 
-    for (unsigned int i=0; i<4; i++){
-        CRV2Dproj->fXYMgr->ImportElements(orthodetlist[i], CRV2Dproj->fDetXYScene);
-    
-    }
+  CRV2Dproj->fDetXYScene->DestroyElements();
+  CRV2Dproj->fEvtXYScene->DestroyElements();
 
-    std::cout<<"DrawCRVDetector7"<<std::endl;
-    // ... Turn OFF rendering of duplicate detector in main 3D view
-    gEve->GetGlobalScene()->FindChild("OrthoDet")->SetRnrState(kFALSE);
-    std::cout<<"DrawCRVDetector8"<<std::endl;
-    
-    // ... Turn ON rendering of detector in RPhi and RZ views
-    //CRV2Dproj->fDetXYScene->FindChild("OrthoDet [P]")->SetRnrState(kTRUE);
-    //CRV2Dproj->fDetRZScene->FindChild("OrthoDets0 [P]")->SetRnrState(kTRUE);
-    std::cout<<"DrawCRVDetector9"<<std::endl;
+  TGeoVolume* topvol = geom->GetTopVolume();
+
+  TEveElementList *orthodetT1 = new TEveElementList("CRVT1OrthoDet");
+  TEveElementList *orthodetT2 = new TEveElementList("CRVT2OrthoDet");
+  TEveElementList *orthodetT3 = new TEveElementList("CRVT3OrthoDet");
+  TEveElementList *orthodetT4 = new TEveElementList("CRVT4OrthoDet");
+  TEveElementList *orthodetlist[] = {orthodetT1, orthodetT2, orthodetT3, orthodetT4};
+
+  Mu2eCRV->DrawCRVDetector(run, topvol, orthodetlist);
+
+  for (unsigned int i=0; i<4; i++){
+    gEve->AddGlobalElement(orthodetlist[i]);
+  }
+
+  for (unsigned int i=0; i<4; i++){
+    CRV2Dproj->fXYMgr->ImportElements(orthodetlist[i], CRV2Dproj->fDetXYScene);
+  }
+
+  // ... Turn OFF rendering of duplicate detector in main 3D view
+  gEve->GetGlobalScene()->FindChild("OrthoDet")->SetRnrState(kFALSE);
+
+  // ... Turn ON rendering of detector in RPhi and RZ views
+  //CRV2Dproj->fDetXYScene->FindChild("OrthoDet [P]")->SetRnrState(kTRUE);
+  //CRV2Dproj->fDetRZScene->FindChild("OrthoDets0 [P]")->SetRnrState(kTRUE);
 
   }
 
@@ -424,6 +417,7 @@ namespace mu2e{
     }
     if(this->_showDSOnly) mu2e_geom->InsideDS(topnode, false );
     if(this->_showCRV) mu2e_geom->InsideCRV(topnode, true);
+
     //Add static detector geometry to global scene
     gEve->AddGlobalElement(etopnode);
     geom->Draw("ogl");
@@ -431,35 +425,34 @@ namespace mu2e{
 
   
   Bool_t TEveMu2eMainWindow::ProcessMessage(Long_t msg, Long_t param1, Long_t param2){
-    switch (GET_MSG(msg))
+  switch (GET_MSG(msg))
+  {    
+    case kC_COMMAND:
+      switch (GET_SUBMSG(msg))
       {
-        
-        case kC_COMMAND:
-          switch (GET_SUBMSG(msg))
-          {
-            case kCM_BUTTON: 
-                 if(param1==1111)
-                 {                 
-                 }
-                 if(param1==1001)//Forward
-                 {
-                   gApplication->Terminate(0);
-                 }
-                 if(param1==1100)//Back
-                 {
-                    std::cout<<"Still developing backwards navigation"<<std::endl;
-                 }
-                 if(param1==1999)//Go
-                 {
-                    eventToFind = atoi(fTeEvt->GetText());
-                    runToFind = atoi(fTeRun->GetText());
-                    gApplication->Terminate();
-                 }
-                break;
-      }
-      break;
-    }
-    return kTRUE;
+        case kCM_BUTTON: 
+             if(param1==1111)
+             {                 
+             }
+             if(param1==1001)//Forward
+             {
+               gApplication->Terminate(0);
+             }
+             if(param1==1100)//Back
+             {
+                std::cout<<"Still developing backwards navigation"<<std::endl;
+             }
+             if(param1==1999)//Go
+             {
+                eventToFind = atoi(fTeEvt->GetText());
+                runToFind = atoi(fTeRun->GetText());
+                gApplication->Terminate();
+             }
+            break;
+  }
+  break;
+  }
+  return kTRUE;
   }
 
   //SetEvent is called from the Module - it is were the drawing functions are called.
@@ -525,7 +518,5 @@ namespace mu2e{
   {
     return _isClosed;
   }
-
 }
-
 
