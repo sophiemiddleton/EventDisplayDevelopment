@@ -174,15 +174,23 @@ namespace mu2e{
     void TEveMu2eMainWindow::StartCRVProjectionTab(){
       // Create detector and event scenes for ortho views
       CRV2Dproj->fDetXYScene = gEve->SpawnNewScene("CRV Top", "");
+      //CRV2Dproj->fDetXYScene = gEve->SpawnNewScene("CRV Side", "");
       CRV2Dproj->fEvtXYScene = gEve->SpawnNewScene("CRV Top event", "");
+      //CRV2Dproj->fEvtXYScene = gEve->SpawnNewScene("CRV Side event", "");
 
       // Create XY/RZ calo2Dprojection mgrs, draw projected axes, & add them to scenes
       CRV2Dproj->fXYMgr = new TEveProjectionManager(TEveProjection::kPT_RPhi);
-      TEveProjectionAxes* axes_xy = new TEveProjectionAxes(CRV2Dproj->fXYMgr);
-      CRV2Dproj->fDetXYScene->AddElement(axes_xy);
-      gEve->AddToListTree(axes_xy,kTRUE);
+      TEveProjectionAxes* axes_xy1 = new TEveProjectionAxes(CRV2Dproj->fXYMgr);
+      CRV2Dproj->fDetXYScene->AddElement(axes_xy1);
+      gEve->AddToListTree(axes_xy1,kTRUE);
       gEve->AddToListTree(CRV2Dproj->fXYMgr,kTRUE);
-
+ /*
+      CRV2Dproj->fXYMgr = new TEveProjectionManager(TEveProjection::kPT_RPhi);
+      TEveProjectionAxes* axes_xy2 = new TEveProjectionAxes(CRV2Dproj->fXYMgr);
+      CRV2Dproj->fDetXYScene->AddElement(axes_xy2);
+      gEve->AddToListTree(axes_xy2,kTRUE);
+      gEve->AddToListTree(CRV2Dproj->fXYMgr,kTRUE);
+*/
       // Create side-by-side ortho D1, D2 views in new tab & add det/evt scenes
       TEveWindowSlot *slot = 0;
       TEveWindowPack *pack = 0;
@@ -194,13 +202,18 @@ namespace mu2e{
       pack->SetShowTitleBar(kFALSE);
 
       pack->NewSlot()->MakeCurrent();
-      CRV2Dproj->fXYView = gEve->SpawnNewViewer("CRV View", "");
+      CRV2Dproj->fXYView = gEve->SpawnNewViewer("CRV Top View", "");
       CRV2Dproj->fXYView->GetGLViewer()->SetCurrentCamera(TGLViewer::kCameraOrthoXOY);
       CRV2Dproj->fXYView->AddScene(CRV2Dproj->fDetXYScene);
       CRV2Dproj->fXYView->AddScene(CRV2Dproj->fEvtXYScene);
 
+      /*pack->NewSlot()->MakeCurrent();
+      CRV2Dproj->fXYView = gEve->SpawnNewViewer("CRV2 View", "");
+      CRV2Dproj->fXYView->GetGLViewer()->SetCurrentCamera(TGLViewer::kCameraOrthoXOY);
+      CRV2Dproj->fXYView->AddScene(calo2Dproj->fDetXYScene);
+      CRV2Dproj->fXYView->AddScene(calo2Dproj->fEvtXYScene);
       gEve->GetBrowser()->GetTabRight()->SetTab(0);
-
+*/
 }
 
     void TEveMu2eMainWindow::StartCaloProjectionTab(){
@@ -347,26 +360,34 @@ namespace mu2e{
     std::cout<<"2Dprojection"<<std::endl;
     TGeoVolume* topvol = geom->GetTopVolume();
     std::cout<<"Geometry"<<std::endl;	
-    TEveElementList *orthodets0 = new TEveElementList("OrthoDet");
-    //TEveElementList *orthodets1 = new TEveElementList("OrthoDet");
-    //TEveElementList *orthodets2 = new TEveElementList("OrthoDet");
-    TEveElementList *orthodetlist[] = {orthodets0};
+    TEveElementList *orthodetT1 = new TEveElementList("CRVT1OrthoDet");
+    TEveElementList *orthodetT2 = new TEveElementList("CRVT2OrthoDet");
+    TEveElementList *orthodetT3 = new TEveElementList("CRVT3OrthoDet");
+    TEveElementList *orthodetT4 = new TEveElementList("CRVT4OrthoDet");
+    //TEveElementList *orthodet2 = new TEveElementList("OrthoDet");
+    TEveElementList *orthodetlist[] = {orthodetT1, orthodetT2, orthodetT3, orthodetT4};
     std::cout<<"DrawCRVDetector1"<<std::endl;
-    // orthodets1, orthodets2
+    // 
     Mu2eCRV->DrawCRVDetector(run, topvol, orthodetlist);
-
-    for (unsigned int i=0; i<1; i++){
-    gEve->AddGlobalElement(orthodetlist[i]);
-    CRV2Dproj->fXYMgr->ImportElements(orthodetlist[i], CRV2Dproj->fDetXYScene);
-    //CRV2Dproj->fRZMgr->ImportElements(orthodetlist[i], CRV2Dproj->fDetRZScene);
+     std::cout<<"DrawCRVDetector6"<<std::endl;
+    for (unsigned int i=0; i<4; i++){
+        gEve->AddGlobalElement(orthodetlist[i]);
     }
 
+    for (unsigned int i=0; i<4; i++){
+        CRV2Dproj->fXYMgr->ImportElements(orthodetlist[i], CRV2Dproj->fDetXYScene);
+    
+    }
+
+    std::cout<<"DrawCRVDetector7"<<std::endl;
     // ... Turn OFF rendering of duplicate detector in main 3D view
     gEve->GetGlobalScene()->FindChild("OrthoDet")->SetRnrState(kFALSE);
-
+    std::cout<<"DrawCRVDetector8"<<std::endl;
+    
     // ... Turn ON rendering of detector in RPhi and RZ views
-    CRV2Dproj->fDetXYScene->FindChild("OrthoDets0 [P]")->SetRnrState(kTRUE);
-    CRV2Dproj->fDetRZScene->FindChild("OrthoDets1 [P]")->SetRnrState(kTRUE);
+    //CRV2Dproj->fDetXYScene->FindChild("OrthoDet [P]")->SetRnrState(kTRUE);
+    //CRV2Dproj->fDetRZScene->FindChild("OrthoDets0 [P]")->SetRnrState(kTRUE);
+    std::cout<<"DrawCRVDetector9"<<std::endl;
 
   }
 
@@ -506,3 +527,5 @@ namespace mu2e{
   }
 
 }
+
+

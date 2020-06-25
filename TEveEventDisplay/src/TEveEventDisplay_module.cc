@@ -111,7 +111,7 @@ void TEveEventDisplay::beginRun(const art::Run& run){
   _frame->SetRunGeometry(run, _diagLevel);
   _frame->PrepareTrackerProjectionTab(run);
   _frame->PrepareCaloProjectionTab(run);
- // _frame->PrepareCRVProjectionTab(run);
+  _frame->PrepareCRVProjectionTab(run);
 }
 
 

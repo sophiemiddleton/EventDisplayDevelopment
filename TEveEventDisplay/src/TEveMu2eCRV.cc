@@ -14,31 +14,32 @@ namespace mu2e{
 	    CLHEP::Hep3Vector position;
 
 	    CosmicRayShield const &CRS = *(GeomHandle<CosmicRayShield>());
-	    const std::vector<CRSScintillatorShield> &sectors = CRS.getCRSScintillatorShields();
-	    std::cout<<"DrawCRVDetector2"<<std::endl;
-      //for (unsigned int i=0; i<sectors.size(); i++){
-      halflen = CRS.getSectorHalfLengths(sectors[0].getName().substr(4));
-      position = CRS.getSectorPosition(sectors[0].getName().substr(4));
-      TEveGeoShape *sectorshape = new TEveGeoShape();
-      std::cout<<"DrawCRVDetector2.5"<<std::endl;
-      sectorshape->SetShape(new TGeoBBox(halflen[0], halflen[1], halflen[2]));
-      std::cout<<"DrawCRVDetector3"<<std::endl;
-      sectorshape->SetMainTransparency(100);
-      //TODO:change this for different orthodets
-      orthodetlist[0]->AddElement(sectorshape);
-      std::cout<<"DrawCRVDetector3.5"<<std::endl;
-      TGeoShape *g = new TGeoBBox("CRV Sector 0",halflen[0], halflen[1], halflen[2]); 
-      std::cout<<"DrawCRVDetector4"<<std::endl;
-      TGeoVolume *crv0= new TGeoVolume("CRV Sector 0",g, Si);
-      crv0->SetVisLeaves(kFALSE);
-      crv0->SetInvisible();
+      const std::string TopSectorNames[] = {"T1", "T2", "T3", "T4"};
+	    for (unsigned int i=0; i<4; i++){
+		      halflen = CRS.getSectorHalfLengths(TopSectorNames[i]);
+		      position = CRS.getSectorPosition(TopSectorNames[i]);
+		      TEveGeoShape *sectorshape = new TEveGeoShape();
+		      sectorshape->SetShape(new TGeoBBox((2*halflen[0])/10, (2*halflen[2])/10, (2*halflen[1])/10));
+		      sectorshape->SetMainTransparency(100);
+		      //TODO:change this for different orthodets
+		      orthodetlist[i]->AddElement(sectorshape);
+		      TGeoShape *g = new TGeoBBox("CRV Sector",(2*halflen[0])/10, 2*halflen[2]/10, (2*halflen[1])/10); 
+		      TGeoVolume *crv0= new TGeoVolume("CRV Sector",g, Si);
+		      crv0->SetVisLeaves(kFALSE);
+		      crv0->SetInvisible();
+		      CLHEP::Hep3Vector crv0Pos(0,0,halflen[2]);
+		      //TODO:Change the translation
+          std::string filename("Mu2eG4/geom/crv_counters_v07.txt");
+          SimpleConfig Config(filename);
+          std::vector<double> Center;
+          if(i==0)  Config.getVectorDouble("crs.firstCounterT1", Center);
+          if(i==1)  Config.getVectorDouble ("crs.firstCounterT2",Center);
+          if(i==2)  Config.getVectorDouble("crs.firstCounterT3", Center);
+          if(i==3)  Config.getVectorDouble("crs.firstCounterT4", Center) ;  
+std::cout<<Center[2]<<std::endl;      
+          topvol->AddNode(crv0, 1, new TGeoTranslation(Center[0]/10,Center[1]/10,Center[2]/10));
 
-      CLHEP::Hep3Vector crv0Pos(0,0,halflen[2]);
-      std::cout<<"DrawCRVDetector5"<<std::endl;
-      //TODO:Change the translation
-      topvol->AddNode(crv0, 1, new TGeoTranslation(-390.4,0,1194.2));
-      std::cout<<"DrawCRVDetector6"<<std::endl;
-      //}
+	      }
 
       }
 
