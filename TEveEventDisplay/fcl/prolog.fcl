@@ -14,7 +14,6 @@ EventFilter : {
 
 TEveEventDisplayHelix : {
     module_type : TEveEventDisplay
-    g4ModuleLabel        		    : "g4run"
     filler : {
       ComboHitCollection 		    : "makeSH"
       GenParticleCollection 		: "compressDigiMCs" #generate"
@@ -36,7 +35,6 @@ TEveEventDisplayHelix : {
 
 TEveEventDisplayCosmics : {
     module_type : TEveEventDisplay
-    g4ModuleLabel        		    : "g4run"
     filler : {
       ComboHitCollection 		      : "makePH"
       GenParticleCollection 	    : "compressDigiMCs" 
@@ -58,7 +56,6 @@ TEveEventDisplayCosmics : {
 
 TEveEventDisplayCaloOnly : {
     module_type : TEveEventDisplay  
-    g4ModuleLabel        		    : "g4run"
     filler : {
       ComboHitCollection 		      : NULL
       GenParticleCollection 		  : NULL

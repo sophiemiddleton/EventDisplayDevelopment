@@ -26,8 +26,8 @@ namespace mu2e {
       void DrawHitCollection(const std::string &pstr, size_t i, std::vector<CLHEP::Hep3Vector> HitPos, TEveElementList *list); 
 
       //Access to the ComboHit members:
-      XYZVec const GetPosition() { return fComboHit.pos() ;}/
-      double GetEnergy(){ return fComboHit.energyDep(); }
+      XYZVec const GetPosition() { return fComboHit.pos();}
+      double GetEnergy(){ return fComboHit.energyDep();}
 
       #endif
       ClassDef(TEveMu2eHit, 0);

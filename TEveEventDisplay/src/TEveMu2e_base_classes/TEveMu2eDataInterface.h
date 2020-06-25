@@ -1,27 +1,11 @@
 #ifndef TEveMu2eDataInterface_h
 #define TEveMu2eDataInterface_h
 
-#include <TGLabel.h>
-#include <TGTextEntry.h>
-#include <TText.h>
 //libGeom
 #include <TGeoManager.h>
-#include <TBox.h>
-#include <TGeoBBox.h>
 //TEve
-#include <TEveTrack.h>
 #include <TEveManager.h>
 #include <TEveStraightLineSet.h>
-//fcl:
-#include "fhiclcpp/types/Atom.h"
-#include "fhiclcpp/types/Sequence.h"
-#include "fhiclcpp/types/Table.h"
-//Mu2e:
-#include "art/Framework/Principal/Event.h"
-#include "art/Framework/Principal/Run.h"
-#include "ConfigTools/inc/SimpleConfig.hh"
-#include "GeometryService/inc/GeomHandle.hh"
-#include "RecoDataProducts/inc/ComboHit.hh"
 //TEveMu2e
 #include "TEveEventDisplay/src/dict_classes/Collection_Filler.h"
 #include "TEveEventDisplay/src/dict_classes/Geom_Interface.h"
@@ -33,10 +17,10 @@
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eCRVEvent.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eCluster.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eCustomHelix.h"
+
 namespace mu2e{
-	class TEveMu2eDataInterface {
+    class TEveMu2eDataInterface {
     public:
-      
       #ifndef __CINT__
       TEveMu2eDataInterface() : fHitsList2D(0),fHitsList3D(0),fCrystalHitList(0),fTrackList2D(0),fTrackList3D(0), fClusterList2D(0), fClusterList3D(0),fCrvList2D(0),fCrvList3D(0){};
       TEveMu2eDataInterface(const TEveMu2eDataInterface &);
@@ -53,7 +37,6 @@ namespace mu2e{
       TEveElementList *fCrvList2D;
       TEveElementList *fCrvList3D;
 
-
       void AddCRVInfo(bool firstloop, const CrvRecoPulseCollection *crvcoincol, Geom_Interface *mu2e_geom, TEveMu2e2DProjection *crv2Dproj);
       void AddComboHits(bool firstloop, const ComboHitCollection *chcol, Geom_Interface *mu2e_geom,TEveMu2e2DProjection *tracker2Dproj);
       void AddCaloClusters(bool firstloop, const CaloClusterCollection *clustercol,Geom_Interface *mu2e_geom,TEveMu2e2DProjection *calo2Dproj);
@@ -61,9 +44,9 @@ namespace mu2e{
       void AddCosmicTrack(bool firstloop, const CosmicTrackSeedCollection *cosmiccol);
       void AddHelixPieceWise(bool firstloop, const KalSeedCollection *seedcol, Geom_Interface *mu2e_geom,TEveMu2e2DProjection *trackerDproj);
 
-     ClassDef(TEveMu2eDataInterface,0);
+      ClassDef(TEveMu2eDataInterface,0);
 
-    }; //end class def
+  }; //end class def
 
 }//end namespace mu2e
 

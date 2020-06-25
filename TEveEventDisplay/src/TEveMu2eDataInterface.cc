@@ -36,7 +36,7 @@ namespace mu2e{
         const CRSScintillatorBarIndex &crvBarIndex = crvRecoPulse.GetScintillatorBarIndex();
         const CRSScintillatorBar &crvCounter = CRS->getBar(crvBarIndex);
         CLHEP::Hep3Vector crvCounterPos = crvCounter.getPosition(); 
-        double time = crvRecoPulse.GetPulseTime();
+        //double time = crvRecoPulse.GetPulseTime();
         //int PEs = crvRecoPulse.GetPEs();
         CLHEP::Hep3Vector pointInMu2e = crvCounterPos/10;
         string pos3D = "(" + to_string((double)crvCounterPos.x()) + ", " + to_string((double)crvCounterPos.y()) + ", " + to_string((double)crvCounterPos.z()) + ")";

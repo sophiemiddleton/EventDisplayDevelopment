@@ -2,7 +2,7 @@
 #define TEveMu2eCRV_h
 
 #include <TApplication.h>
-#include<TEvePad.h>
+#include <TEvePad.h>
 #include <TObject.h>
 #include <TSystem.h>
 #include <TEveGeoShape.h>
@@ -13,10 +13,6 @@
 #include <TGeoMatrix.h>
 // ... libRIO
 #include <TFile.h>
-// Framework includes.
-#include "art/Framework/Principal/Event.h"
-#include "art/Framework/Principal/Run.h"
-#include "art/Framework/Principal/Handle.h"
 //CRV/CRS:
 #include "GeometryService/inc/GeomHandle.hh"
 #include "CosmicRayShieldGeom/inc/CosmicRayShield.hh"
@@ -28,19 +24,16 @@
 namespace mu2e{
 	class TEveMu2eCRV 
 	{
-  public:
-    
-    #ifndef __CINT__
-    explicit TEveMu2eCRV();
-    TEveMu2eCRV(const TEveMu2eCRV &){};
-    TEveMu2eCRV& operator=(const TEveMu2eCRV &);
-    virtual ~TEveMu2eCRV(){};
-    void DrawCRVDetector(art::Run const& run, TGeoVolume* topvol , TEveElementList *orthodetlist[]);
-    TEveMu2e2DProjection *CRV2Dproj = new TEveMu2e2DProjection();
-    #endif
-    ClassDef(TEveMu2eCRV, 0);
-
-	
+    public:
+      #ifndef __CINT__
+      explicit TEveMu2eCRV();
+      TEveMu2eCRV(const TEveMu2eCRV &){};
+      TEveMu2eCRV& operator=(const TEveMu2eCRV &);
+      virtual ~TEveMu2eCRV(){};
+      void DrawCRVDetector(art::Run const& run, TGeoVolume* topvol , TEveElementList *orthodetlist[]);
+      TEveMu2e2DProjection *CRV2Dproj = new TEveMu2e2DProjection();
+      #endif
+      ClassDef(TEveMu2eCRV, 0);
   };
 }
 #endif

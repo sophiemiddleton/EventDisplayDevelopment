@@ -18,14 +18,14 @@
 #include  "TEveEventDisplay/src/dict_classes/Data_Collections.h"
 
 // Mu2e Utilities
-#include "GeometryService/inc/GeomHandle.hh"
+/*#include "GeometryService/inc/GeomHandle.hh"
 #include "GeometryService/inc/DetectorSystem.hh"
 #include "GeometryService/inc/WorldG4.hh"
 #include "GeometryService/inc/WorldG4Maker.hh"
 #include "GeometryService/inc/Mu2eCoordTransform.hh"
 #include "BFieldGeom/inc/BFieldManager.hh"
 #include "Mu2eUtilities/inc/SimParticleTimeOffset.hh"
-#include "TrkDiag/inc/TrkMCTools.hh"
+#include "TrkDiag/inc/TrkMCTools.hh"*/
 
 // Framework includes.
 #include "art/Framework/Core/EDAnalyzer.h"
@@ -47,7 +47,6 @@ namespace mu2e
       using Name=fhicl::Name;
       using Comment=fhicl::Comment;
       fhicl::Atom<int> diagLevel{Name("diagLevel"), Comment("for info"),0};
-      fhicl::Atom<std::string> g4ModuleLabel{Name("g4ModuleLabel"), Comment("")};
       fhicl::Atom<bool> showEvent{Name("showEvent"), Comment(""),true};     
       fhicl::Table<Collection_Filler::Config> filler{Name("filler"),Comment("fill collections")};
     };
@@ -60,84 +59,73 @@ namespace mu2e
     virtual void analyze(const art::Event& e);
     virtual void endJob() override;
     private:
-    Config _conf;
-    int _diagLevel;
-    Int_t _evt; 
-
-    std::string g4ModuleLabel_;
-
-    bool showEvent_;
-       
-    TApplication* application_;
-    TDirectory*   directory_ = nullptr;   
-
-    Collection_Filler _filler;
- 
-    TEveMu2eMainWindow *_frame;
-    fhicl::ParameterSet _pset;
-
-    bool foundEvent = false;
-    void MakeTEveMu2eMainWindow();
-    bool _firstLoop = true;
+      Config _conf;
+      int _diagLevel;
+      bool _showEvent;       
+      TApplication* application_;
+      TDirectory*   directory_ = nullptr;   
+      Collection_Filler _filler;
+      TEveMu2eMainWindow *_frame;
+      fhicl::ParameterSet _pset;
+      bool foundEvent = false;
+      void MakeTEveMu2eMainWindow();
+      bool _firstLoop = true;
          
-    };
+  };
 
-TEveEventDisplay::TEveEventDisplay(const Parameters& conf) :
+  TEveEventDisplay::TEveEventDisplay(const Parameters& conf) :
   art::EDAnalyzer(conf),
   _diagLevel(conf().diagLevel()),
-  g4ModuleLabel_(conf().g4ModuleLabel()),
-  showEvent_(conf().showEvent()),
+  _showEvent(conf().showEvent()),
   _filler(conf().filler())
 	{}
 
 
-TEveEventDisplay::~TEveEventDisplay(){}
+  TEveEventDisplay::~TEveEventDisplay(){}
 
-void TEveEventDisplay::beginJob(){
-  directory_ = gDirectory;
-  if ( !gApplication ){
-    int    tmp_argc(0);
-    char** tmp_argv(0);
-    application_ = new TApplication( "noapplication", &tmp_argc, tmp_argv );
+  void TEveEventDisplay::beginJob(){
+    directory_ = gDirectory;
+    if ( !gApplication ){
+      int    tmp_argc(0);
+      char** tmp_argv(0);
+      application_ = new TApplication( "noapplication", &tmp_argc, tmp_argv );
+    }
+    _frame = new TEveMu2eMainWindow(gClient->GetRoot(), 1000,600, _pset);
+    _frame->StartTrackerProjectionTab();
+    _frame->StartCaloProjectionTab();
+    _frame->StartCRVProjectionTab();
   }
-  _frame = new TEveMu2eMainWindow(gClient->GetRoot(), 1000,600, _pset);
-  _frame->StartTrackerProjectionTab();
-  _frame->StartCaloProjectionTab();
-  _frame->StartCRVProjectionTab();
-}
 
 
-void TEveEventDisplay::beginRun(const art::Run& run){
-  _frame->SetRunGeometry(run, _diagLevel);
-  _frame->PrepareTrackerProjectionTab(run);
-  _frame->PrepareCaloProjectionTab(run);
-  _frame->PrepareCRVProjectionTab(run);
-}
+  void TEveEventDisplay::beginRun(const art::Run& run){
+    _frame->SetRunGeometry(run, _diagLevel);
+    _frame->PrepareTrackerProjectionTab(run);
+    _frame->PrepareCaloProjectionTab(run);
+    _frame->PrepareCRVProjectionTab(run);
+  }
 
 
-void TEveEventDisplay::analyze(const art::Event& event){
-  std::cout<<"[In TEveEventDisplay::analyze()]"<<std::endl;
-  foundEvent = true;
-  Data_Collections data;
-  if(_filler.addHits_)_filler.FillRecoCollection(event, data, ComboHits);
-  if(_filler.addCrvHits_)_filler.FillRecoCollection(event, data, CRVRecoPulses);
-  if(_filler.addTracks_)_filler.FillRecoCollection(event, data, KalSeeds);
-  if(_filler.addClusters_)_filler.FillRecoCollection(event, data, CaloClusters);
-  if(!_frame->isClosed()) _frame->setEvent(event, _firstLoop, data);
-  _firstLoop = false;
+  void TEveEventDisplay::analyze(const art::Event& event){
+    std::cout<<"[In TEveEventDisplay::analyze()]"<<std::endl;
+    foundEvent = true;
+    Data_Collections data;
+    if(_filler.addHits_)_filler.FillRecoCollection(event, data, ComboHits);
+    if(_filler.addCrvHits_)_filler.FillRecoCollection(event, data, CRVRecoPulses);
+    if(_filler.addTracks_)_filler.FillRecoCollection(event, data, KalSeeds);
+    if(_filler.addClusters_)_filler.FillRecoCollection(event, data, CaloClusters);
+    if(!_frame->isClosed()) _frame->setEvent(event, _firstLoop, data);
+    _firstLoop = false;
 
-} 
+  } 
 
 
-void TEveEventDisplay::endJob(){
-  if(!foundEvent){
-    char msg[300];
-    sprintf(msg, "Reached end of file but #%i has not been found", true);
-    new TGMsgBox(gClient->GetRoot(), gClient->GetRoot(), "Event Not Found", msg, kMBIconExclamation,kMBOk);
-	}
-
-}  
-	
+  void TEveEventDisplay::endJob(){
+    if(!foundEvent){
+      char msg[300];
+      sprintf(msg, "Reached end of file but #%i has not been found", true);
+      new TGMsgBox(gClient->GetRoot(), gClient->GetRoot(), "Event Not Found", msg, kMBIconExclamation,kMBOk);
+    }
+  }  
 
 }
 using mu2e::TEveEventDisplay;

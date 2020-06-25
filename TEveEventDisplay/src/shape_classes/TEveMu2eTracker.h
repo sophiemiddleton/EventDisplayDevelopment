@@ -12,20 +12,15 @@
 #include <TGeoMatrix.h>
 // ... libRIO
 #include <TFile.h>
-// Framework includes.
-#include "art/Framework/Principal/Run.h"
 //Tracker
 #include "TrackerGeom/inc/Tracker.hh"
 #include "GeometryService/inc/GeomHandle.hh"
 //TEveMu2e:
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2e2DProjection.h"
 
-
-
 namespace mu2e {
 	
 class TEveMu2eTracker{
-
 	public:
     #ifndef __CINT__
     explicit TEveMu2eTracker();

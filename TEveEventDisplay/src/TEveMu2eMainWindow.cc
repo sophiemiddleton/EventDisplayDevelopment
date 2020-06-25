@@ -24,7 +24,7 @@
 #include <TEveGeoNode.h>
 #include <TEveViewer.h>
 #include <TEveScene.h>
-#include<TEveParamList.h>
+#include <TEveParamList.h>
 #include <TEveProjectionManager.h>
 #include <TEveProjectionAxes.h>
 #include <TEveStraightLineSet.h>
@@ -56,8 +56,7 @@ using namespace mu2e;
 
 namespace mu2e{
 
-
-	TEveMu2eMainWindow::TEveMu2eMainWindow() : TGMainFrame(gClient->GetRoot(), 320, 320){}
+  TEveMu2eMainWindow::TEveMu2eMainWindow() : TGMainFrame(gClient->GetRoot(), 320, 320){}
 
   TEveMu2eMainWindow::TEveMu2eMainWindow(const TGWindow* p, UInt_t w, UInt_t h, fhicl::ParameterSet _pset): 
     TGMainFrame(p, w, h),
@@ -66,7 +65,6 @@ namespace mu2e{
     fTlRun(0),
     fTlEvt(0)
     {
-     
       TEveManager::Create();
       gEve->GetBrowser()->GetTabRight()->SetTab(0);
       gClient->GetRoot();
@@ -80,7 +78,6 @@ namespace mu2e{
       browser->StartEmbedding(TRootBrowser::kLeft); // insert nav frame as new tab in left pane
 
       TGMainFrame* frmMain = new TGMainFrame(gClient->GetRoot(), 1000, 600);
-      //_mainCanvas = new TRootEmbeddedCanvas("EventDisplayCanvas",frmMain,1000,600);
       frmMain->SetWindowName("EVT NAV");
       frmMain->SetCleanup(kDeepCleanup);
 
@@ -88,8 +85,6 @@ namespace mu2e{
       TGVerticalFrame* evtidFrame = new TGVerticalFrame(frmMain);
       {
         TString icondir(TString::Format("%s/icons/", gSystem->Getenv("ROOTSYS")) );
-
-        // ... Example of use of picture button
 
         TGPictureButton *b = new TGPictureButton(navFrame, gClient->GetPicture(icondir + "GoBack.gif"),1100);
         navFrame->AddFrame(b);
@@ -138,8 +133,7 @@ namespace mu2e{
         navFrame->AddFrame(Gobutton, new TGLayoutHints(kLHintsLeft,3,0,3,0));         
         Gobutton->Associate(this);
 
-
-        //Add logo
+        //Add Mu2e logo
         std::string logoFile = "TEveEventDisplay/src/Icons/mu2e_logo_oval.png";
         const TGPicture *logo = gClient->GetPicture(logoFile.c_str());
         TGIcon *icon = new TGIcon(navFrame,logo,50,50);

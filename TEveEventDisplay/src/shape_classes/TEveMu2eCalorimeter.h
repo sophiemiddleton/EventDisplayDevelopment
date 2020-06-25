@@ -2,7 +2,7 @@
 #define TEveMu2eCalorimeter_h
 
 #include <TApplication.h>
-#include<TEvePad.h>
+#include <TEvePad.h>
 #include <TObject.h>
 #include <TSystem.h>
 #include <TEveGeoShape.h>
@@ -13,10 +13,6 @@
 #include <TGeoMatrix.h>
 // ... libRIO
 #include <TFile.h>
-// Framework includes.
-#include "art/Framework/Principal/Event.h"
-#include "art/Framework/Principal/Run.h"
-#include "art/Framework/Principal/Handle.h"
 //Calorimeter:
 #include "GeometryService/inc/GeomHandle.hh"
 #include "CalorimeterGeom/inc/CaloGeomUtil.hh"
@@ -31,19 +27,16 @@
 namespace mu2e{
 	class TEveMu2eCalorimeter
 	{
-  public:
-    
-    #ifndef __CINT__
-    explicit TEveMu2eCalorimeter();
-    TEveMu2eCalorimeter(const TEveMu2eCalorimeter &){};
-    TEveMu2eCalorimeter& operator=(const TEveMu2eCalorimeter &);
-    virtual ~TEveMu2eCalorimeter(){};
-		void DrawCaloDetector(art::Run const& run, TGeoVolume* topvol , TEveElementList *orthodet0,TEveElementList *orthodet1);
-    TEveMu2e2DProjection *calo2Dproj = new TEveMu2e2DProjection();
-    #endif
-		ClassDef(TEveMu2eCalorimeter, 0);
-		
-	
+    public:
+      #ifndef __CINT__
+      explicit TEveMu2eCalorimeter();
+      TEveMu2eCalorimeter(const TEveMu2eCalorimeter &){};
+      TEveMu2eCalorimeter& operator=(const TEveMu2eCalorimeter &);
+      virtual ~TEveMu2eCalorimeter(){};
+      void DrawCaloDetector(art::Run const& run, TGeoVolume* topvol , TEveElementList *orthodet0,TEveElementList *orthodet1);
+      TEveMu2e2DProjection *calo2Dproj = new TEveMu2e2DProjection();
+      #endif
+      ClassDef(TEveMu2eCalorimeter, 0);
   };
 }
 #endif

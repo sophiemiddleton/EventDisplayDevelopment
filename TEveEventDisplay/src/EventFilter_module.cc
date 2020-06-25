@@ -15,33 +15,33 @@ namespace mu2e {
 
 	class EventFilter : public art::EDFilter {
 	  public:
-	  struct Config {
-	    using Name=fhicl::Name;
-	    using Comment=fhicl::Comment;
-	    fhicl::Atom<int> event{Name("Event"),Comment("event number"),0};
-	    fhicl::Atom<int> run{Name("Run"),Comment("run number"),0};
-	    fhicl::Atom<bool> Sequential{Name("Sequential"),Comment("sequential events"),false};
-	  };
-	  
-	  typedef art::EDFilter::Table<Config> Parameters;
-	  
-	  explicit EventFilter(const Parameters& conf);
-	  virtual bool filter (art::Event& event) override;
-	  virtual ~EventFilter() {}
+	    struct Config {
+	      using Name=fhicl::Name;
+	      using Comment=fhicl::Comment;
+	      fhicl::Atom<int> event{Name("Event"),Comment("event number"),0};
+	      fhicl::Atom<int> run{Name("Run"),Comment("run number"),0};
+	      fhicl::Atom<bool> Sequential{Name("Sequential"),Comment("sequential events"),false};
+	    };
+	    
+	    typedef art::EDFilter::Table<Config> Parameters;
+	    
+	    explicit EventFilter(const Parameters& conf);
+	    virtual bool filter (art::Event& event) override;
+	    virtual ~EventFilter() {}
 	  
 	  private:
-	  Config _conf;
-	  int _event, eventid;
-	  int _run, runid;
-	  bool _seq;
+	    Config _conf;
+	    int _event, eventid;
+	    int _run, runid;
+	    bool _seq;
 	};
 	
 	EventFilter::EventFilter(const Parameters& conf):
-	art::EDFilter{conf},
-	_event(conf().event()),
-	_run(conf().run()),
-	_seq(conf().Sequential()){}
-	
+    art::EDFilter{conf},
+    _event(conf().event()),
+    _run(conf().run()),
+    _seq(conf().Sequential()){}
+
 	
 	bool EventFilter::filter(art::Event& event) {
 	  if(_seq) return true;
@@ -55,8 +55,7 @@ namespace mu2e {
 	    return true;
 	  }
 	    return false;
-	  }
-	}
-	
-	using mu2e::EventFilter;
-	DEFINE_ART_MODULE(EventFilter);
+  }
+}
+using mu2e::EventFilter;
+DEFINE_ART_MODULE(EventFilter);
