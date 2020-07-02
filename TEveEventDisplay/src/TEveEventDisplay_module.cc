@@ -17,16 +17,6 @@
 #include  "TEveEventDisplay/src/dict_classes/Collection_Filler.h"
 #include  "TEveEventDisplay/src/dict_classes/Data_Collections.h"
 
-// Mu2e Utilities
-/*#include "GeometryService/inc/GeomHandle.hh"
-#include "GeometryService/inc/DetectorSystem.hh"
-#include "GeometryService/inc/WorldG4.hh"
-#include "GeometryService/inc/WorldG4Maker.hh"
-#include "GeometryService/inc/Mu2eCoordTransform.hh"
-#include "BFieldGeom/inc/BFieldManager.hh"
-#include "Mu2eUtilities/inc/SimParticleTimeOffset.hh"
-#include "TrkDiag/inc/TrkMCTools.hh"*/
-
 // Framework includes.
 #include "art/Framework/Core/EDAnalyzer.h"
 #include "art/Framework/Principal/Event.h"

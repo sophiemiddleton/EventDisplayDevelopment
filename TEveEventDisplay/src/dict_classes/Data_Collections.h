@@ -11,6 +11,13 @@
 #include "MCDataProducts/inc/MCTrajectoryCollection.hh"
 #include "MCDataProducts/inc/SimParticleCollection.hh"
 #include "MCDataProducts/inc/StepPointMCCollection.hh"
+#include "MCDataProducts/inc/CaloDigiMCCollection.hh"
+#include "MCDataProducts/inc/CaloHitMCTruthCollection.hh"
+#include "MCDataProducts/inc/CaloHitSimPartMCCollection.hh"
+#include "MCDataProducts/inc/CrvCoincidenceClusterMCCollection.hh"
+#include "MCDataProducts/inc/CrvDigiMCCollection.hh"
+#include "MCDataProducts/inc/MCTrajectoryCollection.hh"
+#include "MCDataProducts/inc/StrawDigiMCCollection.hh"
 //Kalman Tracks
 #include "RecoDataProducts/inc/KalSeed.hh"
 #include "RecoDataProducts/inc/KalRepCollection.hh"
@@ -44,15 +51,12 @@ namespace mu2e{
 	class Data_Collections
 	{
   public:
-    
     #ifndef __CINT__
-
     explicit Data_Collections(){};
     Data_Collections(const Data_Collections &){};
     Data_Collections& operator=(const Data_Collections &);
 
     //RecoDataProducts:
-
     const ComboHitCollection *chcol = 0;
     const CrvRecoPulseCollection* crvcoincol = 0;
     const CosmicTrackSeedCollection* cosmiccol = 0;
@@ -63,7 +67,13 @@ namespace mu2e{
     const KalSeedCollection* kalseedcol = 0;
 
     //MCDataProducts:
-    //TODO
+    const CaloDigiMCCollection *mccdigicol = 0;
+    const CaloHitMCTruthCollection *mchittruthcol = 0;
+    const CaloHitSimPartMCCollection *mcchitspcol = 0;
+    const CrvCoincidenceClusterMCCollection *mccrvcccol = 0;
+    const CrvDigiMCCollection *mccrvdigicol = 0;
+    const MCTrajectoryCollection *mctrajcol = 0;
+    const StrawDigiMCCollection *mcsdigicol = 0;
 
     virtual ~Data_Collections(){};
     #endif

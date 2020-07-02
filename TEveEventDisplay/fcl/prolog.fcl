@@ -24,12 +24,25 @@ TEveEventDisplayHelix : {
       CaloCrystalHitCollection  :  "CaloCrystalHitFromHit"
       HelixSeedCollection       :  "HelixFinderDe:Negative"
       KalSeedCollection         :  "KFFDeM"
+      CaloDigiMCCollection: NULL
+      CaloHitMCTruthCollection:  NULL
+      CaloHitSimPartMCCollection:  NULL
+      CrvCoincidenceClusterMCCollection:  NULL
+      CrvDigiMCCollection:  NULL
+      MCTrajectoryCollection:  NULL
+      StrawDigiMCCollection:  NULL
       addHits 			            : false
       addTracks 			          : false
       addCrvHits			          : false
       addCosmicSeedFit	        : false
       addClusters			          : true
-      isCosmic			            : false
+      addMCCaloDigis			:false 
+      addMCHits 			:false
+      addMCHitsSP			:false 
+      addMCCrvCC			:false  
+      addMCCrvDigis			:false
+      addMCTraj				:false 
+      addMCStrawDigis			:false
     }
   }   
 
@@ -44,13 +57,26 @@ TEveEventDisplayCosmics : {
       CaloClusterCollection		    : NULL
       CaloCrystalHitCollection    : NULL
 #      CrvCoincidenceClusterCollection : "CrvCoincidenceClusterFinder"
+      CaloDigiMCCollection: NULL
+      CaloHitMCTruthCollection:  NULL
+      CaloHitSimPartMCCollection:  NULL
+      CrvCoincidenceClusterMCCollection:  NULL
+      CrvDigiMCCollection:  NULL
+      MCTrajectoryCollection:  NULL
+      StrawDigiMCCollection:  NULL
       HelixSeedCollection         : NULL
       KalSeedCollection           : NULL
       addHits 			              : true
       addTracks 			            : false
       addCrvHits			            : true
       addCosmicSeedFit	          : false
-      isCosmic			              : true
+      addMCCaloDigis			:false 
+      addMCHits 			:false
+      addMCHitsSP			:false 
+      addMCCrvCC			:false  
+      addMCCrvDigis			:false
+      addMCTraj				:false 
+      addMCStrawDigis			:false
    }
   }   
 
@@ -66,13 +92,26 @@ TEveEventDisplayCaloOnly : {
       CaloCrystalHitCollection    : "CaloCrystalHitFromHit"
       HelixSeedCollection         :  NULL
       KalSeedCollection           :  NULL
+      CaloDigiMCCollection: NULL
+      CaloHitMCTruthCollection:  NULL
+      CaloHitSimPartMCCollection:  NULL
+      CrvCoincidenceClusterMCCollection:  NULL
+      CrvDigiMCCollection:  NULL
+      MCTrajectoryCollection:  NULL
+      StrawDigiMCCollection:  NULL
       addHits 			              : false
       addTracks 			            : false
       addClusters			            : true
       addCrvHits			            : false
       addCosmicSeedFit	          : false
       addCrystalHits              : false
-      isCosmic			              : false
+      addMCCaloDigis			:false 
+      addMCHits 			:false
+      addMCHitsSP			:false 
+      addMCCrvCC			:false  
+      addMCCrvDigis			:false
+      addMCTraj				:false 
+      addMCStrawDigis			:false
   }
   }   
 
