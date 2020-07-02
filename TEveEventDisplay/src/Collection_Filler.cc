@@ -30,7 +30,6 @@ namespace mu2e{
     addCosmicSeedFit_(conf.addCosmicSeedFit()),
     isCosmic_(conf.isCosmic()),
     RecoOnly_(conf.RecoOnly()),
-    MCOnly_(conf.MCOnly()),
     FillAll_(conf.FillAll()),
     addMCCaloDigis_(conf.addMCCaloDigis()), 
     addMCHits_(conf.addMCHits()), 
@@ -38,7 +37,8 @@ namespace mu2e{
     addMCCrvCC_(conf.addMCCrvCC()), 
     addMCCrvDigis_(conf.addMCCrvDigis()), 
     addMCTraj_(conf.addMCTraj()), 
-    addMCStrawDigis_(conf.addMCStrawDigis())
+    addMCStrawDigis_(conf.addMCStrawDigis()),
+    MCOnly_(conf.MCOnly())
   {}
 
   void Collection_Filler::FillRecoCollection(const art::Event& evt, Data_Collections &data, RecoDataProductName CollectionName){

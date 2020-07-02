@@ -68,7 +68,7 @@ namespace mu2e{
       fhicl::Atom<art::InputTag>mcdigisTag{Name("CaloDigiMCCollection"),Comment("mcdigisTag")};
       fhicl::Atom<art::InputTag>mccHitTag{Name("CaloHitMCTruthCollection"),Comment("mccHitTag")};
       fhicl::Atom<art::InputTag>mccHitSPTag{Name("CaloHitSimPartMCCollection"),Comment("mccHitSPTag")};
-      fhicl::Atom<art::InputTag>mccrvcoincluTag{Name("CrvCoincidenceClusterMCCollection"),Comment("mccrvcoincluTag")};
+    fhicl::Atom<art::InputTag>mccrvcoincluTag{Name("CrvCoincidenceClusterMCCollection"),Comment("mccrvcoincluTag")};
       fhicl::Atom<art::InputTag>mccrvdigiTag{Name("CrvDigiMCCollection"),Comment("mccrvdigiTag")};
       //fhicl::Atom<art::InputTag>mckalseedTag{Name("KalSeedMCCollection"),Comment("mckalseedTag")};
       fhicl::Atom<art::InputTag>mctrajTag{Name("MCTrajectoryCollection"),Comment("mctrajTag")};
@@ -88,10 +88,10 @@ namespace mu2e{
       fhicl::Atom<bool> addMCCaloDigis{Name("addMCCaloDigis"), Comment("set to add the MC calo digis"),false};
       fhicl::Atom<bool> addMCHits{Name("addMCHits"), Comment("set to add MC hits"),false};
       fhicl::Atom<bool> addMCHitsSP{Name("addMCHitsSP"), Comment("set to add MC hits sim part"),false};
-      fhicl::Atom<bool> addMCCrvCC{Name("addMCCRVCC"), Comment("set to add MC crv coin clust"),false};	
-      fhicl::Atom<bool> addMCCrvDigis{Name("addMCCRVDigis"), Comment("set to add MC crv digis"), false};
+      fhicl::Atom<bool> addMCCrvCC{Name("addMCCrvCC"), Comment("set to add MC crv coin clust"),false};	
+      fhicl::Atom<bool> addMCCrvDigis{Name("addMCCrvDigis"), Comment("set to add MC crv digis"), false};
       fhicl::Atom<bool> addMCTraj{Name("addMCTraj"), Comment("set to add MC trajectories"), false};
-      fhicl::Atom<bool> addMCStrawDigis{Name("addMCStarawDigis"), Comment("set to add MC straw digis"), false};
+      fhicl::Atom<bool> addMCStrawDigis{Name("addMCStrawDigis"), Comment("set to add MC straw digis"), false};
       fhicl::Atom<bool> MCOnly{Name("MCOnly"), Comment("set to see only MC Data Products"), false};
     };
 
@@ -126,7 +126,7 @@ namespace mu2e{
     art::Event *_event;
     art::Run *_run;
 
-    bool addHits_, addTracks_, addClusters_, addCrvHits_, addCosmicSeedFit_, isCosmic_, RecoOnly_, MCOnly_, FillAll_, addMCCaloDigis_, addMCHits_, addMCHitsSP_, addMCCrvCC_, addMCCrvDigis_, addMCTraj_, addMCStrawDigis_;
+    bool addHits_, addTracks_, addClusters_, addCrvHits_, addCosmicSeedFit_, isCosmic_, RecoOnly_,  FillAll_, addMCCaloDigis_, addMCHits_, addMCHitsSP_, addMCCrvCC_, addMCCrvDigis_, addMCTraj_, addMCStrawDigis_, MCOnly_;
 
     void FillRecoCollection(const art::Event& evt, Data_Collections &data, RecoDataProductName code);
     void FillMCCollections(const art::Event& evt, Data_Collections &data, MCDataProductName code);

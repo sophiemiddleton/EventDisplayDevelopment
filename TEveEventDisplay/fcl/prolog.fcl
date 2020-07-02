@@ -71,11 +71,11 @@ TEveEventDisplayCosmics : {
       addCrvHits			            : true
       addCosmicSeedFit	          : false
       addMCCaloDigis			:false 
-      addMCHits 			:false
-      addMCHitsSP			:false 
-      addMCCrvCC			:false  
-      addMCCrvDigis			:false
-      addMCTraj				:false 
+      addMCHits 			: false
+      addMCHitsSP			: false 
+      addMCCrvCC			: false  
+      addMCCrvDigis			: false
+      addMCTraj				: false 
       addMCStrawDigis			:false
    }
   }   
