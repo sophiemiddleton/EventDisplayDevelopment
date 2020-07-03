@@ -32,6 +32,8 @@ outputs : {
   TrkOutput :@local::Primary.Output
   CaloOutput :@local::Primary.Output
 }
+physics.producers.g4run.TrajectoryControl: @local::mu2eg4DefaultTrajectories
+
 #
 # final configuration
 #
