@@ -32,7 +32,7 @@ TEveEventDisplayHelix : {
       MCTrajectoryCollection:  NULL
       StrawDigiMCCollection:  NULL
       addHits 			            : false
-      addTracks 			          : true
+      addTracks 			          : false
       addCrvHits			          : false
       addCosmicSeedFit	        : false
       addClusters			          : true
@@ -48,7 +48,7 @@ TEveEventDisplayHelix : {
 
 TEveEventDisplayCosmics : {
     module_type : TEveEventDisplay
-    showCRV : true
+    showCRV : false
     filler : {
       ComboHitCollection 		      : "makePH"
       GenParticleCollection 	    : "compressDigiMCs" 

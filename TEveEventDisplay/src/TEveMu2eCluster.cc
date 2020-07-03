@@ -5,7 +5,7 @@ namespace mu2e{
 
 	TEveMu2eCluster::TEveMu2eCluster(){}
 
-  void TEveMu2eCluster::DrawCluster(const std::string &pstr,  CLHEP::Hep3Vector cog, TEveElementList *ClusterList)
+  void TEveMu2eCluster::DrawCluster(const std::string &pstr,  CLHEP::Hep3Vector cog, int energylevel, TEveElementList *ClusterList)
   {
     double edep = fCaloCluster.energyDep();
     std::string hstr=" cluster %d";
@@ -14,16 +14,17 @@ namespace mu2e{
     std::string strlab=pstr+dstr;
     hep3vectorTocm(cog);
     this->SetTitle(Form(strlab.c_str(),1,hstr));
-    Int_t mColor, mSize;
-    if(edep<15) mColor = kCyan;
+    Int_t mSize;
+    int colors[] = {+10, +5, +7, +8, -3, +1, -5, 0, -2, -4, +6, -9};
+    this->SetMarkerColor(kViolet + colors[energylevel]);
+    /*if(edep<15) mColor = kCyan;
     if(edep>=15 and edep<20) mColor = kGreen;
     if(edep>=20 and edep<25) mColor = kYellow;
     if(edep>=25 and edep <40) mColor = kOrange;
     if(edep>=40 and edep < 50) mColor = kRed;
-    if(edep>=50) mColor = kRed+2;
+    if(edep>=50) mColor = kRed+2;*/
     mSize = 2;
     this->SetNextPoint(cog.x(), cog.y(), cog.z()); 
-    this->SetMarkerColor(mColor);
     this->SetMarkerStyle(4);
     this->SetMarkerSize(mSize);
     this->SetPickable(kTRUE);

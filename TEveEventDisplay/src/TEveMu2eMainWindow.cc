@@ -456,7 +456,7 @@ namespace mu2e{
     _subrun=event.id().subRun();
     _run=event.id().run();
     _firstLoop = firstLoop;
-    pass_data->AddCRVInfo(firstLoop, data.crvcoincol, mu2e_geom, CRV2Dproj);
+    pass_data->AddCRVInfo(firstLoop, data.crvcoincol, mu2e_geom);//, CRV2Dproj);
     pass_data->AddComboHits(firstLoop, data.chcol, mu2e_geom, tracker2Dproj);
     pass_data->AddCaloClusters(firstLoop, data.clustercol, mu2e_geom, calo2Dproj);
     pass_data->AddHelixPieceWise(firstLoop, data.kalseedcol,mu2e_geom, tracker2Dproj);

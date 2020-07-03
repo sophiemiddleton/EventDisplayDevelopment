@@ -91,7 +91,7 @@ namespace mu2e
     _frame = new TEveMu2eMainWindow(gClient->GetRoot(), 1000,600, _pset);
     _frame->StartTrackerProjectionTab();
     _frame->StartCaloProjectionTab();
-    _frame->StartCRVProjectionTab();
+    //_frame->StartCRVProjectionTab();
   }
 
 
@@ -99,7 +99,7 @@ namespace mu2e
     _frame->SetRunGeometry(run, _diagLevel, _showBuilding, _showDSOnly, _showCRV);
     _frame->PrepareTrackerProjectionTab(run);
     _frame->PrepareCaloProjectionTab(run);
-    _frame->PrepareCRVProjectionTab(run);
+    //_frame->PrepareCRVProjectionTab(run);
   }
 
 

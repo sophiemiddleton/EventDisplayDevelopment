@@ -5,7 +5,7 @@ namespace mu2e{
 
   TEveMu2eHit::TEveMu2eHit(){}
 
-  void TEveMu2eHit::DrawHit3D(const std::string &pstr, Int_t n, CLHEP::Hep3Vector pointInMu2e, TEveElementList *HitList)
+  void TEveMu2eHit::DrawHit3D(const std::string &pstr, Int_t n, CLHEP::Hep3Vector pointInMu2e, int energylevel, TEveElementList *HitList)
   {
     std::string hstr=" hit %d";
     std::string dstr=" hit# %d\nLayer: %d";
@@ -14,7 +14,8 @@ namespace mu2e{
     hep3vectorTocm(pointInMu2e);
     this->SetTitle(Form(strlab.c_str(),n,hstr));
     this->SetNextPoint(pointInMu2e.x(), pointInMu2e.y(), pointInMu2e.z()); 
-    this->SetMarkerColor(mColor);
+    int colors[] = {-7, 3, -6, -1, 9, 0, -4, 10, 1};
+    this->SetMarkerColor(kSpring + colors[energylevel]);
     this->SetMarkerSize(mSize);
     this->SetPickable(kTRUE);
     if(AddErrorBar){ 
@@ -41,7 +42,7 @@ namespace mu2e{
     HitList->AddElement(this);
   }
 
-  void TEveMu2eHit::DrawHit2D(const std::string &pstr, Int_t n, CLHEP::Hep3Vector pointInMu2e, TEveElementList *HitList)
+  void TEveMu2eHit::DrawHit2D(const std::string &pstr, Int_t n, CLHEP::Hep3Vector pointInMu2e, int energylevel, TEveElementList *HitList)
   {
     std::string hstr=" hit %d";
     std::string dstr=" hit# %d\nLayer: %d";
@@ -50,7 +51,8 @@ namespace mu2e{
     hep3vectorTocm(pointInMu2e);
     this->SetTitle(Form(strlab.c_str(),n,hstr));
     this->SetNextPoint(pointInMu2e.x(), pointInMu2e.y(), pointInMu2e.z()); 
-    this->SetMarkerColor(mColor);
+    int colors[] = {-7, 3, -6, -1, 9, 0, -4, 10, 1};
+    this->SetMarkerColor(kSpring + colors[energylevel]);
     this->SetMarkerSize(mSize);
     this->SetPickable(kTRUE);
 
