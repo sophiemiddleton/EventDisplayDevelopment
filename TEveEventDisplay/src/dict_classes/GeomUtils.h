@@ -72,7 +72,7 @@ namespace mu2e{
     inline CLHEP::Hep3Vector PointToCalo( CLHEP::Hep3Vector point, int nDisk){
       CLHEP::Hep3Vector Mu2eCaloOrigin = GetCaloCenter(nDisk);
       CLHEP::Hep3Vector PointToCalo(point.x() + Mu2eCaloOrigin.x(), point.y()+Mu2eCaloOrigin.y(), point.z() + Mu2eCaloOrigin.z());
-      return PointToCalo;
+      return  PointToCalo;
     }
 }
 #endif 

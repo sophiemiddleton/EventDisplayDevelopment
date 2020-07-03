@@ -20,7 +20,7 @@ namespace mu2e{
       Double_t rmin{pointmmTocm(disk0.innerRadius())};
       Double_t rmax{pointmmTocm(disk0.outerRadius())};
 
-      TEveGeoShape *calShape0 = new TEveGeoShape();
+/*      TEveGeoShape *calShape0 = new TEveGeoShape();
       TEveGeoShape *calShape1 = new TEveGeoShape();
 
       calShape0->SetShape(new TGeoTube(rmin, rmax, dz0));
@@ -28,30 +28,30 @@ namespace mu2e{
       calShape1->SetShape(new TGeoTube(rmin, rmax, dz1));
       calShape1->SetMainTransparency(100);
       orthodet0->AddElement(calShape0);
-      orthodet1->AddElement(calShape1);
+      orthodet1->AddElement(calShape1);*/
 
-      // ... Create cal out of Silicon using the composite shape defined above
-      TGeoShape *g0 = new TGeoTube("calo 2D disk0",rmin,rmax,dz0+1288); 
+     // ... Create cal out of Silicon using the composite shape defined above
+      TGeoShape *g0 = new TGeoTube("calo 2D disk0",rmin,rmax,dz0); 
       TGeoVolume *calo0= new TGeoVolume("Calorimeter D0",g0, CsI);
       calo0->SetVisLeaves(kFALSE);
       calo0->SetInvisible();
 
-      TGeoShape *g1 = new TGeoTube("calo 2D disk1",rmin,rmax,dz1+1288); 
+      TGeoShape *g1 = new TGeoTube("calo 2D disk1",rmin,rmax,dz1); 
       TGeoVolume *calo1= new TGeoVolume("Calorimeter D1",g1, CsI);
       calo1->SetVisLeaves(kFALSE);
       calo1->SetInvisible();
 
       CLHEP::Hep3Vector calo0Pos(0,0,dz0);
-      CLHEP::Hep3Vector CaloCenterD0 =  GetCaloCenter(0);
+      CLHEP::Hep3Vector CaloCenterD0 = PointToCalo(calo0Pos,0);
       hep3vectorTocm(CaloCenterD0);
       topvol->AddNode(calo0, 1, new TGeoTranslation(CaloCenterD0.x(),CaloCenterD0.y(),CaloCenterD0.z()));
 
       CLHEP::Hep3Vector calo1Pos(0,0,dz1);
-      CLHEP::Hep3Vector CaloCenterD1 = GetCaloCenter(1);
+      CLHEP::Hep3Vector CaloCenterD1 = PointToCalo(calo1Pos,1);
       hep3vectorTocm(CaloCenterD1);
-      topvol->AddNode(calo1, 1, new TGeoTranslation(CaloCenterD1.x(),CaloCenterD1.y(),CaloCenterD1.z()));
+      topvol->AddNode(calo1, 1, new TGeoTranslation(CaloCenterD1.x(),CaloCenterD1.y(),CaloCenterD1.z())); 
 
-      for(unsigned int i = 0; i <1348 ; i++){ //TODO
+      for(unsigned int i = 0; i < 1348 ; i++){ 
         Crystal const &crystal = cal.crystal(i);
         double crystalXLen = pointmmTocm(crystal.size().x());
         double crystalYLen = pointmmTocm(crystal.size().y());
@@ -59,6 +59,8 @@ namespace mu2e{
 
         CLHEP::Hep3Vector crystalPos   = cal.geomUtil().mu2eToDiskFF(0,crystal.position());
         Double_t origin[3];
+        if(i < 674) crystalPos = PointToCalo(crystalPos, 0);
+        else crystalPos = PointToCalo(crystalPos, 1);
         hep3vectorTocm(crystalPos);
         origin [0] = crystalPos.x();
         origin [1] = crystalPos.y();
@@ -80,7 +82,7 @@ namespace mu2e{
           TGeoVolume *cry= new TGeoVolume("cryD1",c, CsI);
           cry->SetVisLeaves(kFALSE);
           cry->SetInvisible();
-          topvol->AddNode(cry, 1, new TGeoTranslation(crystalPos.x(),crystalPos.y(),crystalPos.z()));
+          topvol->AddNode(cry, 1, new TGeoTranslation(crystalPos.x(),crystalPos.y(),crystalPos.z())); 
         }
       }
   }

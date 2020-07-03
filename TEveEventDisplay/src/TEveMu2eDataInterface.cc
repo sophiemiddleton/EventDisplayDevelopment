@@ -8,7 +8,6 @@ using namespace mu2e;
 namespace mu2e{
  
   void TEveMu2eDataInterface::AddCRVInfo(bool firstloop, const CrvRecoPulseCollection *crvcoincol, Geom_Interface *mu2e_geom, TEveMu2e2DProjection *CRV2Dproj){
-    std::cout<<"[In AddCCRVInfo()]"<<std::endl;
     if(crvcoincol!=0){
       if (fCrvList3D== 0) {
         fCrvList3D = new TEveElementList("Hits");
@@ -130,7 +129,7 @@ namespace mu2e{
       teve_cluster3D->DrawCluster("CaloCluster3D, Cluster #" + to_string(i + 1) + ", Position =" + pos3D + ", Energy = " + to_string(cluster.energyDep()) + ", Time = " + to_string(cluster.time()), pointInMu2e, ClusterList3D);
       fClusterList3D->AddElement(ClusterList3D);  
 
-      teve_cluster2D->DrawCluster("CaloCluster3D, Cluster #" + to_string(i + 1) + ", Position =" + pos2D + ", Energy = " + to_string(cluster.energyDep()) + ", Time = " + to_string(cluster.time()), COG, ClusterList2D);
+      teve_cluster2D->DrawCluster("CaloCluster3D, Cluster #" + to_string(i + 1) + ", Position =" + pos2D + ", Energy = " + to_string(cluster.energyDep()) + ", Time = " + to_string(cluster.time()), pointInMu2e, ClusterList2D);
       fClusterList2D->AddElement(ClusterList2D); 
 
       if(cluster.diskId()==0)  calo2Dproj->fXYMgr->ImportElements(fClusterList2D, calo2Dproj->fDetXYScene); 
@@ -190,8 +189,8 @@ namespace mu2e{
         fTrackList2D->DestroyElements();  
       }
 
-
-      for(size_t k = 0; k < seedcol->size(); k++){
+      //TEveElementList *TrackList2D = new TEveElementList("Ellipse");
+      for(unsigned int k = 0; k < seedcol->size(); k++){
         KalSeed kseed = (*seedcol)[k];
         TEveMu2eCustomHelix *line = new TEveMu2eCustomHelix();
 
@@ -204,7 +203,7 @@ namespace mu2e{
         double kStepSize = nSteps/TrackerLength;
         line->kStepSize = kStepSize;
 
-        for(size_t i = 0 ; i< nSteps; i++){
+        for(unsigned int i = 0 ; i< nSteps; i++){
         double zpos = (i*kStepSize)-TrackerLength/2;
         line->SetPostionAndDirectionFromKalRep(zpos);//need to start from
         if(i==0) {
@@ -217,14 +216,21 @@ namespace mu2e{
           line->SetNextPoint(InMu2e.x()/10+line->Direction.x()*line->Momentum/10,InMu2e.y()/10+line->Direction.y()*line->Momentum/10, InMu2e.z()/10-TrackerLength/2);
         }
       }
-      /*TEveMu2eTrkEllipse *TrkEllipse = new TEveMu2eTrkEllipse();
-      TrkEllipse->SetX1(kseed.helix()->helix().centerx()/10);
-      TrkEllipse->SetY1(kseed.helix()->helix().centery()/10);
-      TrkEllipse->SetR1(kseed.helix()->helix().radius()/10);
-      TrkEllipse->SetLineColor(kYellow); 
-      fTrackList2D->AddElement(TrkEllipse);*/
-      tracker2Dproj->fXYMgr->ImportElements(fTrackList2D, tracker2Dproj->fDetXYScene); 
+      /*CLHEP::Hep3Vector trackCenter(kseed.helix()->helix().centerx(), kseed.helix()->helix().centery(), GetTrackerCenter().z());
+      PointToTracker(trackCenter);
+      hep3vectorTocm(trackCenter);
+      TEveMu2eTrkEllipse *TrkEllipse = new TEveMu2eTrkEllipse();
+      TEveMu2eTrkRZ *TrkWave = new TEveMu2eTrkRZ(kseed.helix()->helix().radius(),);
 
+      TrkEllipse->SetX1(trackCenter.x());
+      TrkEllipse->SetY1(trackCenter.y());
+      TrkEllipse->SetR1(kseed.helix()->helix().radius()/10);
+
+      TrkEllipse->DrawIt("ellipse", TrackList2D);
+      fTrackList2D->AddElement(TrackList2D);
+      tracker2Dproj->fXYMgr->ImportElements(fTrackList2D, tracker2Dproj->fDetXYScene); */
+      fTrackList2D->AddElement(line);
+      tracker2Dproj->fXYMgr->ImportElements(fTrackList2D, tracker2Dproj->fDetXYScene);
       line->SetLineColor(kGreen);
       line->SetLineWidth(3);
       fTrackList3D->AddElement(line);
@@ -255,4 +261,35 @@ namespace mu2e{
     }
   }
 
+  template<class collection>
+  void TEveMu2eDataInterface::AddHitType(bool firstloop, const collection *hitcol, const char* name, std::vector<std::string> detectors, std::vector<TEveMu2e2DProjection> *projs){
+    if(hitcol!=0){
+      if (fHitsList3D== 0) {
+        fHitsList3D = new TEveElementList(name);
+        fHitsList3D->IncDenyDestroy();     
+      }
+      else {
+        fHitsList3D->DestroyElements();  
+      }
+      if (fHitsList2D== 0) {
+        fHitsList2D = new TEveElementList(name);
+        fHitsList2D->IncDenyDestroy();     
+      }
+      else {
+        fHitsList2D->DestroyElements();  
+      }
+      TEveElementList *HitList2D = new TEveElementList("Hits3D");
+      TEveElementList *HitList3D = new TEveElementList("Hits2D");
+      for(unsigned int i=0; i<hitcol->size();i++){
+        TEveMu2eHit *teve_hit = new TEveMu2eHit();
+        auto &hit = (*hitcol)[i];
+        for(unsigned int j=0; j<detectors.size(); j++){
+          if(detectors[j] == "calo") std::cout<<"calo"<<std::endl;
+          if(detectors[j] == "tracker") std::cout<<"calo"<<std::endl;
+          if(detectors[j] == "crv") std::cout<<"calo"<<std::endl;
+     
+        }
+      } 
+    }
+  }
 }

@@ -11,6 +11,7 @@
 #include "TEveEventDisplay/src/dict_classes/Geom_Interface.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2e2DProjection.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eTrkEllipse.h"
+#include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eTrkRZ.h"
 #include "TEveEventDisplay/src/shape_classes/TEveMu2eCalorimeter.h"
 #include "TEveEventDisplay/src/shape_classes/TEveMu2eTracker.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eHit.h"
@@ -44,6 +45,8 @@ namespace mu2e{
       void AddCosmicTrack(bool firstloop, const CosmicTrackSeedCollection *cosmiccol);
       void AddHelixPieceWise(bool firstloop, const KalSeedCollection *seedcol, Geom_Interface *mu2e_geom,TEveMu2e2DProjection *trackerDproj);
 
+      template<class collection>
+      void AddHitType(bool firstloop, const collection *hitcol, const char* name, std::vector<std::string> detectors, std::vector<TEveMu2e2DProjection> *projs);
       ClassDef(TEveMu2eDataInterface,0);
 
   }; //end class def
