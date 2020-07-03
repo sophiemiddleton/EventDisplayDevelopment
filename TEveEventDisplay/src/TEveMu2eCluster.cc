@@ -17,12 +17,6 @@ namespace mu2e{
     Int_t mSize;
     int colors[] = {+10, +5, +7, +8, -3, +1, -5, 0, -2, -4, +6, -9};
     this->SetMarkerColor(kViolet + colors[energylevel]);
-    /*if(edep<15) mColor = kCyan;
-    if(edep>=15 and edep<20) mColor = kGreen;
-    if(edep>=20 and edep<25) mColor = kYellow;
-    if(edep>=25 and edep <40) mColor = kOrange;
-    if(edep>=40 and edep < 50) mColor = kRed;
-    if(edep>=50) mColor = kRed+2;*/
     mSize = 2;
     this->SetNextPoint(cog.x(), cog.y(), cog.z()); 
     this->SetMarkerStyle(4);
