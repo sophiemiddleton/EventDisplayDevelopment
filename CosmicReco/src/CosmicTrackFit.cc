@@ -1,4 +1,4 @@
-//Author: S Middleton
+// Author: S Middleton
 // Purpose: Holds functions for the fitting of Cosmic Tracks in tracker
 // Mu2e Cosmics:
 #include "CosmicReco/inc/CosmicTrackFit.hh"

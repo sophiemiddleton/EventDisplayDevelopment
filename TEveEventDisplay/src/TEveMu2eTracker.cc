@@ -1,4 +1,5 @@
 #include "TEveEventDisplay/src/shape_classes/TEveMu2eTracker.h"
+#include "TEveEventDisplay/src/dict_classes/GeomUtils.h"
 #include <TBox.h>
 #include <TGeoBBox.h>
 using namespace mu2e;
@@ -11,12 +12,12 @@ namespace mu2e{
 
       TubsParams envelope(trkr->getInnerTrackerEnvelopeParams());
 
-      TGeoMaterial *matSi = new TGeoMaterial("Si", 28.085,14,2.33);
-      TGeoMedium *Si = new TGeoMedium("Silicon",2, matSi);
+      TGeoMaterial *mat = new TGeoMaterial("Mylar", 12,6,1.4);
+      TGeoMedium *My = new TGeoMedium("Mylar",2, mat);
 
-      Double_t dz{envelope.zHalfLength()/10};
-      Double_t rmin{envelope.innerRadius()/10};
-      Double_t rmax{envelope.outerRadius()/10};
+      Double_t dz{pointmmTocm(envelope.zHalfLength())};
+      Double_t rmin{pointmmTocm(envelope.innerRadius())};
+      Double_t rmax{pointmmTocm(envelope.outerRadius())};
       TEveGeoShape *tr = new TEveGeoShape();
       tr->SetShape(new TGeoTube(rmin, rmax, dz));
 
@@ -24,13 +25,16 @@ namespace mu2e{
       orthodet->AddElement(tr);
         
       // ... Create tracker out of Silicon using the composite shape defined above
-      TGeoShape *gs = new TGeoTube("tracker 2D",rmin,rmax,dz+1288); 
-      TGeoVolume *tracker = new TGeoVolume("Tracker",gs, Si);
+      CLHEP::Hep3Vector trackerCenterGDML = GetGDMLTrackerCenter();
+      CLHEP::Hep3Vector trackerCentrMu2e = GetTrackerCenter();
+      TGeoShape *gs = new TGeoTube("Straw Tracker",rmin,rmax,dz+trackerCenterGDML.z()); 
+      TGeoVolume *tracker = new TGeoVolume("straw Tracker ",gs, My);
       tracker->SetVisLeaves(kFALSE);
       tracker->SetInvisible();
       CLHEP::Hep3Vector trackerPos(0,0,dz);
-      //CLHEP::Hep3Vector pointInMu2e = mu2e_geom->PointToTracker(trackerPos);
-      topvol->AddNode(tracker, 1, new TGeoTranslation((trackerPos.x()-3904)/10,trackerPos.y()/10, (trackerPos.z()+10171)/10));
+      CLHEP::Hep3Vector pointInMu2e = PointToTracker(trackerPos);
+      hep3vectorTocm(trackerPos);
+      topvol->AddNode(tracker, 1, new TGeoTranslation(trackerPos.x(),trackerPos.y(), trackerPos.z()));
 
 }
 

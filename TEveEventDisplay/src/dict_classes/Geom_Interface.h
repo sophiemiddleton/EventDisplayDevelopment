@@ -36,8 +36,6 @@
 #include <TEveProjectionManager.h>
 #include <TEveProjectionAxes.h>
 
-#include "art/Framework/Principal/Event.h"
-#include "art/Framework/Principal/Run.h"
 #include "ConfigTools/inc/SimpleConfig.hh"
 #include "CalorimeterGeom/inc/Calorimeter.hh"
 #include "GeometryService/inc/GeomHandle.hh"
@@ -51,26 +49,14 @@ namespace mu2e{
       virtual ~Geom_Interface(){};
       TGeoManager *_geom;
       TGeoManager* getGeom(TString filename) {
-        TGeoManager *geom;
-        geom = geom->TGeoManager::Import(filename);
-        return geom;
+      TGeoManager *geom;
+      geom = geom->TGeoManager::Import(filename);
+      return geom;
       }
-
 
       void CreateGeomManager();
       void RemoveComponents();
       void toForeground();
-
-
-      CLHEP::Hep3Vector GetTrackerCenter();
-      CLHEP::Hep3Vector GetCaloCenter(int nDisk);
-      CLHEP::Hep3Vector GetGDMLTrackerCenter();		
-      CLHEP::Hep3Vector GetGDMLOffsetFromMu2e();
-      CLHEP::Hep3Vector PointToTracker(CLHEP::Hep3Vector point);
-      CLHEP::Hep3Vector PointToCalo(CLHEP::Hep3Vector point, int nDsk);
-      CLHEP::Hep3Vector PointToGDML(CLHEP::Hep3Vector point);
-      CLHEP::Hep3Vector TransformToG4(CLHEP::Hep3Vector vec);
-      CLHEP::Hep3Vector TransformToDet(CLHEP::Hep3Vector vec);
 
       void InsideDS( TGeoNode * node, bool inDSVac );
       void hideTop(TGeoNode* node, int _diagLevel);
@@ -81,8 +67,6 @@ namespace mu2e{
       void SolenoidsOnly(TGeoNode* node);
       void TrackerVolumeHeirarchy( TGeoNode * node, std::vector<CLHEP::Hep3Vector> &TransformList );
 
-      art::Event  *_event;
-      art::Run    *_run;
       CLHEP::Hep3Vector TrackerG4Origin;
       CLHEP::Hep3Vector CaloG4Origin;
       CLHEP::Hep3Vector TrackMu2eOrigin;

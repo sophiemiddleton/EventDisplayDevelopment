@@ -1,4 +1,5 @@
 #include "TEveEventDisplay/src/shape_classes/TEveMu2eCalorimeter.h"
+#include "TEveEventDisplay/src/dict_classes/GeomUtils.h"
 #include <TBox.h>
 #include <TGeoBBox.h>
 using namespace mu2e;
@@ -7,17 +8,17 @@ namespace mu2e{
     TEveMu2eCalorimeter::TEveMu2eCalorimeter(){};
 
     void TEveMu2eCalorimeter::DrawCaloDetector(art::Run const& run, TGeoVolume* topvol, TEveElementList *orthodet0,TEveElementList *orthodet1){
-      TGeoMaterial *matSi = new TGeoMaterial("Si", 28.085,14,2.33);
-      TGeoMedium *Si = new TGeoMedium("Silicon",2, matSi);
+      TGeoMaterial *mat = new TGeoMaterial("CsI", 28.085,14,2.33);
+      TGeoMedium *CsI = new TGeoMedium("CsI",2, mat);
 
       Calorimeter const &cal = *(GeomHandle<Calorimeter>());
       const Disk& disk0 = cal.disk(0);
       const Disk& disk1 = cal.disk(1);
 
-      Double_t dz0{disk0.geomInfo().crateDeltaZ()/10};
-      Double_t dz1{disk1.geomInfo().crateDeltaZ()/10};
-      Double_t rmin{disk0.innerRadius()/10};
-      Double_t rmax{disk0.outerRadius()/10};
+      Double_t dz0{pointmmTocm(disk0.geomInfo().crateDeltaZ())};
+      Double_t dz1{pointmmTocm(disk1.geomInfo().crateDeltaZ())};
+      Double_t rmin{pointmmTocm(disk0.innerRadius())};
+      Double_t rmax{pointmmTocm(disk0.outerRadius())};
 
       TEveGeoShape *calShape0 = new TEveGeoShape();
       TEveGeoShape *calShape1 = new TEveGeoShape();
@@ -30,74 +31,58 @@ namespace mu2e{
       orthodet1->AddElement(calShape1);
 
       // ... Create cal out of Silicon using the composite shape defined above
-      TGeoShape *g0 = new TGeoTube("calo 2D disk0",rmin,rmax,dz0); 
-      TGeoVolume *calo0= new TGeoVolume("Calorimeter D0",g0, Si);
+      TGeoShape *g0 = new TGeoTube("calo 2D disk0",rmin,rmax,dz0+1288); 
+      TGeoVolume *calo0= new TGeoVolume("Calorimeter D0",g0, CsI);
       calo0->SetVisLeaves(kFALSE);
       calo0->SetInvisible();
 
-      TGeoShape *g1 = new TGeoTube("calo 2D disk1",rmin,rmax,dz1); 
-      TGeoVolume *calo1= new TGeoVolume("Calorimeter D1",g1, Si);
+      TGeoShape *g1 = new TGeoTube("calo 2D disk1",rmin,rmax,dz1+1288); 
+      TGeoVolume *calo1= new TGeoVolume("Calorimeter D1",g1, CsI);
       calo1->SetVisLeaves(kFALSE);
       calo1->SetInvisible();
 
       CLHEP::Hep3Vector calo0Pos(0,0,dz0);
-      topvol->AddNode(calo0, 1, new TGeoTranslation(-390.4,0,1194.2));
+      CLHEP::Hep3Vector CaloCenterD0 =  GetCaloCenter(0);
+      hep3vectorTocm(CaloCenterD0);
+      topvol->AddNode(calo0, 1, new TGeoTranslation(CaloCenterD0.x(),CaloCenterD0.y(),CaloCenterD0.z()));
 
       CLHEP::Hep3Vector calo1Pos(0,0,dz1);
-      topvol->AddNode(calo1, 1, new TGeoTranslation(-390.4,0,1262.0));
+      CLHEP::Hep3Vector CaloCenterD1 = GetCaloCenter(1);
+      hep3vectorTocm(CaloCenterD1);
+      topvol->AddNode(calo1, 1, new TGeoTranslation(CaloCenterD1.x(),CaloCenterD1.y(),CaloCenterD1.z()));
 
-      //...Add in the crystals in D0:
-      for(unsigned int i = 0; i <674 ; i++){
+      for(unsigned int i = 0; i <1348 ; i++){ //TODO
         Crystal const &crystal = cal.crystal(i);
-        double crystalXLen = crystal.size().x();
-        double crystalYLen = crystal.size().y();
-        double crystalZLen = crystal.size().z();
+        double crystalXLen = pointmmTocm(crystal.size().x());
+        double crystalYLen = pointmmTocm(crystal.size().y());
+        double crystalZLen = pointmmTocm(crystal.size().z());
 
         CLHEP::Hep3Vector crystalPos   = cal.geomUtil().mu2eToDiskFF(0,crystal.position());
         Double_t origin[3];
-        origin [0] = crystalPos.x()/10;
-        origin [1] = crystalPos.y()/10;
-        origin [2] = crystalPos.z()/10;
-
+        hep3vectorTocm(crystalPos);
+        origin [0] = crystalPos.x();
+        origin [1] = crystalPos.y();
+        origin [2] = crystalPos.z();
         TEveGeoShape *crystalShape   = new TEveGeoShape();
         crystalShape->SetMainTransparency(100);
-        crystalShape->SetShape(new TGeoBBox("crystalD0", (crystalXLen/2)/10, (crystalYLen/2)/10, (crystalZLen/2)/10, origin));
-        orthodet0->AddElement(crystalShape);
-        
-        TGeoShape *c = new TGeoBBox("crystalD0", (crystalXLen/2)/10, (crystalYLen/2)/10, (crystalZLen/2)/10);
-        TGeoVolume *cry= new TGeoVolume("cryD0",c, Si);
-        cry->SetVisLeaves(kFALSE);
-        cry->SetInvisible();
-        topvol->AddNode(cry, 1, new TGeoTranslation(crystalPos.x()/10,crystalPos.y()/10,crystalPos.z()/10));
-
+        crystalShape->SetShape(new TGeoBBox("crystalD0", (crystalXLen/2), (crystalYLen/2), (crystalZLen/2)/10, origin));
+        if(i < 674){
+          orthodet0->AddElement(crystalShape);  
+          TGeoShape *c = new TGeoBBox("crystalD0", (crystalXLen/2), (crystalYLen/2), (crystalZLen/2));
+          TGeoVolume *cry= new TGeoVolume("cryD0",c, CsI);
+          cry->SetVisLeaves(kFALSE);
+          cry->SetInvisible();
+          topvol->AddNode(cry, 1, new TGeoTranslation(crystalPos.x(),crystalPos.y(),crystalPos.z()));
+        } else {
+          crystalShape->SetShape(new TGeoBBox("crystalD1", (crystalXLen/2), (crystalYLen/2), (crystalZLen/2), origin));
+          orthodet1->AddElement(crystalShape);
+          TGeoShape *c = new TGeoBBox("crystalD1", (crystalXLen/2), (crystalYLen/2), (crystalZLen/2));
+          TGeoVolume *cry= new TGeoVolume("cryD1",c, CsI);
+          cry->SetVisLeaves(kFALSE);
+          cry->SetInvisible();
+          topvol->AddNode(cry, 1, new TGeoTranslation(crystalPos.x(),crystalPos.y(),crystalPos.z()));
+        }
       }
-
-      //...Add in crystals to D1:
-      for(unsigned int i = 0; i <674 ; i++){
-        Crystal const &crystal = cal.crystal(i);
-        double crystalXLen = crystal.size().x();
-        double crystalYLen = crystal.size().y();
-        double crystalZLen = crystal.size().z();
-
-        CLHEP::Hep3Vector crystalPos   = cal.geomUtil().mu2eToDiskFF(1,crystal.position());
-        Double_t origin[3];
-        origin [0] = crystalPos.x()/10;
-        origin [1] = crystalPos.y()/10;
-        origin [2] = crystalPos.z()/10;
-
-        TEveGeoShape *crystalShape   = new TEveGeoShape();
-        crystalShape->SetMainTransparency(100);
-        crystalShape->SetShape(new TGeoBBox("crystalD1", (crystalXLen/2)/10, (crystalYLen/2)/10, (crystalZLen/2)/10, origin));
-        orthodet1->AddElement(crystalShape);
-        
-        TGeoShape *c = new TGeoBBox("crystalD1", (crystalXLen/2)/10, (crystalYLen/2)/10, (crystalZLen/2)/10);
-        TGeoVolume *cry= new TGeoVolume("cryD1",c, Si);
-        cry->SetVisLeaves(kFALSE);
-        cry->SetInvisible();
-        topvol->AddNode(cry, 1, new TGeoTranslation(crystalPos.x()/10,crystalPos.y()/10,crystalPos.z()/10));
-
-      }
-      
-    }
+  }
 
 }

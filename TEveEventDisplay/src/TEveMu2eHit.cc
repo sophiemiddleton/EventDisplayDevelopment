@@ -1,4 +1,5 @@
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eHit.h"
+#include "TEveEventDisplay/src/dict_classes/GeomUtils.h"
 using namespace mu2e;
 namespace mu2e{
 
@@ -10,9 +11,9 @@ namespace mu2e{
     std::string dstr=" hit# %d\nLayer: %d";
     std::string strlst=pstr+hstr;
     std::string strlab=pstr+dstr;
-
+    hep3vectorTocm(pointInMu2e);
     this->SetTitle(Form(strlab.c_str(),n,hstr));
-    this->SetNextPoint(pointInMu2e.x()/10, pointInMu2e.y()/10, pointInMu2e.z()/10); 
+    this->SetNextPoint(pointInMu2e.x(), pointInMu2e.y(), pointInMu2e.z()); 
     this->SetMarkerColor(mColor);
     this->SetMarkerSize(mSize);
     this->SetPickable(kTRUE);
@@ -29,8 +30,10 @@ namespace mu2e{
       double y2 = (p.y()-s*w.y());
       std::string errorbar = "ErrorBar Length: %d, %d, %d"; 
       error->SetTitle(Form(errorbar.c_str(), (x1 - x2), (y1 - y2), (z1 - z2)));
-      error->SetPoint(0, x1/10-390,y1/10,z1/10+1017);
-      error->SetNextPoint(x2/10-390,y2/10,z2/10+1017);
+      CLHEP::Hep3Vector trackerCentrMu2e = GetTrackerCenter();
+      hep3vectorTocm(trackerCentrMu2e);
+      error->SetPoint(0, pointmmTocm(x1)+trackerCentrMu2e.x(),pointmmTocm(y1)+trackerCentrMu2e.y(),pointmmTocm(z1)+trackerCentrMu2e.z());
+      error->SetNextPoint(pointmmTocm(x2)+trackerCentrMu2e.x(), pointmmTocm(y2)+trackerCentrMu2e.y(),pointmmTocm(z2)+trackerCentrMu2e.z());
       error->SetLineColor(kRed);
       error->SetPickable(kTRUE);
       HitList->AddElement(error);
@@ -44,9 +47,9 @@ namespace mu2e{
     std::string dstr=" hit# %d\nLayer: %d";
     std::string strlst=pstr+hstr;
     std::string strlab=pstr+dstr;
-
+    hep3vectorTocm(pointInMu2e);
     this->SetTitle(Form(strlab.c_str(),n,hstr));
-    this->SetNextPoint(pointInMu2e.x()/10, pointInMu2e.y()/10, pointInMu2e.z()/10); 
+    this->SetNextPoint(pointInMu2e.x(), pointInMu2e.y(), pointInMu2e.z()); 
     this->SetMarkerColor(mColor);
     this->SetMarkerSize(mSize);
     this->SetPickable(kTRUE);
@@ -65,8 +68,8 @@ namespace mu2e{
       
       std::string errorbar = "ErrorBar Length: %d, %d, %d"; 
       error->SetTitle(Form(errorbar.c_str(), (x1 - x2), (y1 - y2), (z1 - z2)));
-      error->SetPoint(0, x1/10,y1/10,z1/10);
-      error->SetNextPoint(x2/10,y2/10,z2/10);
+      error->SetPoint(0, pointmmTocm(x1),pointmmTocm(y1),pointmmTocm(z1));
+      error->SetNextPoint(pointmmTocm(x2),pointmmTocm(y2),pointmmTocm(z2));
       error->SetLineColor(kRed);
       error->SetPickable(kTRUE);
       HitList->AddElement(error);

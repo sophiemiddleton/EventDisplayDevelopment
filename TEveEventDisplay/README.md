@@ -70,4 +70,8 @@ Any src directory in mu2e which wants to use classes needs to list them in a cla
 
 This class sets up the Gui and imports the geometry. Here the plotting data functions are currently called. you should base any work on AddComboHits.
 
+## Authors
+
+This code is built upon the Mu2e Offline code however TEveEventDisplay is package developed within Mu2e Offline by Sophie Middleton with help from Aditi Venkatesh both from Caltech. If you have any questions/comments about TEveEventDisplay place contact: smidd@caltech.edu.
+
 

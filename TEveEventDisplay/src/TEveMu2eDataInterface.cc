@@ -3,7 +3,7 @@
 #include <TObject.h>
 #include <TSystem.h>
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eDataInterface.h"
-
+#include "TEveEventDisplay/src/dict_classes/GeomUtils.h"
 using namespace mu2e;
 namespace mu2e{
  
@@ -38,13 +38,13 @@ namespace mu2e{
         CLHEP::Hep3Vector crvCounterPos = crvCounter.getPosition(); 
         //double time = crvRecoPulse.GetPulseTime();
         //int PEs = crvRecoPulse.GetPEs();
-        CLHEP::Hep3Vector pointInMu2e = crvCounterPos/10;
+        hep3vectorTocm(crvCounterPos);
         string pos3D = "(" + to_string((double)crvCounterPos.x()) + ", " + to_string((double)crvCounterPos.y()) + ", " + to_string((double)crvCounterPos.z()) + ")";
-        string pos2D = "(" + to_string((double)pointInMu2e.x()) + ", " + to_string((double)pointInMu2e.y()) + ", " + to_string((double)pointInMu2e.z()) + ")";
+        string pos2D = "(" + to_string((double)crvCounterPos.x()) + ", " + to_string((double)crvCounterPos.y()) + ", " + to_string((double)crvCounterPos.z()) + ")";
         //CLHEP::Hep3Vector HitPos(crvRecoPulse.pos().x(), crvRecoPulse.pos().y(), crvRecoPulse.pos().z());
         teve_crv3D->DrawHit3D("CRVHits3D, Position = " + pos3D + ", Pulse Time = " + to_string(crvRecoPulse.GetPulseTime()) + ", Pulse Height = "+ to_string(crvRecoPulse.GetPulseHeight()) + + "Pulse Width = " + to_string(crvRecoPulse.GetPulseWidth()),  i + 1, crvCounterPos, CrvList3D);
 
-        teve_crv2D->DrawHit2D("CRVHits2D, Position = " + pos2D + ", Pulse Time = " + to_string(crvRecoPulse.GetPulseTime()) + ", Pulse Height = "+ to_string(crvRecoPulse.GetPulseHeight()) + + "Pulse Width = " + to_string(crvRecoPulse.GetPulseWidth()),  i + 1, pointInMu2e, CrvList2D);
+        teve_crv2D->DrawHit2D("CRVHits2D, Position = " + pos2D + ", Pulse Time = " + to_string(crvRecoPulse.GetPulseTime()) + ", Pulse Height = "+ to_string(crvRecoPulse.GetPulseHeight()) + + "Pulse Width = " + to_string(crvRecoPulse.GetPulseWidth()),  i + 1, crvCounterPos, CrvList2D);
 
         fCrvList2D->AddElement(CrvList2D); 
         fCrvList3D->AddElement(CrvList3D); 
@@ -81,7 +81,7 @@ namespace mu2e{
       TEveMu2eHit *teve_hit3D = new TEveMu2eHit(hit);
 
       CLHEP::Hep3Vector HitPos(hit.pos().x(), hit.pos().y(), hit.pos().z());
-      CLHEP::Hep3Vector pointInMu2e = mu2e_geom->PointToTracker(HitPos);
+      CLHEP::Hep3Vector pointInMu2e = PointToTracker(HitPos);
       string energy = to_string(teve_hit3D->GetEnergy());
       string pos3D = "(" + to_string((double)pointInMu2e.x()) + ", " + to_string((double)pointInMu2e.y()) + ", " + to_string((double)pointInMu2e.z()) + ")";
       string pos2D = "(" + to_string((double)hit.pos().x()) + ", " + to_string((double)hit.pos().y()) + ", " + to_string((double)hit.pos().z()) + ")";
@@ -124,7 +124,7 @@ namespace mu2e{
       TEveMu2eCluster *teve_cluster2D = new TEveMu2eCluster(cluster);
 
       CLHEP::Hep3Vector COG(cluster.cog3Vector().x(),cluster.cog3Vector().y(), cluster.cog3Vector().z());
-      CLHEP::Hep3Vector pointInMu2e = mu2e_geom->PointToCalo(COG,cluster.diskId());
+      CLHEP::Hep3Vector pointInMu2e = PointToCalo(COG,cluster.diskId());
       string pos3D = "(" + to_string((double)pointInMu2e.x()) + ", " + to_string((double)pointInMu2e.y()) + ", " + to_string((double)pointInMu2e.z()) + ")";
       string pos2D = "(" + to_string((double)COG.x()) + ", " + to_string((double)COG.y()) + ", " + to_string((double)COG.z()) + ")";
       teve_cluster3D->DrawCluster("CaloCluster3D, Cluster #" + to_string(i + 1) + ", Position =" + pos3D + ", Energy = " + to_string(cluster.energyDep()) + ", Time = " + to_string(cluster.time()), pointInMu2e, ClusterList3D);
@@ -160,7 +160,7 @@ namespace mu2e{
           CaloCrystalHit const  &hit = (*cryHitcol)[i];
           int diskId = cal.crystal(hit.id()).diskId();
           CLHEP::Hep3Vector HitPos(cal.geomUtil().mu2eToDiskFF(diskId, cal.crystal(hit.id()).position()));
-          CLHEP::Hep3Vector pointInMu2e = mu2e_geom->PointToCalo(HitPos,diskId);
+          CLHEP::Hep3Vector pointInMu2e = PointToCalo(HitPos,diskId);
 
           teve_hit->DrawHit3D("CrystalHits",  1, pointInMu2e, HitList);
           fCrystalHitList->AddElement(HitList);  
@@ -209,11 +209,11 @@ namespace mu2e{
         line->SetPostionAndDirectionFromKalRep(zpos);//need to start from
         if(i==0) {
           CLHEP::Hep3Vector Pos(line->Position.x(), line->Position.y(), zpos+line->Position.z());
-          CLHEP::Hep3Vector InMu2e = mu2e_geom->PointToTracker(Pos);
+          CLHEP::Hep3Vector InMu2e = PointToTracker(Pos);
           line->SetPoint(i,InMu2e.x()/10+line->Direction.x()*line->Momentum/10,InMu2e.y()/10+line->Direction.y()*line->Momentum/10, InMu2e.z()/10-TrackerLength/2);
         } else {
           CLHEP::Hep3Vector Pos(line->Position.x(), line->Position.y(), zpos+line->Position.z());
-          CLHEP::Hep3Vector InMu2e = mu2e_geom->PointToTracker(Pos);
+          CLHEP::Hep3Vector InMu2e = PointToTracker(Pos);
           line->SetNextPoint(InMu2e.x()/10+line->Direction.x()*line->Momentum/10,InMu2e.y()/10+line->Direction.y()*line->Momentum/10, InMu2e.z()/10-TrackerLength/2);
         }
       }
