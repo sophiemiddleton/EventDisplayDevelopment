@@ -56,7 +56,7 @@ namespace mu2e{
       void StartCRVProjectionTab();
       void PrepareCRVProjectionTab(const art::Run& run);
 
-      void SetRunGeometry(const art::Run& run, int _diagLevel);
+      void SetRunGeometry(const art::Run& run, int _diagLevel, bool _showBuilding, bool _showDSOnly, bool _showCRV);
       Bool_t ProcessMessage(Long_t msg, Long_t param1, Long_t param2);
       void  setEvent(const art::Event& event, bool firstLoop, Data_Collections &data);
       void  fillEvent(bool firstLoop=false);
@@ -93,13 +93,6 @@ namespace mu2e{
       TEveMu2eCalorimeter *Mu2eCalo = new TEveMu2eCalorimeter();
       TEveMu2eTracker *Mu2eTracker  = new TEveMu2eTracker();
       TEveMu2eCRV *Mu2eCRV = new TEveMu2eCRV();
-
-      //TODO - these should be set in the fcl file
-      bool _showBuilding = false;
-      bool _showDSOnly = true;
-      bool _showTracker = false;
-      bool _showCalo = false;
-      bool _showCRV = true;
 
       TText  *_eventNumberText, *_subrunNumberText, *_runNumberText;
       int _event, _subrun, _run;

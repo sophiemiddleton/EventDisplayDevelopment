@@ -4,6 +4,7 @@
   <class name="mu2e::Data_Collections"/>
   <class name="mu2e::TEveMu2eMainWindow"/>
   <class name="mu2e::TEveMu2eDataInterface"/>
+  <class name="mu2e::TEveMu2eMCInterface"/>
   <class name="mu2e::TEveMu2eHit"/>
   <class name="mu2e::TEveMu2eCluster"/>
   <class name="mu2e::TEveMu2eStraightTrack"/>

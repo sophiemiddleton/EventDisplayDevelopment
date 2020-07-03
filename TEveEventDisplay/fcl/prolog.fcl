@@ -17,8 +17,8 @@ TEveEventDisplayHelix : {
     filler : {
       ComboHitCollection 		    : "makeSH"
       GenParticleCollection 		: "compressDigiMCs" #generate"
-      StrawDigiCollection		    :  "selectRecoMC"
-      CrvRecoPulseCollection	  : NULL
+      StrawDigiCollection		    : "selectRecoMC"
+      CrvRecoPulseCollection	  :  NULL
       CosmicTrackSeedCollection :  NULL
       CaloClusterCollection		  :  "CaloClusterFromProtoCluster"
       CaloCrystalHitCollection  :  "CaloCrystalHitFromHit"
@@ -32,7 +32,7 @@ TEveEventDisplayHelix : {
       MCTrajectoryCollection:  NULL
       StrawDigiMCCollection:  NULL
       addHits 			            : false
-      addTracks 			          : false
+      addTracks 			          : true
       addCrvHits			          : false
       addCosmicSeedFit	        : false
       addClusters			          : true
@@ -48,6 +48,7 @@ TEveEventDisplayHelix : {
 
 TEveEventDisplayCosmics : {
     module_type : TEveEventDisplay
+    showCRV : true
     filler : {
       ComboHitCollection 		      : "makePH"
       GenParticleCollection 	    : "compressDigiMCs" 

@@ -37,7 +37,9 @@ namespace mu2e
       using Name=fhicl::Name;
       using Comment=fhicl::Comment;
       fhicl::Atom<int> diagLevel{Name("diagLevel"), Comment("for info"),0};
-      fhicl::Atom<bool> showEvent{Name("showEvent"), Comment(""),true};     
+      fhicl::Atom<bool> showCRV{Name("showCRV"), Comment("set false if you just want to see DS"),false};   
+      fhicl::Atom<bool> showBuilding{Name("showBuilding"), Comment("set false to remove building"),false};   
+      fhicl::Atom<bool> showDSOnly{Name("showDSOnly"), Comment(""),true};     
       fhicl::Table<Collection_Filler::Config> filler{Name("filler"),Comment("fill collections")};
     };
 
@@ -52,6 +54,10 @@ namespace mu2e
       Config _conf;
       int _diagLevel;
       bool _showEvent;       
+      bool _showBuilding;
+      bool _showDSOnly;
+      bool _showCRV;
+
       TApplication* application_;
       TDirectory*   directory_ = nullptr;   
       Collection_Filler _filler;
@@ -66,7 +72,9 @@ namespace mu2e
   TEveEventDisplay::TEveEventDisplay(const Parameters& conf) :
   art::EDAnalyzer(conf),
   _diagLevel(conf().diagLevel()),
-  _showEvent(conf().showEvent()),
+  _showBuilding(conf().showBuilding()),
+  _showDSOnly(conf().showDSOnly()),
+  _showCRV(conf().showCRV()),
   _filler(conf().filler())
 	{}
 
@@ -88,7 +96,7 @@ namespace mu2e
 
 
   void TEveEventDisplay::beginRun(const art::Run& run){
-    _frame->SetRunGeometry(run, _diagLevel);
+    _frame->SetRunGeometry(run, _diagLevel, _showBuilding, _showDSOnly, _showCRV);
     _frame->PrepareTrackerProjectionTab(run);
     _frame->PrepareCaloProjectionTab(run);
     _frame->PrepareCRVProjectionTab(run);

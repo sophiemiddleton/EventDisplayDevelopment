@@ -378,7 +378,7 @@ namespace mu2e{
 
   }
 
-  void TEveMu2eMainWindow::SetRunGeometry(const art::Run& run, int _diagLevel){
+  void TEveMu2eMainWindow::SetRunGeometry(const art::Run& run, int _diagLevel, bool _showBuilding, bool _showDSOnly, bool _showCRV){
     if(gGeoManager){
       gGeoManager->GetListOfNodes()->Delete();
       gGeoManager->GetListOfVolumes()->Delete();
@@ -405,12 +405,12 @@ namespace mu2e{
 
     setRecursiveColorTransp(etopnode->GetNode()->GetVolume(), kWhite-10,70);
 
-    if(!this->_showBuilding){   
+    if(_showBuilding){   
       mu2e_geom->SolenoidsOnly(topnode);
       mu2e_geom->hideTop(topnode, _diagLevel);
     }
-    if(this->_showDSOnly) mu2e_geom->InsideDS(topnode, false );
-    if(this->_showCRV) mu2e_geom->InsideCRV(topnode, true);
+    if(_showDSOnly) mu2e_geom->InsideDS(topnode, false );
+    if(_showCRV) mu2e_geom->InsideCRV(topnode, true);
 
     //Add static detector geometry to global scene
     gEve->AddGlobalElement(etopnode);
