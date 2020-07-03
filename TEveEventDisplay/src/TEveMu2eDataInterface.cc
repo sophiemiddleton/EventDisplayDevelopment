@@ -74,13 +74,12 @@ namespace mu2e{
     TEveElementList *HitList2D = new TEveElementList("Hits2D");
     TEveElementList *HitList3D = new TEveElementList("Hits3D");
     double Max_Energy = 0;
-    double Min_Energy = 100;
+    double Min_Energy = 1000;
     
     for(size_t i=0; i<chcol->size();i++){
       ComboHit hit = (*chcol)[i];
-      TEveMu2eHit *teve_hit3D = new TEveMu2eHit(hit);
-      if (teve_hit3D->GetEnergy() > Max_Energy) Max_Energy = teve_hit3D->GetEnergy();
-      if (teve_hit3D->GetEnergy()< Min_Energy)  Min_Energy = teve_hit3D->GetEnergy(); 
+      if ( hit->energyDep() > Max_Energy) Max_Energy =  hit->energyDep();
+      if ( hit->energyDep() < Min_Energy)  Min_Energy =  hit->energyDep(); 
     }
     double interval = (Max_Energy - Min_Energy)/(9);
     int *energylevels;
@@ -88,9 +87,8 @@ namespace mu2e{
 
     for(size_t i=0; i<chcol->size();i++){
       ComboHit hit = (*chcol)[i];
-      TEveMu2eHit *teve_hit3D = new TEveMu2eHit(hit);
       for(size_t n=0; n<9;n++){
-        if(teve_hit3D->GetEnergy() <= Min_Energy + n * interval){energylevels[n] = n;}
+        if( hit->energyDep() <= Min_Energy + n * interval){energylevels[n] = n;}
       }
     }
     for(size_t i=0; i<chcol->size();i++){
@@ -137,7 +135,7 @@ namespace mu2e{
     }
     TEveElementList *ClusterList2D = new TEveElementList("CaloClusters2D");
     double Max_Energy = 0;
-    double Min_Energy = 100;
+    double Min_Energy = 100 0;
     for(unsigned int i=0; i < clustercol->size();i++){
       CaloCluster cluster = (*clustercol)[i];
       if (cluster.energyDep() > Max_Energy){Max_Energy = cluster.energyDep();}
@@ -192,11 +190,10 @@ namespace mu2e{
 
         TEveElementList *HitList = new TEveElementList("CrystalHits");
         double Max_Energy = 0;
-        double Min_Energy = 100;
+        double Min_Energy = 1000;
       
         for(size_t i=0; i<cryHitcol->size();i++){
           CaloCrystalHit hit = (*cryHitcol)[i];
-          //TEveMu2eHit *teve_hit = new TEveMu2eHit(hit);
           if (hit.energyDep() > Max_Energy){Max_Energy = hit.energyDep();}
           if (hit.energyDep()< Min_Energy){Min_Energy = hit.energyDep();}
         }

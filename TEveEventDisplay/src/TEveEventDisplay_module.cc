@@ -108,7 +108,7 @@ namespace mu2e
     foundEvent = true;
     Data_Collections data;
     if(_filler.addHits_)_filler.FillRecoCollection(event, data, ComboHits);
-    if(_filler.addCrvHits_)_filler.FillRecoCollection(event, data, CRVRecoPulses);
+    //if(_filler.addCrvHits_)_filler.FillRecoCollection(event, data, CRVRecoPulses);
     if(_filler.addTracks_)_filler.FillRecoCollection(event, data, KalSeeds);
     if(_filler.addClusters_)_filler.FillRecoCollection(event, data, CaloClusters);
     if(!_frame->isClosed()) _frame->setEvent(event, _firstLoop, data);

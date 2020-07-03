@@ -12,7 +12,7 @@ namespace mu2e{
       TGeoMedium *CsI = new TGeoMedium("CsI",2, mat);
 
       Calorimeter const &cal = *(GeomHandle<Calorimeter>());
-      const Disk& disk0 = cal.disk(0);
+   /*   const Disk& disk0 = cal.disk(0);
       const Disk& disk1 = cal.disk(1);
 
       Double_t dz0{pointmmTocm(disk0.geomInfo().crateDeltaZ())};
@@ -20,7 +20,7 @@ namespace mu2e{
       Double_t rmin{pointmmTocm(disk0.innerRadius())};
       Double_t rmax{pointmmTocm(disk0.outerRadius())};
 
-/*      TEveGeoShape *calShape0 = new TEveGeoShape();
+     TEveGeoShape *calShape0 = new TEveGeoShape();
       TEveGeoShape *calShape1 = new TEveGeoShape();
 
       calShape0->SetShape(new TGeoTube(rmin, rmax, dz0));
@@ -28,7 +28,7 @@ namespace mu2e{
       calShape1->SetShape(new TGeoTube(rmin, rmax, dz1));
       calShape1->SetMainTransparency(100);
       orthodet0->AddElement(calShape0);
-      orthodet1->AddElement(calShape1);*/
+      orthodet1->AddElement(calShape1);
 
      // ... Create cal out of Silicon using the composite shape defined above
       TGeoShape *g0 = new TGeoTube("calo 2D disk0",rmin,rmax,dz0); 
@@ -50,7 +50,7 @@ namespace mu2e{
       CLHEP::Hep3Vector CaloCenterD1 = PointToCalo(calo1Pos,1);
       hep3vectorTocm(CaloCenterD1);
       topvol->AddNode(calo1, 1, new TGeoTranslation(CaloCenterD1.x(),CaloCenterD1.y(),CaloCenterD1.z())); 
-
+*/
       for(unsigned int i = 0; i < 1348 ; i++){ 
         Crystal const &crystal = cal.crystal(i);
         double crystalXLen = pointmmTocm(crystal.size().x());

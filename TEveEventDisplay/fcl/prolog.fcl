@@ -53,11 +53,10 @@ TEveEventDisplayCosmics : {
       ComboHitCollection 		      : "makePH"
       GenParticleCollection 	    : "compressDigiMCs" 
       StrawDigiCollection		      :  "makeSD"
-      CrvRecoPulseCollection		  : "CrvRecoPulses"
+      CrvRecoPulseCollection		  : NULL #"CrvRecoPulses"
       CosmicTrackSeedCollection 	: "CosmicTrackFinder"
       CaloClusterCollection		    : NULL
       CaloCrystalHitCollection    : NULL
-#      CrvCoincidenceClusterCollection : "CrvCoincidenceClusterFinder"
       CaloDigiMCCollection: NULL
       CaloHitMCTruthCollection:  NULL
       CaloHitSimPartMCCollection:  NULL
@@ -69,7 +68,7 @@ TEveEventDisplayCosmics : {
       KalSeedCollection           : NULL
       addHits 			              : true
       addTracks 			            : false
-      addCrvHits			            : true
+      addCrvHits			            : false
       addCosmicSeedFit	          : false
       addMCCaloDigis			:false 
       addMCHits 			: false
