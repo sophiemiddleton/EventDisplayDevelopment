@@ -67,7 +67,7 @@ TEveEventDisplayCosmics : {
       HelixSeedCollection         : NULL
       KalSeedCollection           : NULL
       addHits 			              : true
-      addTracks 			            : true
+      addTracks 			            : false
       addCrvHits			            : false
       addCosmicSeedFit	          : false
       addMCCaloDigis			:false 

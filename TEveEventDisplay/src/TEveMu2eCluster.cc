@@ -15,8 +15,8 @@ namespace mu2e{
     hep3vectorTocm(cog);
     this->SetTitle(Form(strlab.c_str(),1,hstr));
     Int_t mSize;
-    int colors[] = {+10, +5, +7, +8, -3, +1, -5, 0, -2, -4, +6, -9};
-    this->SetMarkerColor(kViolet + colors[energylevel]);
+    //int colors[] = {+10, +5, +7, +8, -3, +1, -5, 0, -2, -4, +6, -9};
+    this->SetMarkerColor(kViolet);// + colors[energylevel]);
     mSize = 2;
     this->SetNextPoint(cog.x(), cog.y(), cog.z()); 
     this->SetMarkerStyle(4);

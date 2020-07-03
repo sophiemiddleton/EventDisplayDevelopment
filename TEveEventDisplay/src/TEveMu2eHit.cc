@@ -14,8 +14,8 @@ namespace mu2e{
     hep3vectorTocm(pointInMu2e);
     this->SetTitle(Form(strlab.c_str(),n,hstr));
     this->SetNextPoint(pointInMu2e.x(), pointInMu2e.y(), pointInMu2e.z()); 
-    int colors[] = {-7, 3, -6, -1, 9, 0, -4, 10, 1};
-    this->SetMarkerColor(kSpring + colors[energylevel]);
+   // int colors[] = {-7, 3, -6, -1, 9, 0, -4, 10, 1};
+    this->SetMarkerColor(kSpring);// + colors[energylevel]);
     this->SetMarkerSize(mSize);
     this->SetPickable(kTRUE);
     if(AddErrorBar){ 

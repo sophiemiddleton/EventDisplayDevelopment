@@ -73,7 +73,7 @@ namespace mu2e{
     }
     TEveElementList *HitList2D = new TEveElementList("Hits2D");
     TEveElementList *HitList3D = new TEveElementList("Hits3D");
-    double Max_Energy = 0;
+    /*double Max_Energy = 0;
     double Min_Energy = 1000;
     
     for(size_t i=0; i<chcol->size();i++){
@@ -90,7 +90,7 @@ namespace mu2e{
       for(size_t n=0; n<9;n++){
         if( hit.energyDep() <= Min_Energy + n * interval){energylevels[n] = n;}
       }
-    }
+    }*/
     for(size_t i=0; i<chcol->size();i++){
       ComboHit hit = (*chcol)[i];
       TEveMu2eHit *teve_hit2D = new TEveMu2eHit(hit);
@@ -101,8 +101,8 @@ namespace mu2e{
       string energy = to_string(teve_hit3D->GetEnergy());
       string pos3D = "(" + to_string((double)pointInMu2e.x()) + ", " + to_string((double)pointInMu2e.y()) + ", " + to_string((double)pointInMu2e.z()) + ")";
       string pos2D = "(" + to_string((double)hit.pos().x()) + ", " + to_string((double)hit.pos().y()) + ", " + to_string((double)hit.pos().z()) + ")";
-      teve_hit3D->DrawHit3D("ComboHits3D, Position = " + pos3D + ", Energy = " + energy + ", Time = " + to_string(hit.time()) + ", ", i + 1,  pointInMu2e, energylevels[i], HitList3D);
-      teve_hit2D->DrawHit2D("ComboHits2D, Position = " + pos2D + ", Energy = " + energy + ", Time = " + to_string(hit.time()) + ", ", i + 1, HitPos,energylevels[i], HitList2D);
+      teve_hit3D->DrawHit3D("ComboHits3D, Position = " + pos3D + ", Energy = " + energy + ", Time = " + to_string(hit.time()) + ", ", i + 1,  pointInMu2e, 2, HitList3D);
+      teve_hit2D->DrawHit2D("ComboHits2D, Position = " + pos2D + ", Energy = " + energy + ", Time = " + to_string(hit.time()) + ", ", i + 1, HitPos,2, HitList2D);
 
       fHitsList2D->AddElement(HitList2D); 
       fHitsList3D->AddElement(HitList3D); 
@@ -134,7 +134,7 @@ namespace mu2e{
       fClusterList2D->DestroyElements();  
     }
     TEveElementList *ClusterList2D = new TEveElementList("CaloClusters2D");
-    double Max_Energy = 0;
+  /*  double Max_Energy = 0;
     double Min_Energy = 1000;
     for(unsigned int i=0; i < clustercol->size();i++){
       CaloCluster cluster = (*clustercol)[i];
@@ -151,7 +151,7 @@ namespace mu2e{
          if(cluster.energyDep() <= Min_Energy + n * interval){energylevels[n] = n;}
        }
     }
-
+*/
     for(unsigned int i=0; i<clustercol->size();i++){
       CaloCluster const  &cluster= (*clustercol)[i];
       TEveMu2eCluster *teve_cluster3D = new TEveMu2eCluster(cluster);
@@ -161,10 +161,10 @@ namespace mu2e{
       CLHEP::Hep3Vector pointInMu2e = PointToCalo(COG,cluster.diskId());
       string pos3D = "(" + to_string((double)pointInMu2e.x()) + ", " + to_string((double)pointInMu2e.y()) + ", " + to_string((double)pointInMu2e.z()) + ")";
       string pos2D = "(" + to_string((double)COG.x()) + ", " + to_string((double)COG.y()) + ", " + to_string((double)COG.z()) + ")";
-      teve_cluster3D->DrawCluster("CaloCluster3D, Cluster #" + to_string(i + 1) + ", Position =" + pos3D + ", Energy = " + to_string(cluster.energyDep()) + ", Time = " + to_string(cluster.time()), pointInMu2e, energylevels[i], ClusterList3D);
+      teve_cluster3D->DrawCluster("CaloCluster3D, Cluster #" + to_string(i + 1) + ", Position =" + pos3D + ", Energy = " + to_string(cluster.energyDep()) + ", Time = " + to_string(cluster.time()), pointInMu2e, 2, ClusterList3D);
       fClusterList3D->AddElement(ClusterList3D);  
 
-      teve_cluster2D->DrawCluster("CaloCluster3D, Cluster #" + to_string(i + 1) + ", Position =" + pos2D + ", Energy = " + to_string(cluster.energyDep()) + ", Time = " + to_string(cluster.time()), pointInMu2e,energylevels[i], ClusterList2D);
+      teve_cluster2D->DrawCluster("CaloCluster3D, Cluster #" + to_string(i + 1) + ", Position =" + pos2D + ", Energy = " + to_string(cluster.energyDep()) + ", Time = " + to_string(cluster.time()), pointInMu2e,2, ClusterList2D);
       fClusterList2D->AddElement(ClusterList2D); 
 
       if(cluster.diskId()==0)  calo2Dproj->fXYMgr->ImportElements(fClusterList2D, calo2Dproj->fDetXYScene); 
