@@ -16,6 +16,7 @@
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eTrkEllipse.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eTrkRZ.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eCRVEvent.h"
+#include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eMCTraj.h"
 //TEveMu2e Detectors:
 #include "TEveEventDisplay/src/shape_classes/TEveMu2eTracker.h"
 #include "TEveEventDisplay/src/shape_classes/TEveMu2eCalorimeter.h"

@@ -41,7 +41,7 @@ namespace mu2e{
     MCOnly_(conf.MCOnly())
   {}
 
-  void Collection_Filler::FillRecoCollection(const art::Event& evt, Data_Collections &data, RecoDataProductName CollectionName){
+  void Collection_Filler::FillRecoCollections(const art::Event& evt, Data_Collections &data, RecoDataProductName CollectionName){
     if(FillAll_ or RecoOnly_ or (addHits_ and CollectionName == ComboHits)){ 
       auto chH = evt.getValidHandle<mu2e::ComboHitCollection>(chTag_);
       data.chcol = chH.product();

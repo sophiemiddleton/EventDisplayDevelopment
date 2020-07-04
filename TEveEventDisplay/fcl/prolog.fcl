@@ -62,7 +62,7 @@ TEveEventDisplayCosmics : {
       CaloHitSimPartMCCollection:  NULL
       CrvCoincidenceClusterMCCollection:  NULL
       CrvDigiMCCollection:  NULL
-      MCTrajectoryCollection:  NULL
+      MCTrajectoryCollection:  "compressDigiMCs"
       StrawDigiMCCollection:  NULL
       HelixSeedCollection         : NULL
       KalSeedCollection           : NULL
@@ -75,7 +75,7 @@ TEveEventDisplayCosmics : {
       addMCHitsSP			: false 
       addMCCrvCC			: false  
       addMCCrvDigis			: false
-      addMCTraj				: false 
+      addMCTraj				: true
       addMCStrawDigis			:false
    }
   }   

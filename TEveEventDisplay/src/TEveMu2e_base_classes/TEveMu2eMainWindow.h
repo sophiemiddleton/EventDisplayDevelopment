@@ -30,7 +30,7 @@
 #include "TEveEventDisplay/src/shape_classes/TEveMu2eTracker.h"
 #include "TEveEventDisplay/src/shape_classes/TEveMu2eCRV.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eDataInterface.h"
-
+#include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eMCInterface.h"
 class TBox;
 class TGTextEntry;
 class TPad;
@@ -67,7 +67,7 @@ namespace mu2e{
       TGeoManager* geom = new TGeoManager("geom","Geom");
       Geom_Interface *mu2e_geom	=new Geom_Interface(); 
       TEveMu2eDataInterface *pass_data	=new TEveMu2eDataInterface(); 
-
+      TEveMu2eMCInterface *pass_mc	=new TEveMu2eMCInterface(); 
       int eventToFind, runToFind;
 
       TGTextEntry     *fTeRun,*fTeEvt;

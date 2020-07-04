@@ -128,7 +128,7 @@ namespace mu2e{
 
     bool addHits_, addTracks_, addClusters_, addCrvHits_, addCosmicSeedFit_, isCosmic_, RecoOnly_,  FillAll_, addMCCaloDigis_, addMCHits_, addMCHitsSP_, addMCCrvCC_, addMCCrvDigis_, addMCTraj_, addMCStrawDigis_, MCOnly_;
 
-    void FillRecoCollection(const art::Event& evt, Data_Collections &data, RecoDataProductName code);
+    void FillRecoCollections(const art::Event& evt, Data_Collections &data, RecoDataProductName code);
     void FillMCCollections(const art::Event& evt, Data_Collections &data, MCDataProductName code);
 
     template<class collection>
