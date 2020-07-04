@@ -242,7 +242,7 @@ namespace mu2e{
         fTrackList2D->DestroyElements();  
       }
 
-      TEveElementList *TrackList2D = new TEveElementList("Ellipse");
+      //TEveElementList *TrackList2D = new TEveElementList("Ellipse");
       for(unsigned int k = 0; k < seedcol->size(); k++){
         KalSeed kseed = (*seedcol)[k];
         TEveMu2eCustomHelix *line = new TEveMu2eCustomHelix();
@@ -251,7 +251,7 @@ namespace mu2e{
         line->SetMomentum();
         line->SetParticle();
 
-       /* unsigned int nSteps = 1000;  
+        unsigned int nSteps = 1000;  
         double TrackerLength = 300.8;//cm FIXME - this should not be hardcoded this way!!
         double kStepSize = nSteps/TrackerLength;
         line->kStepSize = kStepSize;
@@ -268,24 +268,11 @@ namespace mu2e{
           CLHEP::Hep3Vector InMu2e = PointToTracker(Pos);
           line->SetNextPoint(InMu2e.x()/10+line->Direction.x()*line->Momentum/10,InMu2e.y()/10+line->Direction.y()*line->Momentum/10, InMu2e.z()/10-TrackerLength/2);
         }
-      }*/
-      CLHEP::Hep3Vector trackCenter(kseed.helix()->helix().centerx(), kseed.helix()->helix().centery(), GetTrackerCenter().z());  
-//void TEveMu2eTrkTrkRZ::DrawTrk(const std::string &pstr, TEveElementList *Track2DList);
-      PointToTracker(trackCenter);
-      hep3vectorTocm(trackCenter);
-      TEveMu2eTrkEllipse *TrkEllipse = new TEveMu2eTrkEllipse();
-      //TEveMu2eTrkRZ *TrkWave = new TEveMu2eTrkRZ("test", sin(kseed.helix()->helix().circleAzimuth(TrackerCenter)), 900, 1300));
-
-      TrkEllipse->SetX1(trackCenter.x());
-      TrkEllipse->SetY1(trackCenter.y());
-      TrkEllipse->SetR1(kseed.helix()->helix().radius()/10);
-
-      TrkEllipse->DrawIt("ellipse", TrackList2D);
-      fTrackList2D->AddElement(TrackList2D);
-      tracker2Dproj->fXYMgr->ImportElements(fTrackList2D, tracker2Dproj->fDetXYScene); 
-      //fTrackList2D->AddElement(line);
-      //tracker2Dproj->fXYMgr->ImportElements(fTrackList2D, tracker2Dproj->fDetXYScene);
-      
+      }
+ 
+      fTrackList2D->AddElement(line);
+      tracker2Dproj->fXYMgr->ImportElements(fTrackList2D, tracker2Dproj->fDetXYScene);
+      tracker2Dproj->fRZMgr->ImportElements(fTrackList2D, tracker2Dproj->fDetRZScene);
       line->SetLineColor(kGreen);
       line->SetLineWidth(3);
       fTrackList3D->AddElement(line);

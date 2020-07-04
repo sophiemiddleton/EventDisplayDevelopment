@@ -10,7 +10,7 @@
 #include <TEveTrackPropagator.h>
 
 namespace mu2e {
-  class   TEveMu2eCustomHelix: public TEveElement, public TPolyLine3D { 
+  class   TEveMu2eCustomHelix: public TEveLine {
     public:
        #ifndef __CINT__
       explicit  TEveMu2eCustomHelix(){};
