@@ -32,18 +32,22 @@ namespace mu2e{
         {
           const std::vector<MCTrajectoryPoint> &points = trajectoryIter->second.points();
           std::cout<<"Trajectory has "<<points.size()<<" points"<<std::endl;
-          //double pdgId=trajectoryIter->first->pdgId();
+          string pdgId= to_string(trajectoryIter->first->pdgId());
           //primaryPos=trajectoryIter->first->startPosition();
           //primaryEnergy=trajectoryIter->first->startMomentum().e();
+          CLHEP::Hep3Vector StartHitPos, EndHitPos;
           for(unsigned int i=0; i<points.size();i++){
             TEveMu2eMCTraj *teve_hit3D = new TEveMu2eMCTraj();
 
-            CLHEP::Hep3Vector HitPos(points[i].x(), points[i].y(), points[i].z());
-            CLHEP::Hep3Vector pointInMu2e = PointToTracker(HitPos);
-            string energy = to_string(points[i].kineticEnergy());
-            string pos3D = "(" + to_string((double)pointInMu2e.x()) + ", " + to_string((double)pointInMu2e.y()) + ", " + to_string((double)pointInMu2e.z()) + ")";
-            teve_hit3D->DrawHit3D("ComboHits3D, Position = " + pos3D + ", Energy = " + energy  + ", ", i + 1,  pointInMu2e, HitList3D);
-
+            if(i==0) CLHEP::Hep3Vector StartHitPos(points[i].x(), points[i].y(), points[i].z());
+            if(i==points.size()-1){ 
+              CLHEP::Hep3Vector EndHitPos(points[i].x(), points[i].y(), points[i].z());
+              //CLHEP::Hep3Vector StartInMu2e = PointToTracker(StartHitPos);
+              //CLHEP::Hep3Vector EndInMu2e = PointToTracker(EndHitPos);
+              string energy = to_string(points[i].kineticEnergy());
+              //string mom = "(" + to_string((double)pointInMu2e.x()) + ", " + to_string((double)pointInMu2e.y()) + ", " + to_string((double)pointInMu2e.z()) + ")";
+              teve_hit3D->DrawLine3D("MCTraj PDG " + pdgId + "Energy = " + energy  + ", ",  StartHitPos, EndHitPos, HitList3D);
+            }
             fTrackList3D->AddElement(HitList3D); 
             gEve->AddElement(fTrackList3D);
             gEve->Redraw3D(kTRUE);
