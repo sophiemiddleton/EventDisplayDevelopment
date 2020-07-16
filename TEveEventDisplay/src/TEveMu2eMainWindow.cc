@@ -61,8 +61,12 @@ namespace mu2e{
     TGMainFrame(p, w, h),
     fTeRun(0),
     fTeEvt(0),
+    fTTEvt(0),
+    fTHSlid(0),
     fTlRun(0),
-    fTlEvt(0)
+    fTlEvt(0),
+    fTlTEvt(0),
+    fTlHSlid(0)
     {
       TEveManager::Create();
       gEve->GetBrowser()->GetTabRight()->SetTab(0);
@@ -128,6 +132,24 @@ namespace mu2e{
         evnoFrame->AddFrame(fTeEvt,new TGLayoutHints(kLHintsExpandX));
         fTeEvt->Associate(this);
 
+        //Create a Time Slider
+        TGHorizontalFrame* timeFrame = new TGHorizontalFrame(evtidFrame);
+        fTlHSlid = new TGLabel(timeFrame, "Time");
+        fTlHSlid->SetTextJustify(kTextLeft);
+        fTlHSlid->SetMargins(5,5,5,0);
+        timeFrame->AddFrame(fTlHSlid);
+
+        fTHSlid = new TGHSlider(timeFrame, 190, kScaleBoth, 1600, kHorizontalFrame, GetDefaultFrameBackground());//,kFALSE, kFALSE, kFALSE, kFALSE);
+        fTHSlid->SetRange(0.05, 5.0);
+        timeFrame->AddFrame(fTHSlid, new TGLayoutHints(kLHintsExpandX));
+        fTHSlid->Associate(this);
+
+        TGHorizontalFrame *fHframe2 = new TGHorizontalFrame(evtidFrame);
+        fTeh1 = new TGTextEntry(fHframe2, fTbh1 = new TGTextBuffer(5), 1700);
+        fTeh1->SetToolTipText("Time");
+        fTbh1->AddText(0, "0.0");
+        fHframe2->AddFrame(fTeh1,new TGLayoutHints(kLHintsExpandX));
+        fTeh1->Associate(this);
         TGTextButton *Gobutton         = new TGTextButton(navFrame, "&Go", 1999);
         navFrame->AddFrame(Gobutton, new TGLayoutHints(kLHintsLeft,3,0,3,0));         
         Gobutton->Associate(this);
@@ -148,6 +170,8 @@ namespace mu2e{
         evtidFrame->AddFrame(runoFrame,new TGLayoutHints(kLHintsExpandX));
         evtidFrame->AddFrame(evnoFrame,new TGLayoutHints(kLHintsExpandX));
 
+        evtidFrame->AddFrame(timeFrame,new TGLayoutHints(kLHintsExpandX));
+	      evtidFrame->AddFrame(fHframe2,new TGLayoutHints(kLHintsExpandX));
         // ... Add navFrame and evtidFrame to MainFrame
         frmMain->AddFrame(navFrame);
         TGHorizontal3DLine *separator = new TGHorizontal3DLine(frmMain);
@@ -442,7 +466,35 @@ namespace mu2e{
 
   Bool_t TEveMu2eMainWindow::ProcessMessage(Long_t msg, Long_t param1, Long_t param2){
   switch (GET_MSG(msg))
-  {    
+  {  
+  case kC_HSLIDER:
+    //switch (GET_MSG(msg)){ 
+	//case kSL_POS:
+	    if(param1==1600){
+		char buf[32]; 
+		sprintf(buf, "%.3d", fTHSlid->GetPosition());
+		fTbh1->Clear();
+		fTbh1->AddText(0, buf);
+		fTeh1->SetCursorPosition(fTeh1->GetCursorPosition());
+		fTeh1->Deselect();
+		gClient->NeedRedraw(fTeh1);
+		texttime = fTHSlid->GetPosition();
+		//pass_data->AddCRVInfo(firstLoop, data.crvcoincol, mu2e_geom);//, CRV2Dproj);
+	    	pass_data->AddComboHits(_firstLoop, _data.chcol, mu2e_geom, tracker2Dproj, texttime);
+	    	pass_data->AddCaloClusters(_firstLoop, _data.clustercol, mu2e_geom, calo2Dproj, texttime);
+	    	//pass_data->AddHelixPieceWise(firstLoop, data.kalseedcol,mu2e_geom, tracker2Dproj);
+		
+	    }
+            break;
+  	//}  
+    case kC_TEXTENTRY:
+      switch (GET_SUBMSG(msg)){
+	case kTE_TEXTCHANGED:
+	    if (param1 == 1700){
+		fTHSlid->SetPosition(atof(fTbh1->GetString()));
+	    }		
+	    break;
+	}
     case kC_COMMAND:
       switch (GET_SUBMSG(msg))
       {
@@ -463,28 +515,36 @@ namespace mu2e{
                 eventToFind = atoi(fTeEvt->GetText());
                 runToFind = atoi(fTeRun->GetText());
                 gApplication->Terminate();
-             }
-             if(param1==1400){ //CRV button
+             } 
+             if(param1==1400){
                 RedrawGeometry();
-	          }
-            break;
-  }
+                
+	    }
+		break;
+	  }
+      
   break;
   }
   return kTRUE;
   }
 
   //SetEvent is called from the Module - it is were the drawing functions are called.
-  void TEveMu2eMainWindow::setEvent(const art::Event& event, bool firstLoop, Data_Collections &data)
+  void TEveMu2eMainWindow::setEvent(const art::Event& event, bool firstLoop, Data_Collections &data, double time)
   {
     _event=event.id().event();
     _subrun=event.id().subRun();
     _run=event.id().run();
     _firstLoop = firstLoop;
-    pass_data->AddCRVInfo(firstLoop, data.crvcoincol, mu2e_geom);
-    pass_data->AddComboHits(firstLoop, data.chcol, mu2e_geom, tracker2Dproj);
-    pass_data->AddCaloClusters(firstLoop, data.clustercol, mu2e_geom, calo2Dproj);
-    pass_data->AddHelixPieceWise(firstLoop, data.kalseedcol,mu2e_geom, tracker2Dproj);
+    _data.chcol = data.chcol; 
+    _data.clustercol = data.clustercol;
+    if (texttime == -1){
+      std::vector<double> times = pass_data->getTimeRange(firstLoop, data.chcol, data.crvcoincol, data.clustercol);
+      fTHSlid->SetRange(times.at(0), times.at(1));
+    }
+    pass_data->AddCRVInfo(firstLoop, data.crvcoincol, mu2e_geom, time);
+    pass_data->AddComboHits(firstLoop, data.chcol, mu2e_geom, tracker2Dproj, time);
+    pass_data->AddCaloClusters(firstLoop, data.clustercol, mu2e_geom, calo2Dproj, time);
+    pass_data->AddHelixPieceWise(firstLoop, data.kalseedcol,mu2e_geom, tracker2Dproj, time);
     pass_mc->AddMCTrajectory(firstLoop, data.mctrajcol, tracker2Dproj);
     gSystem->ProcessEvents();
     gClient->NeedRedraw(fTeRun);
@@ -523,7 +583,14 @@ namespace mu2e{
       _runNumberText->Draw("same");
     }
     else _runNumberText->SetTitle(eventInfoText.c_str());
-
+    if(_timeText==nullptr)
+    {
+      _timeText = new TText(0.6,-0.7,eventInfoText.c_str());
+      _timeText->SetTextColor(5);
+      _timeText->SetTextSize(0.025);
+      _timeText->Draw("same");
+    }
+    else _timeText->SetTitle(eventInfoText.c_str());
     this->Layout();
 
  }

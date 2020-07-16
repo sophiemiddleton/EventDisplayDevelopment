@@ -7,7 +7,38 @@
 using namespace mu2e;
 namespace mu2e{
  
-  void TEveMu2eDataInterface::AddCRVInfo(bool firstloop, const CrvRecoPulseCollection *crvcoincol, Geom_Interface *mu2e_geom){// TEveMu2e2DProjection *CRV2Dproj){
+  std::vector<double> TEveMu2eDataInterface::getTimeRange(bool firstloop, const ComboHitCollection *chcol, const CrvRecoPulseCollection *crvcoincol, const CaloClusterCollection *clustercol){
+	//double maxtime = -1;
+        //double mintime = -1;
+	vector <double> time = {-1, -1};
+
+	if (crvcoincol != 0){
+		for(unsigned int i=0; i <crvcoincol->size(); i++){
+			const CrvRecoPulse &crvRecoPulse = crvcoincol->at(i);
+			if (crvRecoPulse.GetPulseTime() > time.at(1)){time.at(1) = crvRecoPulse.GetPulseTime();}
+			if (crvRecoPulse.GetPulseTime() < time.at(0)){time.at(0) = crvRecoPulse.GetPulseTime();}
+		}
+	}
+        if (chcol != 0){
+		for(size_t i=0; i<chcol->size();i++){
+	      		ComboHit hit = (*chcol)[i];
+			if (hit.time() > time.at(1)){time.at(1) = hit.time();}
+			if (hit.time() < time.at(0)){time.at(0) = hit.time();}
+		}
+	}
+
+	if (clustercol != 0){
+	    	for(unsigned int i=0; i<clustercol->size();i++){
+	      		CaloCluster const  &cluster= (*clustercol)[i];
+			if (cluster.time() > time.at(1)){time.at(1) = cluster.time();}
+			if (cluster.time() < time.at(0)){time.at(0) = cluster.time();}
+		}
+	}
+	if (time.at(0) == -1){time.at(0) = 0;}
+	return time;
+
+}
+  void TEveMu2eDataInterface::AddCRVInfo(bool firstloop, const CrvRecoPulseCollection *crvcoincol, Geom_Interface *mu2e_geom, double time){
     if(crvcoincol!=0){
       if (fCrvList3D== 0) {
         fCrvList3D = new TEveElementList("Hits");
@@ -16,21 +47,14 @@ namespace mu2e{
       else {
         fCrvList3D->DestroyElements();  
       }
-      //if (fCrvList2D== 0) {
-      //  fCrvList2D = new TEveElementList("Hits");
-     //   fCrvList2D->IncDenyDestroy();     
-     // }
-     // else {
-     //   fCrvList2D->DestroyElements();  
-     // }
       TEveElementList *CrvList3D = new TEveElementList("Crv3D");
-      //TEveElementList *CrvList2D = new TEveElementList("Crv2D");
+
       GeomHandle<CosmicRayShield> CRS;
 
       for(unsigned int i=0; i <crvcoincol->size(); i++)
       {
         const CrvRecoPulse &crvRecoPulse = crvcoincol->at(i);
-        //TEveMu2eCRVEvent *teve_crv2D = new TEveMu2eCRVEvent(crvRecoPulse);
+       
         TEveMu2eCRVEvent *teve_crv3D = new TEveMu2eCRVEvent(crvRecoPulse);
         const CRSScintillatorBarIndex &crvBarIndex = crvRecoPulse.GetScintillatorBarIndex();
         const CRSScintillatorBar &crvCounter = CRS->getBar(crvBarIndex);
@@ -39,23 +63,17 @@ namespace mu2e{
         //int PEs = crvRecoPulse.GetPEs();
         hep3vectorTocm(crvCounterPos);
         string pos3D = "(" + to_string((double)crvCounterPos.x()) + ", " + to_string((double)crvCounterPos.y()) + ", " + to_string((double)crvCounterPos.z()) + ")";
-       // string pos2D = "(" + to_string((double)crvCounterPos.x()) + ", " + to_string((double)crvCounterPos.y()) + ", " + to_string((double)crvCounterPos.z()) + ")";
-        
+
         teve_crv3D->DrawHit3D("CRVHits3D, Position = " + pos3D + ", Pulse Time = " + to_string(crvRecoPulse.GetPulseTime()) + ", Pulse Height = "+ to_string(crvRecoPulse.GetPulseHeight()) + + "Pulse Width = " + to_string(crvRecoPulse.GetPulseWidth()),  i + 1, crvCounterPos, CrvList3D);
 
-        //teve_crv2D->DrawHit2D("CRVHits2D, Position = " + pos2D + ", Pulse Time = " + to_string(crvRecoPulse.GetPulseTime()) + ", Pulse Height = "+ to_string(crvRecoPulse.GetPulseHeight()) + + "Pulse Width = " + to_string(crvRecoPulse.GetPulseWidth()),  i + 1, crvCounterPos, CrvList2D);
-
-        //fCrvList2D->AddElement(CrvList2D); 
         fCrvList3D->AddElement(CrvList3D); 
-        // ... Import elements of the list into the projected views
-        //CRV2Dproj->fXYMgr->ImportElements(fCrvList2D, CRV2Dproj->fDetXYScene);
         gEve->AddElement(fCrvList3D);
         gEve->Redraw3D(kTRUE); 
       }
     }
   }
 
-  void TEveMu2eDataInterface::AddComboHits(bool firstloop, const ComboHitCollection *chcol, Geom_Interface *mu2e_geom, TEveMu2e2DProjection *tracker2Dproj){
+  void TEveMu2eDataInterface::AddComboHits(bool firstloop, const ComboHitCollection *chcol, Geom_Interface *mu2e_geom, TEveMu2e2DProjection *tracker2Dproj, double time){
   if(chcol!=0){
     if (fHitsList3D== 0) {
       fHitsList3D = new TEveElementList("ComboHits3D");
@@ -101,22 +119,27 @@ namespace mu2e{
       string energy = to_string(teve_hit3D->GetEnergy());
       string pos3D = "(" + to_string((double)pointInMu2e.x()) + ", " + to_string((double)pointInMu2e.y()) + ", " + to_string((double)pointInMu2e.z()) + ")";
       string pos2D = "(" + to_string((double)hit.pos().x()) + ", " + to_string((double)hit.pos().y()) + ", " + to_string((double)hit.pos().z()) + ")";
-      teve_hit3D->DrawHit3D("ComboHits3D, Position = " + pos3D + ", Energy = " + energy + ", Time = " + to_string(hit.time()) + ", ", i + 1,  pointInMu2e, energylevels[i] , HitList3D);
-      teve_hit2D->DrawHit2D("ComboHits2D, Position = " + pos2D + ", Energy = " + energy + ", Time = " + to_string(hit.time()) + ", ", i + 1, HitPos,energylevels[i] , HitList2D);
+      //teve_hit3D->DrawHit3D("ComboHits3D, Position = " + pos3D + ", Energy = " + energy + ", Time = " + to_string(hit.time()) + ", ", i + 1,  pointInMu2e, energylevels[i] , HitList3D);
+      //teve_hit2D->DrawHit2D("ComboHits2D, Position = " + pos2D + ", Energy = " + energy + ", Time = " + to_string(hit.time()) + ", ", i + 1, HitPos,energylevels[i] , HitList2D);
+      if (time == -1 || (hit.time() <= time && time != -1)){
+        teve_hit3D->DrawHit3D("ComboHits3D, Position = " + pos3D + ", Energy = " + energy + ", Time = " + to_string(hit.time()) + ", ", i + 1,  pointInMu2e, energylevels[i], HitList3D);
+        teve_hit2D->DrawHit2D("ComboHits2D, Position = " + pos2D + ", Energy = " + energy + ", Time = " + to_string(hit.time()) + ", ", i + 1, HitPos,energylevels[i], HitList2D);
+     
 
-      fHitsList2D->AddElement(HitList2D); 
-      fHitsList3D->AddElement(HitList3D); 
-      // ... Import elements of the list into the projected views
-      tracker2Dproj->fXYMgr->ImportElements(fHitsList2D, tracker2Dproj->fDetXYScene); 
-      tracker2Dproj->fRZMgr->ImportElements(fHitsList2D, tracker2Dproj->fDetRZScene);
+        fHitsList2D->AddElement(HitList2D); 
+        fHitsList3D->AddElement(HitList3D); 
+        // ... Import elements of the list into the projected views
+        tracker2Dproj->fXYMgr->ImportElements(fHitsList2D, tracker2Dproj->fDetXYScene); 
+        tracker2Dproj->fRZMgr->ImportElements(fHitsList2D, tracker2Dproj->fDetRZScene);
 
-      gEve->AddElement(fHitsList3D);
-      gEve->Redraw3D(kTRUE);  
+        gEve->AddElement(fHitsList3D);
+        gEve->Redraw3D(kTRUE);  
+        }
       }
     }
   }
 
-  void TEveMu2eDataInterface::AddCaloClusters(bool firstloop, const CaloClusterCollection *clustercol, Geom_Interface *mu2e_geom,TEveMu2e2DProjection *calo2Dproj){
+  void TEveMu2eDataInterface::AddCaloClusters(bool firstloop, const CaloClusterCollection *clustercol, Geom_Interface *mu2e_geom,TEveMu2e2DProjection *calo2Dproj, double time){
   if(clustercol!=0){
     if (fClusterList3D == 0) {
       fClusterList3D = new TEveElementList("Clusters3D");
@@ -177,7 +200,7 @@ namespace mu2e{
     }
   }
 
-  void TEveMu2eDataInterface::AddCrystalHits(bool firstloop, const CaloCrystalHitCollection *cryHitcol, Geom_Interface *mu2e_geom,TEveMu2e2DProjection *calo2Dproj){
+  void TEveMu2eDataInterface::AddCrystalHits(bool firstloop, const CaloCrystalHitCollection *cryHitcol, Geom_Interface *mu2e_geom,TEveMu2e2DProjection *calo2Dproj, double time){
     Calorimeter const &cal = *(GeomHandle<Calorimeter>());
     if(cryHitcol!=0){
       if (fCrystalHitList == 0) {
@@ -223,7 +246,7 @@ namespace mu2e{
   }
 
 
-  void TEveMu2eDataInterface::AddHelixPieceWise(bool firstloop, const KalSeedCollection *seedcol, Geom_Interface *mu2e_geom,TEveMu2e2DProjection *tracker2Dproj){
+  void TEveMu2eDataInterface::AddHelixPieceWise(bool firstloop, const KalSeedCollection *seedcol, Geom_Interface *mu2e_geom,TEveMu2e2DProjection *tracker2Dproj,  double time){
   
     if(seedcol!=0){
       if (fTrackList3D == 0) {
@@ -283,7 +306,7 @@ namespace mu2e{
     }
   }
 
-  void TEveMu2eDataInterface::AddCosmicTrack(bool firstloop, const CosmicTrackSeedCollection *_cosmiccol){
+  void TEveMu2eDataInterface::AddCosmicTrack(bool firstloop, const CosmicTrackSeedCollection *_cosmiccol, double time){
     TEveStraightLineSet *CosmicTrackList = new TEveStraightLineSet();
     for(size_t ist = 0; ist < _cosmiccol->size(); ++ist){
       CosmicTrackSeed sts =(*_cosmiccol)[ist];

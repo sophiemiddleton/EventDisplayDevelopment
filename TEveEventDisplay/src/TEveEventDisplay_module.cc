@@ -108,7 +108,7 @@ namespace mu2e
     if(_filler.addTracks_)_filler.FillRecoCollections(event, data, KalSeeds);
     if(_filler.addClusters_)_filler.FillRecoCollections(event, data, CaloClusters);
     if(_filler.addMCTraj_)_filler.FillMCCollections(event, data, MCTrajectories);
-    if(!_frame->isClosed()) _frame->setEvent(event, _firstLoop, data);
+    if(!_frame->isClosed()) _frame->setEvent(event, _firstLoop, data, -1);
     _firstLoop = false;
 
   } 

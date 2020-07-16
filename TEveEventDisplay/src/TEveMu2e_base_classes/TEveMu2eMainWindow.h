@@ -4,6 +4,13 @@
 #include <TGLabel.h>
 #include <TGTextEntry.h>
 #include <TText.h>
+#include <TGScrollBar.h>
+#include <TGSlider.h>
+//#include <TGDoubleSlider.h>
+//#include <TSlider.h>
+//#include <TSliderBox.h>
+#include <TCanvas.h>
+#include <TQObject.h>
 //libGeom
 #include <TGeoManager.h>
 #include <TBox.h>
@@ -48,7 +55,7 @@ namespace mu2e{
       TEveMu2eMainWindow& operator=(const TEveMu2eMainWindow &);
       TEveMu2eMainWindow(const TGWindow* p, UInt_t w, UInt_t h, fhicl::ParameterSet _pset);
       virtual ~TEveMu2eMainWindow(){};
-
+      enum ETestComandIdentifiers{HId1, HId2, HId3};
       void StartTrackerProjectionTab();
       void PrepareTrackerProjectionTab(const art::Run& run);
       void StartCaloProjectionTab();
@@ -59,10 +66,11 @@ namespace mu2e{
       void SetRunGeometry(const art::Run& run, int _diagLevel, bool _showBuilding, bool _showDSOnly, bool _showCRV);
       void RedrawGeometry();
       Bool_t ProcessMessage(Long_t msg, Long_t param1, Long_t param2);
-      void  setEvent(const art::Event& event, bool firstLoop, Data_Collections &data);
+      void  setEvent(const art::Event& event, bool firstLoop, Data_Collections &data, double time);
       void  fillEvent(bool firstLoop=false);
       bool  isClosed() const;
       int   getEventToFind(bool &findEvent) const;
+      double texttime = -1;
       #endif
 
       TGeoManager* geom = new TGeoManager("geom","Geom");
@@ -71,8 +79,9 @@ namespace mu2e{
       TEveMu2eMCInterface *pass_mc	=new TEveMu2eMCInterface(); 
       int eventToFind, runToFind;
 
-      TGTextEntry     *fTeRun,*fTeEvt;
-      TGLabel         *fTlRun,*fTlEvt;
+      TGTextEntry     *fTeRun,*fTeEvt, *fTTEvt, *fTeh1, *fTeh2, *fTeh3;    
+      TGHSlider       *fTHSlid;
+      TGLabel         *fTlRun,*fTlEvt, *fTlTEvt, *fTlHSlid;
       Double_t        hitMarkerSize_;
       Double_t        trkMaxR_;
       Double_t        trkMaxZ_;
@@ -80,8 +89,8 @@ namespace mu2e{
       Double_t        camRotateCenterH_;
       Double_t        camRotateCenterV_;
       Double_t        camDollyDelta_;
-
-      TGTextBuffer *_eventNumber, *_subrunNumber, *_runNumber;
+      Int_t	      HSId1;
+      TGTextBuffer *_eventNumber, *_subrunNumber, *_runNumber, *_time, *fTbh1, *fTbh2, *fTbh3;
       int  _eventToFind = 0; ///TODO - this or one above>?
 
       bool _isClosed = false;
@@ -95,9 +104,9 @@ namespace mu2e{
       TEveMu2eTracker *Mu2eTracker  = new TEveMu2eTracker();
       TEveMu2eCRV *Mu2eCRV = new TEveMu2eCRV();
 
-      TText  *_eventNumberText, *_subrunNumberText, *_runNumberText;
+      TText  *_eventNumberText, *_subrunNumberText, *_runNumberText, *_timeText;
       int _event, _subrun, _run;
-
+      Data_Collections _data;
      ClassDef(TEveMu2eMainWindow,0);
 
     }; //end class def
