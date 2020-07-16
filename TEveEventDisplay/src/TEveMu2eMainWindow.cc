@@ -32,7 +32,6 @@
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eMainWindow.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eHit.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eCluster.h"
-#include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eHelixTrack.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eCustomHelix.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eCRVEvent.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eBField.h"
@@ -133,6 +132,12 @@ namespace mu2e{
         navFrame->AddFrame(Gobutton, new TGLayoutHints(kLHintsLeft,3,0,3,0));         
         Gobutton->Associate(this);
 
+        TGTextButton *showCRV = new TGTextButton(navFrame, "&Show 3D CRV", 1400);
+        //showCRV->Connect("Clicked()", "navFrame", this, "showcrv = kTRUE");
+        //if (showCRV->IsDown() == kTRUE){showcrv = kTRUE;}
+
+        navFrame->AddFrame(showCRV, new TGLayoutHints(kLHintsLeft,3,0,3,0));
+        showCRV->Associate(this);
         //Add Mu2e logo
         std::string logoFile = "TEveEventDisplay/src/Icons/mu2e_logo_oval.png";
         const TGPicture *logo = gClient->GetPicture(logoFile.c_str());
@@ -410,6 +415,7 @@ namespace mu2e{
       mu2e_geom->hideTop(topnode, _diagLevel);
     }
     if(_showDSOnly) mu2e_geom->InsideDS(topnode, false );
+  
     if(_showCRV) mu2e_geom->InsideCRV(topnode, true);
 
     //Add static detector geometry to global scene
@@ -417,7 +423,23 @@ namespace mu2e{
     geom->Draw("ogl");
   }
 
-  
+  void TEveMu2eMainWindow::RedrawGeometry(){
+    geom = mu2e_geom->Geom_Interface::getGeom("TEveEventDisplay/src/fix.gdml");
+
+    TGeoNode* topnode = gGeoManager->GetTopNode();
+    TEveGeoTopNode* etopnode = new TEveGeoTopNode(gGeoManager, topnode);
+    etopnode->SetVisLevel(4);
+    etopnode->GetNode()->GetVolume()->SetVisibility(kFALSE);
+
+    setRecursiveColorTransp(etopnode->GetNode()->GetVolume(), kWhite-10,70);
+    mu2e_geom->InsideCRV(topnode, true);
+
+    //Add static detector geometry to global scene
+    gEve->AddGlobalElement(etopnode);
+    geom->Draw("ogl");
+
+  }
+
   Bool_t TEveMu2eMainWindow::ProcessMessage(Long_t msg, Long_t param1, Long_t param2){
   switch (GET_MSG(msg))
   {    
@@ -442,6 +464,9 @@ namespace mu2e{
                 runToFind = atoi(fTeRun->GetText());
                 gApplication->Terminate();
              }
+             if(param1==1400){ //CRV button
+                RedrawGeometry();
+	          }
             break;
   }
   break;

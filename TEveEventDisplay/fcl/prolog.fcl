@@ -32,7 +32,7 @@ TEveEventDisplayHelix : {
       MCTrajectoryCollection:  NULL
       StrawDigiMCCollection:  NULL
       addHits 			            : false
-      addTracks 			          : true
+      addTracks 			          : false
       addCrvHits			          : false
       addCosmicSeedFit	        : false
       addClusters			          : true
