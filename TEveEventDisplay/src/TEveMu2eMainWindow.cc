@@ -154,12 +154,12 @@ namespace mu2e{
         navFrame->AddFrame(Gobutton, new TGLayoutHints(kLHintsLeft,3,0,3,0));         
         Gobutton->Associate(this);
 
-        TGTextButton *showCRV = new TGTextButton(navFrame, "&Show 3D CRV", 1400);
+        // TODO show CRV button: commented out while in progress
+        //TGTextButton *showCRV = new TGTextButton(navFrame, "&Show 3D CRV", 1400);
         //showCRV->Connect("Clicked()", "navFrame", this, "showcrv = kTRUE");
         //if (showCRV->IsDown() == kTRUE){showcrv = kTRUE;}
-
-        navFrame->AddFrame(showCRV, new TGLayoutHints(kLHintsLeft,3,0,3,0));
-        showCRV->Associate(this);
+        //navFrame->AddFrame(showCRV, new TGLayoutHints(kLHintsLeft,3,0,3,0));
+        //showCRV->Associate(this);
         //Add Mu2e logo
         std::string logoFile = "TEveEventDisplay/src/Icons/mu2e_logo_oval.png";
         const TGPicture *logo = gClient->GetPicture(logoFile.c_str());
@@ -434,7 +434,7 @@ namespace mu2e{
 
     setRecursiveColorTransp(etopnode->GetNode()->GetVolume(), kWhite-10,70);
 
-    if(_showBuilding){   
+    if(!_showBuilding){   
       mu2e_geom->SolenoidsOnly(topnode);
       mu2e_geom->hideTop(topnode, _diagLevel);
     }

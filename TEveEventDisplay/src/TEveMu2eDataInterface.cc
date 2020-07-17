@@ -184,18 +184,20 @@ namespace mu2e{
       CLHEP::Hep3Vector pointInMu2e = PointToCalo(COG,cluster.diskId());
       string pos3D = "(" + to_string((double)pointInMu2e.x()) + ", " + to_string((double)pointInMu2e.y()) + ", " + to_string((double)pointInMu2e.z()) + ")";
       string pos2D = "(" + to_string((double)COG.x()) + ", " + to_string((double)COG.y()) + ", " + to_string((double)COG.z()) + ")";
-      teve_cluster3D->DrawCluster("CaloCluster3D, Cluster #" + to_string(i + 1) + ", Position =" + pos3D + ", Energy = " + to_string(cluster.energyDep()) + ", Time = " + to_string(cluster.time()), pointInMu2e, energylevels[i], ClusterList3D);
-      fClusterList3D->AddElement(ClusterList3D);  
+      
+      if (time == -1 || cluster.time() <= time ){
+          teve_cluster3D->DrawCluster("CaloCluster3D, Cluster #" + to_string(i + 1) + ", Position =" + pos3D + ", Energy = " + to_string(cluster.energyDep()) + ", Time = " + to_string(cluster.time()), pointInMu2e, energylevels[i], ClusterList3D);
+	        fClusterList3D->AddElement(ClusterList3D);  
+        teve_cluster2D->DrawCluster("CaloCluster3D, Cluster #" + to_string(i + 1) + ", Position =" + pos2D + ", Energy = " + to_string(cluster.energyDep()) + ", Time = " + to_string(cluster.time()), pointInMu2e,energylevels[i], ClusterList2D);
+        fClusterList2D->AddElement(ClusterList2D); 
 
-      teve_cluster2D->DrawCluster("CaloCluster3D, Cluster #" + to_string(i + 1) + ", Position =" + pos2D + ", Energy = " + to_string(cluster.energyDep()) + ", Time = " + to_string(cluster.time()), pointInMu2e,energylevels[i], ClusterList2D);
-      fClusterList2D->AddElement(ClusterList2D); 
+        if(cluster.diskId()==0)  calo2Dproj->fXYMgr->ImportElements(fClusterList2D, calo2Dproj->fDetXYScene); 
 
-      if(cluster.diskId()==0)  calo2Dproj->fXYMgr->ImportElements(fClusterList2D, calo2Dproj->fDetXYScene); 
+        if(cluster.diskId()==1) calo2Dproj->fRZMgr->ImportElements(fClusterList2D, calo2Dproj->fDetRZScene);
 
-      if(cluster.diskId()==1) calo2Dproj->fRZMgr->ImportElements(fClusterList2D, calo2Dproj->fDetRZScene);
-
-      gEve->AddElement(fClusterList3D);
-      gEve->Redraw3D(kTRUE);    
+        gEve->AddElement(fClusterList3D);
+        gEve->Redraw3D(kTRUE);    
+        }
       }
     }
   }
@@ -274,9 +276,10 @@ namespace mu2e{
         line->SetMomentum();
         line->SetParticle();
 
-        unsigned int nSteps = 1000;  
-        double TrackerLength = 300.8;//cm FIXME - this should not be hardcoded this way!!
-        double kStepSize = nSteps/TrackerLength;
+        unsigned int nSteps = 1670;  
+        double CaloLength = 70 + 118+ 132; //FIXME - add to GeomUtils
+        double TrackerLength = 300.8;//cm FIXME - GeomUtil
+        double kStepSize = nSteps/(CaloLength + TrackerLength);
         line->kStepSize = kStepSize;
 
         for(unsigned int i = 0 ; i< nSteps; i++){
@@ -296,6 +299,9 @@ namespace mu2e{
       fTrackList2D->AddElement(line);
       tracker2Dproj->fXYMgr->ImportElements(fTrackList2D, tracker2Dproj->fDetXYScene);
       tracker2Dproj->fRZMgr->ImportElements(fTrackList2D, tracker2Dproj->fDetRZScene);
+      line->SetPickable(kTRUE);
+      const std::string title = "Helix #" + to_string(k + 1) + ", Momentum = " + to_string(line->Momentum);
+      line->SetTitle(Form(title.c_str()));
       line->SetLineColor(kGreen);
       line->SetLineWidth(3);
       fTrackList3D->AddElement(line);

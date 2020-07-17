@@ -12,8 +12,6 @@
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eBField.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2e2DProjection.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eCustomHelix.h"
-#include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eTrkEllipse.h"
-#include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eTrkRZ.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eCRVEvent.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eMCTraj.h"
 //TEveMu2e Detectors:
