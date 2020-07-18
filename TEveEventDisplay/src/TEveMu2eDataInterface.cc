@@ -258,20 +258,17 @@ namespace mu2e{
       else {
         fTrackList3D->DestroyElements();  
       }
-
       if (fTrackList2D == 0) {
-        fTrackList2D  = new TEveElementList("Helix2D");
+        fTrackList2D = new TEveElementList("Helix2D");
         fTrackList2D->IncDenyDestroy();     
       }
       else {
         fTrackList2D->DestroyElements();  
       }
-
-      //TEveElementList *TrackList2D = new TEveElementList("Ellipse");
       for(unsigned int k = 0; k < seedcol->size(); k++){
         KalSeed kseed = (*seedcol)[k];
         TEveMu2eCustomHelix *line = new TEveMu2eCustomHelix();
-
+        TEveMu2eCustomHelix *line_twoD = new TEveMu2eCustomHelix();
         line->fKalSeed = kseed;
         line->SetMomentum();
         line->SetParticle();
@@ -281,22 +278,26 @@ namespace mu2e{
         double TrackerLength = 300.8;//cm FIXME - GeomUtil
         double kStepSize = nSteps/(CaloLength + TrackerLength);
         line->kStepSize = kStepSize;
-
+        
         for(unsigned int i = 0 ; i< nSteps; i++){
         double zpos = (i*kStepSize)-TrackerLength/2;
         line->SetPostionAndDirectionFromKalRep(zpos);//need to start from
+
         if(i==0) {
           CLHEP::Hep3Vector Pos(line->Position.x(), line->Position.y(), zpos+line->Position.z());
           CLHEP::Hep3Vector InMu2e = PointToTracker(Pos);
           line->SetPoint(i,InMu2e.x()/10+line->Direction.x()*line->Momentum/10,InMu2e.y()/10+line->Direction.y()*line->Momentum/10, InMu2e.z()/10-TrackerLength/2);
+           line_twoD->SetPoint(i,Pos.x()/10+line->Direction.x()*line->Momentum/10,Pos.y()/10+line->Direction.y()*line->Momentum/10,Pos.z()/10-TrackerLength/2);
         } else {
           CLHEP::Hep3Vector Pos(line->Position.x(), line->Position.y(), zpos+line->Position.z());
           CLHEP::Hep3Vector InMu2e = PointToTracker(Pos);
           line->SetNextPoint(InMu2e.x()/10+line->Direction.x()*line->Momentum/10,InMu2e.y()/10+line->Direction.y()*line->Momentum/10, InMu2e.z()/10-TrackerLength/2);
+          line_twoD->SetNextPoint(Pos.x()/10+line->Direction.x()*line->Momentum/10,Pos.y()/10+line->Direction.y()*line->Momentum/10, Pos.z()/10-TrackerLength/2);
         }
       }
- 
-      fTrackList2D->AddElement(line);
+      line_twoD->SetLineColor(kGreen);
+      line_twoD->SetLineWidth(3);
+      fTrackList2D->AddElement(line_twoD);
       tracker2Dproj->fXYMgr->ImportElements(fTrackList2D, tracker2Dproj->fDetXYScene);
       tracker2Dproj->fRZMgr->ImportElements(fTrackList2D, tracker2Dproj->fDetRZScene);
       line->SetPickable(kTRUE);

@@ -14,6 +14,7 @@ namespace mu2e {
     public:
        #ifndef __CINT__
       explicit  TEveMu2eCustomHelix(){};
+      TEveMu2eCustomHelix(const TEveMu2eCustomHelix &helix) { fKalSeed = helix.fKalSeed;} ;
       TEveMu2eCustomHelix(HelixSeed hseed){fHelixSeed = hseed;};
       virtual ~ TEveMu2eCustomHelix(){};
       #endif

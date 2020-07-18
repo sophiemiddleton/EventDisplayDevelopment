@@ -20,22 +20,19 @@ namespace mu2e{
       Double_t rmax{pointmmTocm(envelope.outerRadius())};
       TEveGeoShape *tr = new TEveGeoShape();
       tr->SetShape(new TGeoTube(rmin, rmax, dz));
+      std::cout<<"Size "<<rmin<<" "<<rmax<<" "<<dz<<std::endl;
 
       tr->SetMainTransparency(100);
       orthodet->AddElement(tr);
         
-      // ... Create tracker out of Silicon using the composite shape defined above
+      // ... Create tracker using the composite shape defined above
       CLHEP::Hep3Vector trackerCenterGDML = GetGDMLTrackerCenter();
       CLHEP::Hep3Vector trackerCentrMu2e = GetTrackerCenter();
-      TGeoShape *gs = new TGeoTube("Straw Tracker",rmin,rmax,dz+trackerCenterGDML.z()); 
+      TGeoShape *gs = new TGeoTube("Straw Tracker",rmin,rmax,dz); 
       TGeoVolume *tracker = new TGeoVolume("straw Tracker ",gs, My);
       tracker->SetVisLeaves(kFALSE);
       tracker->SetInvisible();
-      CLHEP::Hep3Vector trackerPos(0,0,dz);
-      CLHEP::Hep3Vector pointInMu2e = PointToTracker(trackerPos);
-      hep3vectorTocm(trackerPos);
-      topvol->AddNode(tracker, 1, new TGeoTranslation(trackerPos.x(),trackerPos.y(), trackerPos.z()));
+      topvol->AddNode(tracker, 1, new TGeoTranslation(-390.4,0,1017.1));
 
-}
-
+  }
 }

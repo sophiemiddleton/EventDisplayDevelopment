@@ -48,13 +48,13 @@ TEveEventDisplayHelix : {
 
 TEveEventDisplayCosmics : {
     module_type : TEveEventDisplay
-    showCRV : false
-    showDSOnly : false
+    showCRV : true
+    showDSOnly : true
     filler : {
       ComboHitCollection 		      : "makePH"
       GenParticleCollection 	    : "compressDigiMCs" 
       StrawDigiCollection		      :  "makeSD"
-      CrvRecoPulseCollection		  : NULL #"CrvRecoPulses"
+      CrvRecoPulseCollection		  : "CrvRecoPulses"
       CosmicTrackSeedCollection 	: "CosmicTrackFinder"
       CaloClusterCollection		    : NULL
       CaloCrystalHitCollection    : NULL
@@ -69,7 +69,7 @@ TEveEventDisplayCosmics : {
       KalSeedCollection           : NULL
       addHits 			              : true
       addTracks 			            : false
-      addCrvHits			            : false
+      addCrvHits			            : true
       addCosmicSeedFit	          : false
       addMCCaloDigis			:false 
       addMCHits 			: false
