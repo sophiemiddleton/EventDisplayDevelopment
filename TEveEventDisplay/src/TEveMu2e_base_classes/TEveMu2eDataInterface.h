@@ -35,8 +35,8 @@ namespace mu2e{
       TEveElementList *fClusterList3D;
       TEveElementList *fCrvList2D;
       TEveElementList *fCrvList3D;
-      std::vector<double> getTimeRange(bool firstloop, const ComboHitCollection *chcol, const CrvRecoPulseCollection *crvcoincol, const CaloClusterCollection *clustercol);
-      void AddCRVInfo(bool firstloop, const CrvRecoPulseCollection *crvcoincol, Geom_Interface *mu2e_geom, double time);// TEveMu2e2DProjection *crv2Dproj);
+      std::vector<double> getTimeRange(bool firstloop, const ComboHitCollection *chcol, const CrvRecoPulseCollection *crvcoincol, const CaloClusterCollection *clustercol, const KalSeedCollection *seedcol);
+      void AddCRVInfo(bool firstloop, const CrvRecoPulseCollection *crvcoincol, Geom_Interface *mu2e_geom, double time);
       void AddComboHits(bool firstloop, const ComboHitCollection *chcol, Geom_Interface *mu2e_geom,TEveMu2e2DProjection *tracker2Dproj, double time);
       void AddCaloClusters(bool firstloop, const CaloClusterCollection *clustercol,Geom_Interface *mu2e_geom,TEveMu2e2DProjection *calo2Dproj,  double time);
       void AddCrystalHits(bool firstloop, const CaloCrystalHitCollection *cryHitcol, Geom_Interface *mu2e_geom,TEveMu2e2DProjection *calo2Dproj,  double time);

@@ -7,10 +7,9 @@
 using namespace mu2e;
 namespace mu2e{
  
-  std::vector<double> TEveMu2eDataInterface::getTimeRange(bool firstloop, const ComboHitCollection *chcol, const CrvRecoPulseCollection *crvcoincol, const CaloClusterCollection *clustercol){
-	//double maxtime = -1;
-        //double mintime = -1;
-	vector <double> time = {-1, -1};
+  std::vector<double> TEveMu2eDataInterface::getTimeRange(bool firstloop, const ComboHitCollection *chcol, const CrvRecoPulseCollection *crvcoincol, const CaloClusterCollection *clustercol, const KalSeedCollection *seedcol){
+
+	vector <double> time = {1000000, -1};
 
 	if (crvcoincol != 0){
 		for(unsigned int i=0; i <crvcoincol->size(); i++){
@@ -26,7 +25,6 @@ namespace mu2e{
 			if (hit.time() < time.at(0)){time.at(0) = hit.time();}
 		}
 	}
-
 	if (clustercol != 0){
 	    	for(unsigned int i=0; i<clustercol->size();i++){
 	      		CaloCluster const  &cluster= (*clustercol)[i];
@@ -34,7 +32,16 @@ namespace mu2e{
 			if (cluster.time() < time.at(0)){time.at(0) = cluster.time();}
 		}
 	}
-	if (time.at(0) == -1){time.at(0) = 0;}
+
+	if (seedcol != 0){
+		for (unsigned int i = 0; i <seedcol->size();i++){
+			KalSeed kseed = (*seedcol)[i];
+			if ((kseed.t0()).t0() > time.at(1)){time.at(1) = (kseed.t0()).t0();}
+			if ((kseed.t0()).t0() < time.at(0)){time.at(0) = (kseed.t0()).t0();}
+		}
+	}
+	//if (time.at(0) == -1){time.at(0) = 0;}
+	if (time.at(1) == -1){time.at(1) = 0;}
 	return time;
 
 }

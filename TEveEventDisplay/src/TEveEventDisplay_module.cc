@@ -107,7 +107,7 @@ namespace mu2e
       foundEvent = true;
       Data_Collections data;
       if(_filler.addHits_)_filler.FillRecoCollections(event, data, ComboHits);
-      //if(_filler.addCrvHits_)_filler.FillRecoCollection(event, data, CRVRecoPulses);
+      if(_filler.addCrvHits_)_filler.FillRecoCollections(event, data, CRVRecoPulses);
       if(_filler.addTracks_)_filler.FillRecoCollections(event, data, KalSeeds);
       if(_filler.addClusters_)_filler.FillRecoCollections(event, data, CaloClusters);
       if(_filler.addMCTraj_)_filler.FillMCCollections(event, data, MCTrajectories);

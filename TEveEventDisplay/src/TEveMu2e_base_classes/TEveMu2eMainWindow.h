@@ -106,6 +106,7 @@ namespace mu2e{
       TText  *_eventNumberText, *_subrunNumberText, *_runNumberText, *_timeText;
       int _event, _subrun, _run;
       Data_Collections _data;
+      std::vector<double> times;
      ClassDef(TEveMu2eMainWindow,0);
 
     }; //end class def

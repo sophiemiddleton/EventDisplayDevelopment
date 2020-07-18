@@ -479,10 +479,10 @@ namespace mu2e{
 		fTeh1->Deselect();
 		gClient->NeedRedraw(fTeh1);
 		texttime = fTHSlid->GetPosition();
-		//pass_data->AddCRVInfo(firstLoop, data.crvcoincol, mu2e_geom);//, CRV2Dproj);
-	    	pass_data->AddComboHits(_firstLoop, _data.chcol, mu2e_geom, tracker2Dproj, texttime);
-	    	pass_data->AddCaloClusters(_firstLoop, _data.clustercol, mu2e_geom, calo2Dproj, texttime);
-	    	//pass_data->AddHelixPieceWise(firstLoop, data.kalseedcol,mu2e_geom, tracker2Dproj);
+		pass_data->AddCRVInfo(_firstLoop, _data.crvcoincol, mu2e_geom, texttime);
+    pass_data->AddComboHits(_firstLoop, _data.chcol, mu2e_geom, tracker2Dproj, texttime);
+    pass_data->AddCaloClusters(_firstLoop, _data.clustercol, mu2e_geom, calo2Dproj, texttime);
+    pass_data->AddHelixPieceWise(_firstLoop, _data.kalseedcol,mu2e_geom, tracker2Dproj, texttime);
 		
 	    }
             break;
@@ -491,10 +491,13 @@ namespace mu2e{
       switch (GET_SUBMSG(msg)){
 	case kTE_TEXTCHANGED:
 	    if (param1 == 1700){
-		fTHSlid->SetPosition(atof(fTbh1->GetString()));
+        fTHSlid->SetPosition(atof(fTbh1->GetString()));
+        if (std::stod(fTbh1->GetString())<= times.at(1) && std::stod(fTbh1->GetString()) >= times.at(0)){fTHSlid->SetPosition(atof(fTbh1->GetString()));}
+        if(std::stod(fTbh1->GetString())>= times.at(1)){fTHSlid->SetPosition(times.at(1));}
+        if(std::stod(fTbh1->GetString())<= times.at(0)){fTHSlid->SetPosition(times.at(0));}
 	    }		
 	    break;
-	}
+	  }
     case kC_COMMAND:
       switch (GET_SUBMSG(msg))
       {
@@ -537,8 +540,10 @@ namespace mu2e{
     _firstLoop = firstLoop;
     _data.chcol = data.chcol; 
     _data.clustercol = data.clustercol;
+    _data.crvcoincol = data.crvcoincol;
+    _data.kalseedcol = data.kalseedcol;
     if (texttime == -1){
-      std::vector<double> times = pass_data->getTimeRange(firstLoop, data.chcol, data.crvcoincol, data.clustercol);
+      times = pass_data->getTimeRange(firstLoop, data.chcol, data.crvcoincol, data.clustercol, data.kalseedcol);
       fTHSlid->SetRange(times.at(0), times.at(1));
     }
     pass_data->AddCRVInfo(firstLoop, data.crvcoincol, mu2e_geom, time);
