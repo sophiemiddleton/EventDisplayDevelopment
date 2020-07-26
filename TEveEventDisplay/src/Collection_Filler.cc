@@ -54,7 +54,7 @@ namespace mu2e{
       auto chH = evt.getValidHandle<mu2e::CaloClusterCollection>(cluTag_);
       data.clustercol = chH.product();
     }
-    if(FillAll_ or RecoOnly_ or (isCosmic_ and addTracks_ and CollectionName==CosmicTracks)){
+    if(FillAll_ or RecoOnly_ or (addCosmicSeedFit_ and CollectionName==CosmicTracks)){
       auto chH = evt.getValidHandle<mu2e::CosmicTrackSeedCollection>(cosmicTag_);
       data.cosmiccol = chH.product();
     }

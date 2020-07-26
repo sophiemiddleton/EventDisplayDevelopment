@@ -320,25 +320,54 @@ namespace mu2e{
     }
   }
 
-  void TEveMu2eDataInterface::AddCosmicTrack(bool firstloop, const CosmicTrackSeedCollection *_cosmiccol, double time){
-    TEveStraightLineSet *CosmicTrackList = new TEveStraightLineSet();
-    for(size_t ist = 0; ist < _cosmiccol->size(); ++ist){
-      CosmicTrackSeed sts =(*_cosmiccol)[ist];
-      CosmicTrack st = sts._track;
+  void TEveMu2eDataInterface::AddCosmicTrack(bool firstloop, const CosmicTrackSeedCollection *cosmiccol, Geom_Interface *mu2e_geom,TEveMu2e2DProjection *tracker2Dproj){
+     if(cosmiccol !=0){
+       if (fTrackList3D == 0) {
+          fTrackList3D = new TEveElementList("Cosmic3D");
+          fTrackList3D->IncDenyDestroy();     
+        }
+        else {
+          fTrackList3D->DestroyElements();  
+        }
+        if (fTrackList2D == 0) {
+          fTrackList2D = new TEveElementList("Cosmic2D");
+          fTrackList2D->IncDenyDestroy();     
+        }
+        else {
+          fTrackList2D->DestroyElements();  
+        }  
+		  
+      TEveMu2eStraightTrack *line = new TEveMu2eStraightTrack();
+		  for(size_t ist = 0; ist < cosmiccol->size(); ++ist){
 
-      CosmicTrackList->SetLineColor(kGreen);
-      Float_t tz1 = -150;
-      Float_t tz2 = 150;
-      Float_t tx1 = st.InitParams.A0  + st.InitParams.A1*tz1;
-      Float_t tx2 = st.InitParams.A0  + st.InitParams.A1*tz2;
-      Float_t ty1 = st.InitParams.B0  + st.InitParams.B1*tz1;
-      Float_t ty2 = st.InitParams.B0  + st.InitParams.B1*tz2; 	
-      CosmicTrackList->AddLine(tx1, ty1, tz1, tx2, ty2, tz2);
-      gEve->AddElement(CosmicTrackList);
-      gEve->Redraw3D(kTRUE);
-	  
-    }
-  }
+			  CosmicTrackSeed sts =(*cosmiccol)[ist];
+			  CosmicTrack st = sts._track;
+			  
+			  line->SetLineColor(kGreen);
+			  Float_t tz1 = -150;
+			  Float_t tz2 = 150;
+			  Float_t tx1 = st.InitParams.A0  + st.InitParams.A1*tz1;
+			  Float_t tx2 = st.InitParams.A0  + st.InitParams.A1*tz2;
+			  Float_t ty1 = st.InitParams.B0  + st.InitParams.B1*tz1;
+			  Float_t ty2 = st.InitParams.B0  + st.InitParams.B1*tz2; 	
+			  line->AddLine(tx1, ty1, tz1, tx2, ty2, tz2);
+		  
+			  cout<<st.InitParams.A0<<"track "<<st.InitParams.A1<<st.InitParams.B1<<st.InitParams.B0<<endl;
+        fTrackList2D->AddElement(line);
+        tracker2Dproj->fXYMgr->ImportElements(fTrackList2D, tracker2Dproj->fDetXYScene);
+        tracker2Dproj->fRZMgr->ImportElements(fTrackList2D, tracker2Dproj->fDetRZScene);
+        line->SetPickable(kTRUE);
+
+        line->SetLineColor(kGreen);
+        line->SetLineWidth(3);
+        fTrackList3D->AddElement(line);
+        gEve->AddElement(fTrackList3D);
+        gEve->Redraw3D(kTRUE);
+        gEve->AddElement(fTrackList3D);
+        gEve->Redraw3D(kTRUE);
+		}
+	}
+}
 
   template<class collection>
   void TEveMu2eDataInterface::AddHitType(bool firstloop, const collection *hitcol, const char* name, std::vector<std::string> detectors, std::vector<TEveMu2e2DProjection> *projs){

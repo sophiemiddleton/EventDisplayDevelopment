@@ -16,7 +16,7 @@
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eCRVEvent.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eCluster.h"
 #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eCustomHelix.h"
-
+#include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eStraightTrack.h"
 namespace mu2e{
     class TEveMu2eDataInterface {
     public:
@@ -40,7 +40,7 @@ namespace mu2e{
       void AddComboHits(bool firstloop, const ComboHitCollection *chcol, Geom_Interface *mu2e_geom,TEveMu2e2DProjection *tracker2Dproj, double time);
       void AddCaloClusters(bool firstloop, const CaloClusterCollection *clustercol,Geom_Interface *mu2e_geom,TEveMu2e2DProjection *calo2Dproj,  double time);
       void AddCrystalHits(bool firstloop, const CaloCrystalHitCollection *cryHitcol, Geom_Interface *mu2e_geom,TEveMu2e2DProjection *calo2Dproj,  double time);
-      void AddCosmicTrack(bool firstloop, const CosmicTrackSeedCollection *cosmiccol,  double time);
+      void AddCosmicTrack(bool firstloop, const CosmicTrackSeedCollection *cosmiccol, Geom_Interface *mu2e_geom,TEveMu2e2DProjection *tracker2Dproj);
       void AddHelixPieceWise(bool firstloop, const KalSeedCollection *seedcol, Geom_Interface *mu2e_geom,TEveMu2e2DProjection *trackerDproj,  double time);
 
       template<class collection>
