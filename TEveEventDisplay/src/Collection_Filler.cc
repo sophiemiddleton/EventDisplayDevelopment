@@ -16,6 +16,7 @@ namespace mu2e{
     cryHitTag_(conf.cryHitTag()),
     hseedTag_(conf.hseedTag()),
     kalseedTag_(conf.kalseedTag()),
+    trkexttrajTag_(conf.trkexttrajTag()),
     mcdigisTag_(conf.mcdigisTag()),
     mccHitTag_(conf.mccHitTag()),
     mccHitSPTag_(conf.mccHitSPTag()),
@@ -29,6 +30,7 @@ namespace mu2e{
     addCrvHits_(conf.addCrvHits()),
     addCosmicSeedFit_(conf.addCosmicSeedFit()),
     isCosmic_(conf.isCosmic()),
+    addTrkExtTrajs_(conf.addTrkExtTrajs()),
     RecoOnly_(conf.RecoOnly()),
     FillAll_(conf.FillAll()),
     addMCCaloDigis_(conf.addMCCaloDigis()), 
@@ -70,6 +72,10 @@ namespace mu2e{
       auto chH = evt.getValidHandle<mu2e::CrvRecoPulseCollection>(crvcoinTag_);
       data.crvcoincol = chH.product();
     }
+    if(FillAll_ or RecoOnly_ or (addTrkExtTrajs_ and CollectionName==TrkExtTrajectories)){
+      auto chH = evt.getValidHandle<mu2e::TrkExtTrajCollection>(trkexttrajTag_);
+      data.trkextcol = chH.product();
+    }
   }
 
 
@@ -103,27 +109,7 @@ namespace mu2e{
       data.mcsdigicol = chH.product();
     }
   }
-  /*
-  //TODO- below is some thoughts - need to discuss - might need moving to the DataCollection
-  template<class collection>
-      void Collection_Filler::GetCollection(const art::Event& evt, collection &c, int code){
-     
-        if(code==1){ //ComboHits TODO - build an enum to allocate code to typename
-          if(!addHits_) std::cout<<"you are adding hits when parameter is off "<<std::endl;
-          _chcol = 0; 
-          auto chH = evt.getValidHandle<mu2e::ComboHitCollection>(chTag_);
-          _chcol = chH.product();
-          c=_chcol;
-        }
-        if(code==2){
-          c=_clustercol;
-        }
-         if(code==3){
-          c=_cosmiccol;
-        }
-        return c;
-    }
-  */
+
 }
 
 

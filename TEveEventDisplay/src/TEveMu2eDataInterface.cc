@@ -320,6 +320,51 @@ namespace mu2e{
     }
   }
 
+  void TEveMu2eDataInterface::AddTrackExitTrajectories(bool firstloop, const TrkExtTrajCollection *trkextcol, Geom_Interface *mu2e_geom){
+    if(trkextcol!=0){
+      if (fExtTrackList3D == 0) {
+        fExtTrackList3D = new TEveElementList("Helix3D");
+        fExtTrackList3D->IncDenyDestroy();     
+      }
+      else {
+        fExtTrackList3D->DestroyElements();  
+      }
+
+      if (fExtTrackList2D == 0) {
+        fExtTrackList2D  = new TEveElementList("Helix2D");
+        fExtTrackList2D->IncDenyDestroy();     
+      }
+      else {
+        fExtTrackList2D->DestroyElements();  
+      }
+      for(unsigned int i = 0; i < trkextcol->size(); i++){
+      TrkExtTraj trkext = (*trkextcol)[i];
+      TEveMu2eCustomHelix *line = new TEveMu2eCustomHelix();
+      line->fTrkExtTraj = trkext;
+
+      line->SetMomentumExt();
+      line->SetParticleExt();
+
+      line->SetPoint(0,trkext.front().x(),trkext.front().y(),trkext.front().z());
+      for(unsigned int k = 0 ; k< trkext.size(); k+=10){
+        const mu2e::TrkExtTrajPoint &trkextpoint = trkext[k];
+        line->SetNextPoint(trkextpoint.x(), trkextpoint.y(), trkextpoint.z()); //might have to divide by 10 for accurate translation
+      }
+      //     fExtTrackList2D->AddElement(line);
+      //     tracker2Dproj->fXYMgr->ImportElements(fExtTrackList2D, tracker2Dproj->fDetXYScene);
+      //     tracker2Dproj->fRZMgr->ImportElements(fExtTrackList2D, tracker2Dproj->fDetRZScene);
+      line->SetPickable(kTRUE);
+      const std::string title = "Helix #" + to_string(i + 1) + ", Momentum = " + to_string(line->Momentum);
+      line->SetTitle(Form(title.c_str()));
+      line->SetLineColor(kRed);
+      line->SetLineWidth(3);
+      fExtTrackList3D->AddElement(line);
+      gEve->AddElement(fExtTrackList3D);
+      gEve->Redraw3D(kTRUE);
+      }
+    }
+
+}
   void TEveMu2eDataInterface::AddCosmicTrack(bool firstloop, const CosmicTrackSeedCollection *cosmiccol, Geom_Interface *mu2e_geom,TEveMu2e2DProjection *tracker2Dproj){
      if(cosmiccol !=0){
        if (fTrackList3D == 0) {

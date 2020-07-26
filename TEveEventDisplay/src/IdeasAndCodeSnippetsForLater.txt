@@ -405,4 +405,88 @@ void TEveMu2eMainWindow::AddHelixEveTracks(bool firstloop, const KalSeedCollecti
    }
 
 
+// Mu2e B Field Map
+
+  void TEveMu2eDataInterface::AddBFieldMap(bool firstloop, Geom_Interface *mu2e_geom){
+	gSystem->IgnoreSignal(kSigSegmentationViolation, true);
+	if (tList == 0){
+    		tList = new TEveTrackList();
+	}
+	GeomHandle<StoppingTarget> target;
+	GeomHandle<BFieldManager> bfmgr;
+
+	trkProp = tList->GetPropagator();
+        trkProp->SetFitDaughters(kFALSE);
+
+	trkProp->SetStepper(TEveTrackPropagator::kRungeKutta);
+	TEveTrack *track = 0;
+
+        CLHEP::Hep3Vector startST(target->centerInMu2e());
+
+	trkProp->SetRnrReferences(kTRUE);
+	trkProp->SetRnrDaughters(kTRUE);
+	trkProp->SetRnrDecay(kTRUE);
+        trkProp->RefPMAtt().SetMarkerStyle(4);
+
+
+        std::cout<<startST<<std::endl;
+	CLHEP::Hep3Vector pt1(0.027667,  0.007919, 350);
+	CLHEP::Hep3Vector pt2(0.027667,  0.007919, 480);
+	CLHEP::Hep3Vector pt3(0.027667,  0.007919, 580);
+
+
+	for (unsigned int i = 0; i < 50; i++){
+		CLHEP::Hep3Vector pt(0,  0, 310 + i*20);
+		auto t = new TEveRecTrackD();
+		t->fV.Set(pt.x(), pt.y(), pt.z());
+		CLHEP::Hep3Vector field = bfmgr->getBField(pt);
+		trkProp->SetMagField(field.x(), field.y(), field.z());
+		//t->fP.Set(field.x(), field.y(), field.z());
+		TEveTrack *track = new TEveTrack(t, trkProp);
+		track->SetMarkerColor(kRed);
+	    	track->SetPickable(kTRUE);
+	    	track->SetLineColor(tList->GetLineColor());
+	   	const std::string title = "TEST TRACK" + to_string(i);
+	   	track->SetTitle(Form(title.c_str()));
+		tList->AddElement(track);
+	}
+
+	for (unsigned int j = 0; j < 100; j++){
+	//CLHEP::Hep3Vector pt(0,  0, 310);
+		auto t = new TEveRecTrackD();
+		CLHEP::Hep3Vector pt(0,  0, 310 + j * 10);
+		t->fV.Set(0, 0, pt.z());
+		CLHEP::Hep3Vector field = bfmgr->getBField(pt);
+		TEveMu2eBField *mf = new TEveMu2eBField();
+		trkProp->SetMagFieldObj(mf);
+		t->fP.Set(field.x(), field.y(), field.z());
+		t->fSign= 1;
+		track = new TEveTrack(t, trkProp);
+		for (unsigned int i = 0; i < 100; i++){
+			CLHEP::Hep3Vector field = bfmgr->getBField(pt);
+			trkProp->SetMagField(field.x(), field.y(), field.z());
+			TEvePathMarkD* pm1 = new TEvePathMarkD(TEvePathMarkD::kReference, TEveVectorD(pt.x(), pt.y(), pt.z()), TEveVectorD(field.x(), field.y(), field.z()));
+			pt = CLHEP::Hep3Vector ((double)(pt.x() + field.x()), (double)(pt.y() + field.y()), (double)(pt.z() + field.z()));
+			track->AddPathMark(*pm1);
+			}
+	track->SetMarkerColorAlpha(kYellow, 0.9);
+	track->SetPickable(kTRUE);
+	track->SetLineColor(tList->GetLineColor());
+	//track->SetAttLineAttMarker(tList);
+	const std::string title = "TEST TRACK";
+	track->SetTitle(Form(title.c_str()));
+	tList->AddElement(track);
+	}
+
+	track->SetRnrPoints(kTRUE);
+	track->SetMarkerStyle(6);
+        tList->SetLineColor(kMagenta);
+
+	gEve->AddElement(tList);
+	tList->MakeTracks();
+
+    	gEve->Redraw3D(kTRUE);
+	//gSystem->ProcessEvents();
+
+}
 

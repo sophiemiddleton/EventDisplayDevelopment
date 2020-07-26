@@ -21,6 +21,7 @@ namespace mu2e {
       
       KalSeed fKalSeed;
       HelixSeed fHelixSeed;
+      TrkExtTraj fTrkExtTraj;
 
       void DrawHelixTrack();
       void Draw2DProjection();
@@ -47,11 +48,19 @@ namespace mu2e {
         this->PDGcode = fKalSeed.particle().particleType();
       }
 
+      void SetMomentumExt(){
+        this->Momentum = fTrkExtTraj.front().momentum().mag();
+      }
+
+      void SetParticleExt(){
+        this->PDGcode = 11; //FIXME
+      }
       XYZVec Direction;
       XYZVec Position;
       double Momentum;
-      int PDGcode  = 11;
-      unsigned int nSteps = 100;
+      int PDGcode  = 11;//FIXME
+      bool _trajectory;
+      unsigned int nSteps = 100;//FIXME default
       double TrackerLength = 300.8;//cm
       int kStepSize = nSteps/TrackerLength;//cm
       ClassDef( TEveMu2eCustomHelix, 0);

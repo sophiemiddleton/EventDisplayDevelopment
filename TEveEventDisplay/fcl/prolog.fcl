@@ -23,7 +23,8 @@ TEveEventDisplayHelix : {
       CaloClusterCollection		  :  "CaloClusterFromProtoCluster"
       CaloCrystalHitCollection  :  "CaloCrystalHitFromHit"
       HelixSeedCollection       :  "HelixFinderDe:Negative"
-      KalSeedCollection         :  "KFFDeP" #RPC
+      KalSeedCollection         :  "KFFDeM" #RPC: KFFDeP
+      TrkExtTrajCollection      : NULL
       CaloDigiMCCollection: NULL
       CaloHitMCTruthCollection:  NULL
       CaloHitSimPartMCCollection:  NULL
@@ -36,6 +37,7 @@ TEveEventDisplayHelix : {
       addCrvHits			          : false
       addCosmicSeedFit	        : false
       addClusters			          : true
+      addTrkExtTrajs		: false
       addMCCaloDigis			:false 
       addMCHits 			:false
       addMCHitsSP			:false 
@@ -43,6 +45,7 @@ TEveEventDisplayHelix : {
       addMCCrvDigis			:false
       addMCTraj				:false 
       addMCStrawDigis			:false
+
     }
   }   
 
@@ -67,6 +70,7 @@ TEveEventDisplayCosmics : {
       StrawDigiMCCollection:  NULL
       HelixSeedCollection         : NULL
       KalSeedCollection           : NULL
+      TrkExtTrajCollection      : NULL
       addHits 			              : true
       addTracks 			            : false
       addCrvHits			            : true

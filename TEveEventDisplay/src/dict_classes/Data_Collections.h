@@ -65,7 +65,7 @@ namespace mu2e{
     const CaloCrystalHitCollection* cryHitcol = 0;
     const HelixSeedCollection* hseedcol = 0;
     const KalSeedCollection* kalseedcol = 0;
-
+    const TrkExtTrajCollection* trkextcol = 0;
     //MCDataProducts:
     const CaloDigiMCCollection *mccdigicol = 0;
     const CaloHitMCTruthCollection *mchittruthcol = 0;
