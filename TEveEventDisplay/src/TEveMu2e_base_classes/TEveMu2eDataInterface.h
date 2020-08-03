@@ -26,6 +26,7 @@ namespace mu2e{
       TEveMu2eDataInterface& operator=(const TEveMu2eDataInterface &);
       virtual ~TEveMu2eDataInterface(){};
       #endif
+      bool show2D;
       TEveElementList *fHitsList2D;
       TEveElementList *fHitsList3D;
       TEveElementList *fCrystalHitList;
@@ -37,14 +38,16 @@ namespace mu2e{
       TEveElementList *fCrvList3D;
       TEveElementList *fExtTrackList2D;
       TEveElementList *fExtTrackList3D;
-      std::vector<double> getTimeRange(bool firstloop, const ComboHitCollection *chcol, const CrvRecoPulseCollection *crvcoincol, const CaloClusterCollection *clustercol, const KalSeedCollection *seedcol);
-      void AddCRVInfo(bool firstloop, const CrvRecoPulseCollection *crvcoincol, Geom_Interface *mu2e_geom, double time);
-      void AddComboHits(bool firstloop, const ComboHitCollection *chcol, Geom_Interface *mu2e_geom,TEveMu2e2DProjection *tracker2Dproj, double time);
-      void AddCaloClusters(bool firstloop, const CaloClusterCollection *clustercol,Geom_Interface *mu2e_geom,TEveMu2e2DProjection *calo2Dproj,  double time);
-      void AddCrystalHits(bool firstloop, const CaloCrystalHitCollection *cryHitcol, Geom_Interface *mu2e_geom,TEveMu2e2DProjection *calo2Dproj,  double time);
-      void AddCosmicTrack(bool firstloop, const CosmicTrackSeedCollection *cosmiccol, Geom_Interface *mu2e_geom,TEveMu2e2DProjection *tracker2Dproj);
-      void AddHelixPieceWise(bool firstloop, const KalSeedCollection *seedcol, Geom_Interface *mu2e_geom,TEveMu2e2DProjection *trackerDproj,  double time);
-      void AddTrackExitTrajectories(bool firstloop, const TrkExtTrajCollection *trkextcol, Geom_Interface *mu2e_geom);
+
+      std::vector<double> getTimeRange(bool firstloop, const ComboHitCollection *chcol, const CrvRecoPulseCollection *crvcoincol, const CaloClusterCollection *clustercol);
+      void AddCRVInfo(bool firstloop, const CrvRecoPulseCollection *crvcoincol, double time, bool Redraw);
+      std::vector<double> AddComboHits(bool firstloop, const ComboHitCollection *chcol, TEveMu2e2DProjection *tracker2Dproj, double time, bool Redraw);
+      std::vector<double> AddCaloClusters(bool firstloop, const CaloClusterCollection *clustercol,TEveMu2e2DProjection *calo2Dproj,  double time, bool Redraw);
+      void AddCrystalHits(bool firstloop, const CaloCrystalHitCollection *cryHitcol, TEveMu2e2DProjection *calo2Dproj,  double time, bool Redraw);
+      void AddCosmicTrack(bool firstloop, const CosmicTrackSeedCollection *cosmiccol, TEveMu2e2DProjection *tracker2Dproj, double time, bool Redraw);
+      void AddHelixPieceWise(bool firstloop, const KalSeedCollection *seedcol, TEveMu2e2DProjection *trackerDproj, double time, bool Redraw);
+      void AddTrackExitTrajectories(bool firstloop, const TrkExtTrajCollection *trkextcol);
+
       template<class collection>
       void AddHitType(bool firstloop, const collection *hitcol, const char* name, std::vector<std::string> detectors, std::vector<TEveMu2e2DProjection> *projs);
       ClassDef(TEveMu2eDataInterface,0);

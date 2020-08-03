@@ -9,7 +9,17 @@
 using namespace mu2e;
 namespace mu2e{
 
-  void TEveMu2eMCInterface::AddMCTrajectory(bool firstloop, const MCTrajectoryCollection *trajcol, TEveMu2e2DProjection *tracker2Dproj){
+  void TEveMu2eMCInterface::AddMCTrajectory(bool firstloop, const MCTrajectoryCollection *trajcol, TEveMu2e2DProjection *tracker2Dproj, bool Redraw){
+      if(trajcol == 0 && Redraw){
+        if (fTrackList3D != 0){
+          fTrackList3D->DestroyElements();
+        }
+        if (fTrackList2D != 0){
+          fTrackList2D->DestroyElements();
+        }
+        gEve->AddElement(fTrackList3D);
+        gEve->Redraw3D(kTRUE); 
+    }
     if(trajcol!=0){
       if (fTrackList3D == 0) {
         fTrackList3D = new TEveElementList("MCTraj3D");

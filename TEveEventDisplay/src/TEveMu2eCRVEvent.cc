@@ -11,8 +11,6 @@ namespace mu2e{
     std::string dstr=" hit# %d\nLayer: %d";
     std::string strlst=pstr+hstr;
     std::string strlab=pstr+dstr;
-    //hep3vectorTocm(pointInMu2e);
-    std::cout<<"CRV point at "<<pointInMu2e.x()<<" "<<pointInMu2e.y()<<" "<<pointInMu2e.z()<<std::endl;
     this->SetTitle(Form(strlab.c_str(),n,hstr));
     this->SetNextPoint(pointInMu2e.x(), pointInMu2e.y(), pointInMu2e.z()); 
     this->SetMarkerColor(mColor);

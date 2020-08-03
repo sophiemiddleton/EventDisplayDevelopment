@@ -66,7 +66,14 @@ namespace mu2e{
     fTlRun(0),
     fTlEvt(0),
     fTlTEvt(0),
-    fTlHSlid(0)
+    fTlHSlid(0),
+    celabelenergy(0),
+    helabelenergy(0),
+    br(0),
+    clusterscheck(0),
+    hitscheck(0),
+    trackscheck(0),
+    cosmicscheck(0)	
     {
       TEveManager::Create();
       gEve->GetBrowser()->GetTabRight()->SetTab(0);
@@ -97,11 +104,6 @@ namespace mu2e{
         navFrame->AddFrame(f);
         f->Associate(this);
 
-        //....Add in check list
-        // TGGroupFrame *options = new TGGroupFrame(navFrame, "Options", kVerticalFrame);
-        // options->SetTitlePos(TGGroupFrame::kLeft);
-        // navFrame->AddFrame(options);
-
         TEveParamList *edep = new TEveParamList("CaloEnergySelection");
         gEve->AddToListTree(edep,0);
         edep->AddParameter(TEveParamList::FloatConfig_t("Min Energy Depositied",20,0,100));
@@ -115,7 +117,7 @@ namespace mu2e{
 
         fTeRun = new TGTextEntry(runoFrame, _runNumber = new TGTextBuffer(5), 1);
         _runNumber->AddText(0, "1");
-        //fTeRun->Connect("ReturnPressed()","mu2e::EvtDisplayUtils", visutil_,"GotoEvent()");
+       
         runoFrame->AddFrame(fTeRun,new TGLayoutHints(kLHintsExpandX));
         fTeRun->Associate(this);
 
@@ -128,13 +130,13 @@ namespace mu2e{
 
         fTeEvt = new TGTextEntry(evnoFrame, _eventNumber = new TGTextBuffer(5), 1);
         _eventNumber->AddText(0, "1");
-        /// fTeEvt->Connect("ReturnPressed()","mu2e::EvtDisplayUtils", visutil_,"GotoEvent()");
+       
         evnoFrame->AddFrame(fTeEvt,new TGLayoutHints(kLHintsExpandX));
         fTeEvt->Associate(this);
 
         //Create a Time Slider
         TGHorizontalFrame* timeFrame = new TGHorizontalFrame(evtidFrame);
-        fTlHSlid = new TGLabel(timeFrame, "Time");
+        fTlHSlid = new TGLabel(timeFrame, "Time (ns)");
         fTlHSlid->SetTextJustify(kTextLeft);
         fTlHSlid->SetMargins(5,5,5,0);
         timeFrame->AddFrame(fTlHSlid);
@@ -146,7 +148,7 @@ namespace mu2e{
 
         TGHorizontalFrame *fHframe2 = new TGHorizontalFrame(evtidFrame);
         fTeh1 = new TGTextEntry(fHframe2, fTbh1 = new TGTextBuffer(5), 1700);
-        fTeh1->SetToolTipText("Time");
+        fTeh1->SetToolTipText("Time (ns)");
         fTbh1->AddText(0, "0.0");
         fHframe2->AddFrame(fTeh1,new TGLayoutHints(kLHintsExpandX));
         fTeh1->Associate(this);
@@ -154,24 +156,63 @@ namespace mu2e{
         navFrame->AddFrame(Gobutton, new TGLayoutHints(kLHintsLeft,3,0,3,0));         
         Gobutton->Associate(this);
 
-        // TODO show CRV button: commented out while in progress
-        //TGTextButton *showCRV = new TGTextButton(navFrame, "&Show 3D CRV", 1400);
-        //showCRV->Connect("Clicked()", "navFrame", this, "showcrv = kTRUE");
-        //if (showCRV->IsDown() == kTRUE){showcrv = kTRUE;}
-        //navFrame->AddFrame(showCRV, new TGLayoutHints(kLHintsLeft,3,0,3,0));
-        //showCRV->Associate(this);
         //Add Mu2e logo
         std::string logoFile = "TEveEventDisplay/src/Icons/mu2e_logo_oval.png";
         const TGPicture *logo = gClient->GetPicture(logoFile.c_str());
         TGIcon *icon = new TGIcon(navFrame,logo,50,50);
         navFrame->AddFrame(icon,new TGLayoutHints(kLHintsLeft,20,0,0,0));
 
+        celabel = new TGLabel(evtidFrame, "Cluster Energy");
+        std::string celabeltxt = "";
+        if (clusterenergy != NULL){
+          std::string celabeltxt = to_string(clusterenergy->at(0)) + "                           " + to_string(clusterenergy->at(1));
+        }
+        celabelenergy = new TGLabel(evtidFrame, celabeltxt.c_str());
+
+        helabel = new TGLabel(evtidFrame, "Hit Energy");
+        std::string helabeltxt = "";
+        if (hitenergy != NULL){
+        std::string helabeltxt = to_string(hitenergy->at(0)) + "                           " + to_string(hitenergy->at(1));
+        }
+        helabelenergy = new TGLabel(evtidFrame, helabeltxt.c_str());
+
+        std::string clusterenergy = "TEveEventDisplay/src/Icons/purplegradient.png";
+        const TGPicture *ce = gClient->GetPicture(clusterenergy.c_str());
+        TGIcon *ceicon = new TGIcon(evtidFrame, ce, 40, 8);
+
+        helabel = new TGLabel(evtidFrame, "Hit Energy");
+        std::string hitenergy = "TEveEventDisplay/src/Icons/greengradient.png";
+        const TGPicture *he = gClient->GetPicture(hitenergy.c_str());
+        TGIcon *heicon = new TGIcon(evtidFrame, he, 40 ,8);
+
+        br = new TGButtonGroup(evtidFrame, "Data Products", kVerticalFrame);
+        clusterscheck = new TGCheckButton(br, new TGHotString("Clusters"), 1200);
+        clusterscheck->SetState(kButtonDown);
+        hitscheck = new TGCheckButton(br, new TGHotString("Hits"), 1201);
+        hitscheck->SetState(kButtonDown);
+        trackscheck = new TGCheckButton(br, new TGHotString("Tracks"), 1202);
+        trackscheck->SetState(kButtonDown);
+        cosmicscheck = new TGCheckButton(br, new TGHotString("Cosmics"), 1203);
+        cosmicscheck->SetState(kButtonDown);
         // ... Add horizontal run & event number subframes to vertical evtidFrame
         evtidFrame->AddFrame(runoFrame,new TGLayoutHints(kLHintsExpandX));
         evtidFrame->AddFrame(evnoFrame,new TGLayoutHints(kLHintsExpandX));
 
         evtidFrame->AddFrame(timeFrame,new TGLayoutHints(kLHintsExpandX));
-	      evtidFrame->AddFrame(fHframe2,new TGLayoutHints(kLHintsExpandX));
+        evtidFrame->AddFrame(fHframe2,new TGLayoutHints(kLHintsExpandX));
+        evtidFrame->AddFrame(celabel, new TGLayoutHints(kLHintsLeft,3,0,3,0));
+        evtidFrame->AddFrame(ceicon, new TGLayoutHints(kLHintsLeft,20,0,0,0));
+        evtidFrame->AddFrame(celabelenergy, new TGLayoutHints(kLHintsLeft,3,0,3,0));
+        evtidFrame->AddFrame(helabel, new TGLayoutHints(kLHintsLeft,3,0,3,0));
+        evtidFrame->AddFrame(heicon, new TGLayoutHints(kLHintsLeft,20,0,0,0));
+        evtidFrame->AddFrame(helabelenergy, new TGLayoutHints(kLHintsLeft,3,0,3,0));
+        evtidFrame->AddFrame(br, new TGLayoutHints(kLHintsExpandX));
+
+        //celabelenergy->Associate(this);
+        clusterscheck->Associate(this);
+        hitscheck->Associate(this);
+        trackscheck->Associate(this);
+        cosmicscheck->Associate(this);
         // ... Add navFrame and evtidFrame to MainFrame
         frmMain->AddFrame(navFrame);
         TGHorizontal3DLine *separator = new TGHorizontal3DLine(frmMain);
@@ -187,33 +228,25 @@ namespace mu2e{
 
       }
       gEve->AddEvent(new TEveEventManager("Event", "Empty Event"));
-
       TGLViewer *glv = gEve->GetDefaultGLViewer();
       glv->SetGuideState(TGLUtil::kAxesEdge, kTRUE, kFALSE, 0);
       glv->CurrentCamera().RotateRad(camRotateCenterH_,camRotateCenterV_);
       glv->CurrentCamera().Dolly(camDollyDelta_,kFALSE,kFALSE);
     }
 
+
     void TEveMu2eMainWindow::StartCRVProjectionTab(){
       // Create detector and event scenes for ortho views
       CRV2Dproj->fDetXYScene = gEve->SpawnNewScene("CRV Top", "");
-      //CRV2Dproj->fDetXYScene = gEve->SpawnNewScene("CRV Side", "");
       CRV2Dproj->fEvtXYScene = gEve->SpawnNewScene("CRV Top event", "");
-      //CRV2Dproj->fEvtXYScene = gEve->SpawnNewScene("CRV Side event", "");
-
+    
       // Create XY/RZ calo2Dprojection mgrs, draw projected axes, & add them to scenes
       CRV2Dproj->fXYMgr = new TEveProjectionManager(TEveProjection::kPT_RPhi);
       TEveProjectionAxes* axes_xy1 = new TEveProjectionAxes(CRV2Dproj->fXYMgr);
       CRV2Dproj->fDetXYScene->AddElement(axes_xy1);
       gEve->AddToListTree(axes_xy1,kTRUE);
       gEve->AddToListTree(CRV2Dproj->fXYMgr,kTRUE);
- /*
-      CRV2Dproj->fXYMgr = new TEveProjectionManager(TEveProjection::kPT_RPhi);
-      TEveProjectionAxes* axes_xy2 = new TEveProjectionAxes(CRV2Dproj->fXYMgr);
-      CRV2Dproj->fDetXYScene->AddElement(axes_xy2);
-      gEve->AddToListTree(axes_xy2,kTRUE);
-      gEve->AddToListTree(CRV2Dproj->fXYMgr,kTRUE);
-*/
+
       // Create side-by-side ortho D1, D2 views in new tab & add det/evt scenes
       TEveWindowSlot *slot = 0;
       TEveWindowPack *pack = 0;
@@ -230,14 +263,7 @@ namespace mu2e{
       CRV2Dproj->fXYView->AddScene(CRV2Dproj->fDetXYScene);
       CRV2Dproj->fXYView->AddScene(CRV2Dproj->fEvtXYScene);
 
-      /*pack->NewSlot()->MakeCurrent();
-      CRV2Dproj->fXYView = gEve->SpawnNewViewer("CRV2 View", "");
-      CRV2Dproj->fXYView->GetGLViewer()->SetCurrentCamera(TGLViewer::kCameraOrthoXOY);
-      CRV2Dproj->fXYView->AddScene(calo2Dproj->fDetXYScene);
-      CRV2Dproj->fXYView->AddScene(calo2Dproj->fEvtXYScene);
-      gEve->GetBrowser()->GetTabRight()->SetTab(0);
-*/
-}
+  }
 
   void TEveMu2eMainWindow::StartCaloProjectionTab(){
     // Create detector and event scenes for ortho views
@@ -447,6 +473,33 @@ namespace mu2e{
     geom->Draw("ogl");
   }
 
+  void TEveMu2eMainWindow::RedrawDataProducts(std::string type){
+    //_emptydata = new Data_Collections();
+
+    if (type == "Clusters"){
+      *clusterenergy = pass_data->AddCaloClusters(_firstLoop, _emptydata.clustercol, calo2Dproj, texttime, true);
+    }
+    if (type == "Hits"){
+      if (_data.chcol !=0){*hitenergy = pass_data->AddComboHits(_firstLoop, _emptydata.chcol, tracker2Dproj, texttime, true);}
+      if(_data.cryHitcol !=0){pass_data->AddCrystalHits(_firstLoop, _emptydata.cryHitcol, calo2Dproj, texttime, true);}
+    }
+    if (type == "Tracks"){
+      pass_data->AddHelixPieceWise(_firstLoop, _emptydata.kalseedcol, tracker2Dproj, texttime, true);
+    }
+    if (type == "Cosmics"){
+      if(_data.crvcoincol!= 0){pass_data->AddCRVInfo(_firstLoop, _emptydata.crvcoincol, texttime, true);}
+      if(_data.cosmiccol!=0){pass_data->AddCosmicTrack(_firstLoop, _emptydata.cosmiccol, tracker2Dproj, texttime, true);}
+    }
+
+    gSystem->ProcessEvents();
+    gClient->NeedRedraw(fTeRun);
+
+    gClient->NeedRedraw(celabelenergy);
+    gClient->NeedRedraw(helabelenergy);
+    gApplication->Run(true);
+
+	}
+
   void TEveMu2eMainWindow::RedrawGeometry(){
     geom = mu2e_geom->Geom_Interface::getGeom("TEveEventDisplay/src/fix.gdml");
 
@@ -465,65 +518,85 @@ namespace mu2e{
   }
 
   Bool_t TEveMu2eMainWindow::ProcessMessage(Long_t msg, Long_t param1, Long_t param2){
-  switch (GET_MSG(msg))
-  {  
-  case kC_HSLIDER:
-    //switch (GET_MSG(msg)){ 
-	//case kSL_POS:
-	    if(param1==1600){
-		char buf[32]; 
-		sprintf(buf, "%.3d", fTHSlid->GetPosition());
-		fTbh1->Clear();
-		fTbh1->AddText(0, buf);
-		fTeh1->SetCursorPosition(fTeh1->GetCursorPosition());
-		fTeh1->Deselect();
-		gClient->NeedRedraw(fTeh1);
-		texttime = fTHSlid->GetPosition();
-		pass_data->AddCRVInfo(_firstLoop, _data.crvcoincol, mu2e_geom, texttime);
-    pass_data->AddComboHits(_firstLoop, _data.chcol, mu2e_geom, tracker2Dproj, texttime);
-    pass_data->AddCaloClusters(_firstLoop, _data.clustercol, mu2e_geom, calo2Dproj, texttime);
-    pass_data->AddHelixPieceWise(_firstLoop, _data.kalseedcol,mu2e_geom, tracker2Dproj, texttime);
-		
+    switch (GET_MSG(msg))
+    {  
+    case kC_HSLIDER:
+      if(param1==1600){
+        char buf[32]; 
+        sprintf(buf, "%.3d", fTHSlid->GetPosition());
+        fTbh1->Clear();
+        fTbh1->AddText(0, buf);
+        fTeh1->SetCursorPosition(fTeh1->GetCursorPosition());
+        fTeh1->Deselect();
+        gClient->NeedRedraw(fTeh1);
+        texttime = fTHSlid->GetPosition();
+        pass_data->AddCRVInfo(_firstLoop, _data.crvcoincol, texttime, false);//, CRV2Dproj);
+        *hitenergy = pass_data->AddComboHits(_firstLoop, _data.chcol, tracker2Dproj, texttime, false);
+        *clusterenergy = pass_data->AddCaloClusters(_firstLoop, _data.clustercol, calo2Dproj, texttime, false);
+        pass_data->AddHelixPieceWise(_firstLoop, _data.kalseedcol,tracker2Dproj, texttime, false);
+
 	    }
-            break;
-  	//}  
+     break; 
     case kC_TEXTENTRY:
-      switch (GET_SUBMSG(msg)){
-	case kTE_TEXTCHANGED:
-	    if (param1 == 1700){
+    switch (GET_SUBMSG(msg)){
+      case kTE_TEXTCHANGED:
+      if (param1 == 1700){
         fTHSlid->SetPosition(atof(fTbh1->GetString()));
-        if (std::stod(fTbh1->GetString())<= times.at(1) && std::stod(fTbh1->GetString()) >= times.at(0)){fTHSlid->SetPosition(atof(fTbh1->GetString()));}
-        if(std::stod(fTbh1->GetString())>= times.at(1)){fTHSlid->SetPosition(times.at(1));}
-        if(std::stod(fTbh1->GetString())<= times.at(0)){fTHSlid->SetPosition(times.at(0));}
-	    }		
-	    break;
-	  }
+      }		
+      break;
+    }
     case kC_COMMAND:
       switch (GET_SUBMSG(msg))
       {
-        case kCM_BUTTON: 
-             if(param1==1111)
-             {                 
-             }
-             if(param1==1001)//Forward
-             {
-               gApplication->Terminate(0);
-             }
-             if(param1==1100)//Back
-             {
-                std::cout<<"Still developing backwards navigation"<<std::endl;
-             }
-             if(param1==1999)//Go
-             {
-                eventToFind = atoi(fTeEvt->GetText());
-                runToFind = atoi(fTeRun->GetText());
-                gApplication->Terminate();
-             } 
-             if(param1==1400){
-                RedrawGeometry();
-                
-	    }
-		break;
+      case kCM_CHECKBUTTON:
+      if(param1==1200){
+        if(clusterscheck->IsDown()){
+        *clusterenergy = pass_data->AddCaloClusters(_firstLoop, _data.clustercol, calo2Dproj, texttime, false);
+        gClient->NeedRedraw(celabelenergy);}
+        if(!clusterscheck->IsDown() && _data.clustercol!=0){RedrawDataProducts("Clusters");}
+      }
+      if(param1==1201){
+        if(hitscheck->IsDown()){
+        *hitenergy = pass_data->AddComboHits(_firstLoop, _data.chcol, tracker2Dproj, texttime, false);
+        pass_data->AddCrystalHits(_firstLoop, _data.cryHitcol, calo2Dproj, texttime, false);
+        }
+        if(!hitscheck->IsDown()){RedrawDataProducts("Hits");}
+      }
+      if(param1==1202){
+        if(trackscheck->IsDown()){pass_data->AddHelixPieceWise(_firstLoop, _data.kalseedcol, tracker2Dproj, texttime, false);}
+        if(!trackscheck->IsDown() && _data.kalseedcol!=0){RedrawDataProducts("Tracks");}
+      }
+      if(param1==1203){
+        if(cosmicscheck->IsDown()){
+        pass_data->AddCRVInfo(_firstLoop, _data.crvcoincol, texttime, false);
+        pass_data->AddCosmicTrack(_firstLoop, _data.cosmiccol,  tracker2Dproj, texttime, false);		
+        }
+        if(!cosmicscheck->IsDown()){RedrawDataProducts("Cosmics");}
+      }
+      break;
+      case kCM_BUTTON: 
+       if(param1==1111)
+       {                 
+       }
+       if(param1==1001)//Forward
+       {
+         gApplication->Terminate(0);
+       }
+       if(param1==1100)//Back
+       {
+          std::cout<<"Still developing backwards navigation"<<std::endl;
+       }
+       if(param1==1999)//Go
+       {
+          eventToFind = atoi(fTeEvt->GetText());
+          runToFind = atoi(fTeRun->GetText());
+          gApplication->Terminate();
+       } 
+       if(param1==1400){
+          RedrawGeometry();
+          
+      }
+      break;
 	  }
       
   break;
@@ -531,35 +604,47 @@ namespace mu2e{
   return kTRUE;
   }
 
-  //SetEvent is called from the Module - it is were the drawing functions are called.
   void TEveMu2eMainWindow::setEvent(const art::Event& event, bool firstLoop, Data_Collections &data, double time)
   {
     _event=event.id().event();
     _subrun=event.id().subRun();
     _run=event.id().run();
     _firstLoop = firstLoop;
+    //_data = data;
     _data.chcol = data.chcol; 
     _data.clustercol = data.clustercol;
     _data.crvcoincol = data.crvcoincol;
     _data.kalseedcol = data.kalseedcol;
+    _data.mctrajcol = data.mctrajcol;
+    _data.crvcoincol = data.crvcoincol;
     if (texttime == -1){
-      times = pass_data->getTimeRange(firstLoop, data.chcol, data.crvcoincol, data.clustercol, data.kalseedcol);
+      std::vector<double> times = pass_data->getTimeRange(firstLoop, data.chcol, data.crvcoincol, data.clustercol);
       fTHSlid->SetRange(times.at(0), times.at(1));
     }
-    pass_data->AddCRVInfo(firstLoop, data.crvcoincol, mu2e_geom, time);
-    pass_data->AddComboHits(firstLoop, data.chcol, mu2e_geom, tracker2Dproj, time);
-    pass_data->AddCaloClusters(firstLoop, data.clustercol, mu2e_geom, calo2Dproj, time);
-    pass_data->AddHelixPieceWise(firstLoop, data.kalseedcol,mu2e_geom, tracker2Dproj, time);
-    pass_mc->AddMCTrajectory(firstLoop, data.mctrajcol, tracker2Dproj);
+    pass_data->AddCRVInfo(firstLoop, data.crvcoincol, time, false);
+    hitenergy = new vector<double>(2);
+    *hitenergy = pass_data->AddComboHits(firstLoop, data.chcol, tracker2Dproj, time, false);
+    clusterenergy = new vector<double>(2);
+    *clusterenergy = pass_data->AddCaloClusters(firstLoop, data.clustercol, calo2Dproj, time, false);
+    pass_data->AddHelixPieceWise(firstLoop, data.kalseedcol, tracker2Dproj, time, false);
+    pass_mc->AddMCTrajectory(firstLoop, data.mctrajcol, tracker2Dproj, false);
     gSystem->ProcessEvents();
     gClient->NeedRedraw(fTeRun);
+    std::string celabeltxt = to_string(clusterenergy->at(0)) + "                           " + to_string(clusterenergy->at(1));
+    celabelenergy->ChangeText(celabeltxt.c_str());
+    celabelenergy->Draw();
+    gClient->NeedRedraw(celabelenergy);
+    std::string helabeltxt = to_string(hitenergy->at(0)) + "                           " + to_string(hitenergy->at(1));
+    helabelenergy->ChangeText(helabeltxt.c_str());
+    helabelenergy->Draw();
+    gClient->NeedRedraw(helabelenergy);
     gApplication->Run(true);
+    gEve->Redraw3D(kTRUE);
    }
 
 
   void TEveMu2eMainWindow::fillEvent(bool firstLoop)
    {
-    // _findEvent=false;
     std::string eventInfoText;
     eventInfoText=Form("Event #: %i",_event);
     if(_eventNumberText==nullptr) 

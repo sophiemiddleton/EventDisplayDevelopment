@@ -63,6 +63,7 @@ namespace mu2e{
       void PrepareCRVProjectionTab(const art::Run& run);
 
       void SetRunGeometry(const art::Run& run, int _diagLevel, bool _showBuilding, bool _showDSOnly, bool _showCRV);
+      void RedrawDataProducts(std::string type);
       void RedrawGeometry();
       Bool_t ProcessMessage(Long_t msg, Long_t param1, Long_t param2);
       void  setEvent(const art::Event& event, bool firstLoop, Data_Collections &data, double time);
@@ -70,6 +71,8 @@ namespace mu2e{
       bool  isClosed() const;
       int   getEventToFind(bool &findEvent) const;
       double texttime = -1;
+      vector<double> *clusterenergy = 0;
+      vector<double> *hitenergy = 0;
       #endif
 
       TGeoManager* geom = new TGeoManager("geom","Geom");
@@ -80,7 +83,9 @@ namespace mu2e{
 
       TGTextEntry     *fTeRun,*fTeEvt, *fTTEvt, *fTeh1, *fTeh2, *fTeh3;    
       TGHSlider       *fTHSlid;
-      TGLabel         *fTlRun,*fTlEvt, *fTlTEvt, *fTlHSlid;
+      TGLabel         *fTlRun,*fTlEvt, *fTlTEvt, *fTlHSlid, *celabel, *celabelenergy, *helabel, *helabelenergy;
+      TGButtonGroup	*br;
+      TGCheckButton	*clusterscheck, *hitscheck, *trackscheck, *cosmicscheck;
       Double_t        hitMarkerSize_;
       Double_t        trkMaxR_;
       Double_t        trkMaxZ_;
@@ -106,6 +111,7 @@ namespace mu2e{
       TText  *_eventNumberText, *_subrunNumberText, *_runNumberText, *_timeText;
       int _event, _subrun, _run;
       Data_Collections _data;
+      Data_Collections _emptydata;
       std::vector<double> times;
      ClassDef(TEveMu2eMainWindow,0);
 

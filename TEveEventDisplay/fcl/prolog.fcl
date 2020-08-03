@@ -16,14 +16,14 @@ TEveEventDisplayHelix : {
     module_type : TEveEventDisplay
     filler : {
       ComboHitCollection 		    : "makeSH"
-      GenParticleCollection 		: "compressDigiMCs" #generate"
+      GenParticleCollection 		: "compressDigiMCs" 
       StrawDigiCollection		    : "selectRecoMC"
       CrvRecoPulseCollection	  :  NULL
       CosmicTrackSeedCollection :  NULL
       CaloClusterCollection		  :  "CaloClusterFromProtoCluster"
       CaloCrystalHitCollection  :  "CaloCrystalHitFromHit"
       HelixSeedCollection       :  "HelixFinderDe:Negative"
-      KalSeedCollection         :  "KFFDeM" #RPC: KFFDeP
+      KalSeedCollection         :  "KFFDeM" 
       TrkExtTrajCollection      : NULL
       CaloDigiMCCollection: NULL
       CaloHitMCTruthCollection:  NULL
@@ -36,7 +36,7 @@ TEveEventDisplayHelix : {
       addTracks 			          : true
       addCrvHits			          : false
       addCosmicSeedFit	        : false
-      addClusters			          : true
+      addClusters			          : false
       addTrkExtTrajs		: false
       addMCCaloDigis			:false 
       addMCHits 			:false

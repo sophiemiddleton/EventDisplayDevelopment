@@ -36,7 +36,8 @@ namespace mu2e
       fhicl::Atom<bool> showCRV{Name("showCRV"), Comment("set false if you just want to see DS"),false};   
       fhicl::Atom<bool> showBuilding{Name("showBuilding"), Comment("set false to remove building"),false};   
       fhicl::Atom<bool> showDSOnly{Name("showDSOnly"), Comment(""),true};     
-      fhicl::Atom<bool> showEvent{Name("showEvent"), Comment(""),true};     
+      fhicl::Atom<bool> showEvent{Name("showEvent"), Comment(""),true};  
+      fhicl::Atom<bool> show2D{Name("show2D"), Comment(""),true};     
       fhicl::Table<Collection_Filler::Config> filler{Name("filler"),Comment("fill collections")};
     };
 
@@ -54,7 +55,7 @@ namespace mu2e
       bool _showDSOnly;
       bool _showCRV;
       bool _showEvent;  
-
+      bool _show2D;
       TApplication* application_;
       TDirectory*   directory_ = nullptr;   
       Collection_Filler _filler;
@@ -73,6 +74,7 @@ namespace mu2e
   _showDSOnly(conf().showDSOnly()),
   _showCRV(conf().showCRV()),
   _showEvent(conf().showEvent()),
+  _show2D(conf().show2D()),
   _filler(conf().filler())
 	{}
 
@@ -87,17 +89,16 @@ namespace mu2e
       application_ = new TApplication( "noapplication", &tmp_argc, tmp_argv );
     }
     _frame = new TEveMu2eMainWindow(gClient->GetRoot(), 1000,600, _pset);
-    _frame->StartTrackerProjectionTab();
-    _frame->StartCaloProjectionTab();
-    //_frame->StartCRVProjectionTab();
+    if(_show2D) _frame->StartTrackerProjectionTab();
+    if(_show2D) _frame->StartCaloProjectionTab();
+  
   }
 
 
   void TEveEventDisplay::beginRun(const art::Run& run){
     _frame->SetRunGeometry(run, _diagLevel, _showBuilding, _showDSOnly, _showCRV);
-    _frame->PrepareTrackerProjectionTab(run);
-    _frame->PrepareCaloProjectionTab(run);
-    //_frame->PrepareCRVProjectionTab(run);
+    if(_show2D) _frame->PrepareTrackerProjectionTab(run);
+    if(_show2D) _frame->PrepareCaloProjectionTab(run);
   }
 
 
@@ -106,6 +107,7 @@ namespace mu2e
     if(_showEvent){
       foundEvent = true;
       Data_Collections data;
+      //data.show2D = _show2D;
       if(_filler.addHits_)_filler.FillRecoCollections(event, data, ComboHits);
       if(_filler.addCrvHits_)_filler.FillRecoCollections(event, data, CRVRecoPulses);
       if(_filler.addCosmicSeedFit_)_filler.FillRecoCollections(event, data, CosmicTracks);

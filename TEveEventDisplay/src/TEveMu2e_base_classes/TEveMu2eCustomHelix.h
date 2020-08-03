@@ -16,15 +16,30 @@ namespace mu2e {
       explicit  TEveMu2eCustomHelix(){};
       TEveMu2eCustomHelix(const TEveMu2eCustomHelix &helix) { fKalSeed = helix.fKalSeed;} ;
       TEveMu2eCustomHelix(HelixSeed hseed){fHelixSeed = hseed;};
+      TEveMu2eCustomHelix(KalSeed kseed){
+        fKalSeed = kseed;
+        this->Momentum = fKalSeed.helix()->helix().momentum();
+        this->PDGcode = fKalSeed.particle().particleType();
+        this->Charge = fKalSeed.particle().charge();
+        this->Mass = fKalSeed.particle().mass();
+      };
       virtual ~ TEveMu2eCustomHelix(){};
       #endif
       
-      KalSeed fKalSeed;
+      KalSeed fKalSeed; 
       HelixSeed fHelixSeed;
       TrkExtTraj fTrkExtTraj;
 
       void DrawHelixTrack();
       void Draw2DProjection();
+
+      void SetSeedInfo(KalSeed seed) { 
+        fKalSeed = seed;
+        this->Momentum = fKalSeed.helix()->helix().momentum();
+        this->PDGcode = fKalSeed.particle().particleType();
+        this->Charge = fKalSeed.particle().charge();
+        this->Mass = fKalSeed.particle().mass();
+      }
 
       void SetPostionAndDirectionFromHelixSeed(double zpos){
         fHelixSeed.helix().position(Position);
@@ -36,18 +51,6 @@ namespace mu2e {
         fKalSeed.helix()->helix().direction(zpos, Direction);
       }
 
-      double GetFlightLen(){
-        return fKalSeed.flt0();
-      }
-
-      void SetMomentum(){
-        this->Momentum = fKalSeed.helix()->helix().momentum();
-      }
-
-      void SetParticle(){
-        this->PDGcode = fKalSeed.particle().particleType();
-      }
-
       void SetMomentumExt(){
         this->Momentum = fTrkExtTraj.front().momentum().mag();
       }
@@ -55,14 +58,19 @@ namespace mu2e {
       void SetParticleExt(){
         this->PDGcode = 11; //FIXME
       }
+
+      const std::string Title(){
+        const std::string title = "Track PDG " + to_string(PDGcode) +" Momentum = " + to_string(Momentum) + " Charge "+ to_string(Charge);
+        return title;
+      }
+
       XYZVec Direction;
       XYZVec Position;
       double Momentum;
-      int PDGcode  = 11;//FIXME
+      int PDGcode;
+      double Charge;
+      double Mass;
       bool _trajectory;
-      unsigned int nSteps = 100;//FIXME default
-      double TrackerLength = 300.8;//cm
-      int kStepSize = nSteps/TrackerLength;//cm
       ClassDef( TEveMu2eCustomHelix, 0);
     };
 }
