@@ -168,7 +168,7 @@ namespace mu2e{
         tracker2Dproj->fRZMgr->ImportElements(fHitsList2D, tracker2Dproj->fDetRZScene);
 
         gEve->AddElement(fHitsList3D);
-        //gEve->Redraw3D(kTRUE);  
+        gEve->Redraw3D(kTRUE);  
         }
       }
     }

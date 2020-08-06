@@ -31,12 +31,13 @@ TEveEventDisplayHelix : {
       CrvCoincidenceClusterMCCollection:  NULL
       CrvDigiMCCollection:  NULL
       MCTrajectoryCollection:  NULL
+      CaloHitSimPartMCCollection : "make MC Sim Particles"
       StrawDigiMCCollection:  NULL
       addHits 			            : false
       addTracks 			          : true
       addCrvHits			          : false
       addCosmicSeedFit	        : false
-      addClusters			          : false
+      addClusters			          : true
       addTrkExtTrajs		: false
       addMCCaloDigis			:false 
       addMCHits 			:false
@@ -44,6 +45,7 @@ TEveEventDisplayHelix : {
       addMCCrvCC			:false  
       addMCCrvDigis			:false
       addMCTraj				:false 
+      addMCHitsSP			:true
       addMCStrawDigis			:false
 
     }
@@ -67,6 +69,7 @@ TEveEventDisplayCosmics : {
       CrvCoincidenceClusterMCCollection:  NULL
       CrvDigiMCCollection:  NULL
       MCTrajectoryCollection:  "compressDigiMCs"
+      CaloHitSimPartMCCollection : NULL
       StrawDigiMCCollection:  NULL
       HelixSeedCollection         : NULL
       KalSeedCollection           : NULL
@@ -81,6 +84,7 @@ TEveEventDisplayCosmics : {
       addMCCrvCC			: false  
       addMCCrvDigis			: false
       addMCTraj				: false
+      addMCHitsSP			: false
       addMCStrawDigis			:false
    }
   }   
@@ -103,6 +107,7 @@ TEveEventDisplayCaloOnly : {
       CrvCoincidenceClusterMCCollection:  NULL
       CrvDigiMCCollection:  NULL
       MCTrajectoryCollection:  NULL
+      CaloHitSimPartMCCollection : NULL
       StrawDigiMCCollection:  NULL
       addHits 			              : false
       addTracks 			            : true
@@ -116,6 +121,7 @@ TEveEventDisplayCaloOnly : {
       addMCCrvCC			:false  
       addMCCrvDigis			:false
       addMCTraj				:false 
+      addMCHitsSP			:false
       addMCStrawDigis			:false
   }
   }   

@@ -169,7 +169,7 @@ namespace mu2e{
         }
         celabelenergy = new TGLabel(evtidFrame, celabeltxt.c_str());
 
-        helabel = new TGLabel(evtidFrame, "Hit Energy");
+
         std::string helabeltxt = "";
         if (hitenergy != NULL){
         std::string helabeltxt = to_string(hitenergy->at(0)) + "                           " + to_string(hitenergy->at(1));
@@ -628,6 +628,7 @@ namespace mu2e{
     *clusterenergy = pass_data->AddCaloClusters(firstLoop, data.clustercol, calo2Dproj, time, false);
     pass_data->AddHelixPieceWise(firstLoop, data.kalseedcol, tracker2Dproj, time, false);
     pass_mc->AddMCTrajectory(firstLoop, data.mctrajcol, tracker2Dproj, false);
+    pass_mc->AddMCSimParticle(firstLoop, data.mcchitspcol, calo2Dproj, time, false);
     gSystem->ProcessEvents();
     gClient->NeedRedraw(fTeRun);
     std::string celabeltxt = to_string(clusterenergy->at(0)) + "                           " + to_string(clusterenergy->at(1));
