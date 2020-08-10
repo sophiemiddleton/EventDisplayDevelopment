@@ -1,5 +1,5 @@
-#ifndef TEveMu2eHit_h
-#define TEveMu2eHit_h
+#ifndef TEveMu2eParticle_h
+#define TEveMu2eParticle_h
 
 #include <TObject.h>
 #include <string.h>
@@ -20,8 +20,8 @@ namespace mu2e {
       Int_t mSize= 1; 
 
 
-      void DrawParticle3D(const std::string &pstr, Int_t b,CLHEP::Hep3Vector pointInMu2e, TEveElementList *ParticleList)
-      void DrawParticle2D(const std::string &pstr, Int_t b,CLHEP::Hep3Vector pointInMu2e, TEveElementList *ParticleList)
+      void DrawParticle3D(const std::string &pstr, Int_t b,CLHEP::Hep3Vector pointInMu2e, TEveElementList *ParticleList);
+      void DrawParticle2D(const std::string &pstr, Int_t b,CLHEP::Hep3Vector pointInMu2e, TEveElementList *ParticleList);
 
 
 
