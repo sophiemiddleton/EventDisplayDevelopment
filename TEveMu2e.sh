@@ -14,6 +14,10 @@ for var in "$@"
 	    sed -i 's/show2D.*/show2D : false/' TEveEventDisplay/fcl/prolog.fcl
 	fi
 
+	if [ "$var" == '-2Dand3D' ]; then
+	    sed -i 's/show2D.*/show2D : true/' TEveEventDisplay/fcl/prolog.fcl
+	fi
+
 	if [ "$var" == '-DSOnly' ]; then
 	    sed -i 's/showDSOnly :.*/showDSOnly : true/' TEveEventDisplay/fcl/prolog.fcl
 	    sed -i 's/showCRV :.*/showCRV : false/' TEveEventDisplay/fcl/prolog.fcl
