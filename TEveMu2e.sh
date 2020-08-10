@@ -10,6 +10,10 @@ numofevts=$3
 
 for var in "$@"
   do
+	if [ "$var" == '-3DOnly' ]; then
+	    sed -i 's/show2D.*/show2D : false/' TEveEventDisplay/fcl/prolog.fcl
+	fi
+
 	if [ "$var" == '-DSOnly' ]; then
 	    sed -i 's/showDSOnly :.*/showDSOnly : true/' TEveEventDisplay/fcl/prolog.fcl
 	    sed -i 's/showCRV :.*/showCRV : false/' TEveEventDisplay/fcl/prolog.fcl

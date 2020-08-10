@@ -51,12 +51,12 @@ namespace mu2e{
 
 }
 
-  void TEveMu2eDataInterface::AddCRVInfo(bool firstloop, const CrvRecoPulseCollection *crvcoincol,  double time, bool Redraw){
+  void TEveMu2eDataInterface::AddCRVInfo(bool firstloop, const CrvRecoPulseCollection *crvcoincol,  double time, bool Redraw, bool show2D){
     if(crvcoincol == 0 && Redraw){
       if (fCrvList3D != 0){
         fCrvList3D->DestroyElements();
       }
-      if (fCrvList2D != 0){
+      if (fCrvList2D != 0 && show2D){
         fCrvList2D->DestroyElements();
       }
       gEve->AddElement(fCrvList3D);
@@ -96,17 +96,19 @@ namespace mu2e{
   
   }
 
-  std::vector<double> TEveMu2eDataInterface::AddComboHits(bool firstloop, const ComboHitCollection *chcol, TEveMu2e2DProjection *tracker2Dproj, double time, bool Redraw){
+  std::vector<double> TEveMu2eDataInterface::AddComboHits(bool firstloop, const ComboHitCollection *chcol, TEveMu2e2DProjection *tracker2Dproj, double time, bool Redraw, bool show2D){
   vector <double> energies = {0, 0};
   if(chcol == 0 && Redraw){
     if (fHitsList3D != 0){
       fHitsList3D->DestroyElements();
     }
+    if(show2D){
     if (fHitsList2D != 0){
       fHitsList2D->DestroyElements();
     }
     tracker2Dproj->fXYMgr->ImportElements(fHitsList2D, tracker2Dproj->fDetXYScene); 
     tracker2Dproj->fRZMgr->ImportElements(fHitsList2D, tracker2Dproj->fDetRZScene);
+    }
     gEve->AddElement(fHitsList3D);
     gEve->Redraw3D(kTRUE); 
   } 
@@ -158,15 +160,15 @@ namespace mu2e{
       string pos2D = "(" + to_string((double)hit.pos().x()) + ", " + to_string((double)hit.pos().y()) + ", " + to_string((double)hit.pos().z()) + ")";
       if (time == -1 || (hit.time() <= time && time != -1)){
         teve_hit3D->DrawHit3D("ComboHits3D, Position = " + pos3D + ", Energy = " + energy + ", Time = " + to_string(hit.time()) + ", ", i + 1,  pointInMu2e, energylevels[i], HitList3D);
-        teve_hit2D->DrawHit2D("ComboHits2D, Position = " + pos2D + ", Energy = " + energy + ", Time = " + to_string(hit.time()) + ", ", i + 1, HitPos,energylevels[i], HitList2D);
-
-        fHitsList2D->AddElement(HitList2D); 
+        
         fHitsList3D->AddElement(HitList3D); 
-
+	if(show2D){
+	teve_hit2D->DrawHit2D("ComboHits2D, Position = " + pos2D + ", Energy = " + energy + ", Time = " + to_string(hit.time()) + ", ", i + 1, HitPos,energylevels[i], HitList2D);
+        fHitsList2D->AddElement(HitList2D); 
         // ... Import elements of the list into the projected views
         tracker2Dproj->fXYMgr->ImportElements(fHitsList2D, tracker2Dproj->fDetXYScene); 
         tracker2Dproj->fRZMgr->ImportElements(fHitsList2D, tracker2Dproj->fDetRZScene);
-
+ 	}
         gEve->AddElement(fHitsList3D);
         gEve->Redraw3D(kTRUE);  
         }
@@ -175,17 +177,19 @@ namespace mu2e{
    return energies;
   }
 
-  std::vector<double> TEveMu2eDataInterface::AddCaloClusters(bool firstloop, const CaloClusterCollection *clustercol, TEveMu2e2DProjection *calo2Dproj, double time, bool Redraw){
+  std::vector<double> TEveMu2eDataInterface::AddCaloClusters(bool firstloop, const CaloClusterCollection *clustercol, TEveMu2e2DProjection *calo2Dproj, double time, bool Redraw, bool show2D){
   vector <double> energies = {0, 0};
   if(clustercol == 0 && Redraw){
     if (fClusterList3D != 0){
       fClusterList3D->DestroyElements();
     }
+    if(show2D){
     if (fClusterList2D != 0){
       fClusterList2D->DestroyElements();
     }
     calo2Dproj->fXYMgr->ImportElements(fClusterList2D, calo2Dproj->fDetXYScene); 
     calo2Dproj->fRZMgr->ImportElements(fClusterList2D, calo2Dproj->fDetRZScene);
+    }
     gEve->AddElement(fClusterList3D);
     gEve->Redraw3D(kTRUE); 
   }
@@ -237,14 +241,16 @@ namespace mu2e{
       if (time == -1 || cluster.time() <= time ){
           teve_cluster3D->DrawCluster("CaloCluster3D, Cluster #" + to_string(i + 1) + ", Position =" + pos3D + ", Energy = " + to_string(cluster.energyDep()) + ", Time = " + to_string(cluster.time()), pointInMu2e, energylevels[i], ClusterList3D);
 	        fClusterList3D->AddElement(ClusterList3D);  
-        teve_cluster2D->DrawCluster("CaloCluster3D, Cluster #" + to_string(i + 1) + ", Position =" + pos2D + ", Energy = " + to_string(cluster.energyDep()) + ", Time = " + to_string(cluster.time()), pointInMu2e,energylevels[i], ClusterList2D);
+       if(show2D){ 
+	 teve_cluster2D->DrawCluster("CaloCluster3D, Cluster #" + to_string(i + 1) + ", Position =" + pos2D + ", Energy = " + to_string(cluster.energyDep()) + ", Time = " + to_string(cluster.time()), pointInMu2e,energylevels[i], ClusterList2D);
         fClusterList2D->AddElement(ClusterList2D); 
 
         if(cluster.diskId()==0)  calo2Dproj->fXYMgr->ImportElements(fClusterList2D, calo2Dproj->fDetXYScene); 
 
-        if(cluster.diskId()==1) calo2Dproj->fRZMgr->ImportElements(fClusterList2D, calo2Dproj->fDetRZScene);
-
+        if(cluster.diskId()==1) calo2Dproj->fRZMgr->ImportElements(fClusterList2D, calo2Dproj->fDetRZScene); 
+	}
         gEve->AddElement(fClusterList3D);
+        std::cout<<"Added Clusters"<<std::endl;
         gEve->Redraw3D(kTRUE);    
         }
       }
@@ -252,7 +258,7 @@ namespace mu2e{
   return energies;
   }
 
-  void TEveMu2eDataInterface::AddCrystalHits(bool firstloop, const CaloCrystalHitCollection *cryHitcol, TEveMu2e2DProjection *calo2Dproj, double time, bool Redraw){
+  void TEveMu2eDataInterface::AddCrystalHits(bool firstloop, const CaloCrystalHitCollection *cryHitcol, TEveMu2e2DProjection *calo2Dproj, double time, bool Redraw, bool show2D){
     Calorimeter const &cal = *(GeomHandle<Calorimeter>());
   if(cryHitcol == 0 && Redraw){
 	if (fCrystalHitList != 0){
@@ -368,17 +374,19 @@ namespace mu2e{
   }
 */
 
-void TEveMu2eDataInterface::AddHelixPieceWise(bool firstloop, const KalSeedCollection *seedcol, TEveMu2e2DProjection *tracker2Dproj, double time, bool Redraw){
+void TEveMu2eDataInterface::AddHelixPieceWise(bool firstloop, const KalSeedCollection *seedcol, TEveMu2e2DProjection *tracker2Dproj, double time, bool Redraw, bool show2D){
   
     if(seedcol == 0 && Redraw){
     if (fTrackList3D != 0){
       fTrackList3D->DestroyElements();
     }
+    if(show2D){
     if (fTrackList2D != 0){
       fTrackList2D->DestroyElements();
     }
       tracker2Dproj->fXYMgr->ImportElements(fTrackList2D, tracker2Dproj->fDetXYScene);
       tracker2Dproj->fRZMgr->ImportElements(fTrackList2D, tracker2Dproj->fDetRZScene);
+     }
       gEve->AddElement(fTrackList3D);
       gEve->Redraw3D(kTRUE); 
     }   
@@ -417,19 +425,21 @@ void TEveMu2eDataInterface::AddHelixPieceWise(bool firstloop, const KalSeedColle
           CLHEP::Hep3Vector Pos(line->Position.x(), line->Position.y(), zpos+line->Position.z());
           CLHEP::Hep3Vector InMu2e = PointToTracker(Pos);
           line->SetPoint(i,InMu2e.x()/10+line->Direction.x()*line->Momentum/10,InMu2e.y()/10+line->Direction.y()*line->Momentum/10, InMu2e.z()/10-TrackerLength/2);
-           line_twoD->SetPoint(i,Pos.x()/10+line->Direction.x()*line->Momentum/10,Pos.y()/10+line->Direction.y()*line->Momentum/10,Pos.z()/10-TrackerLength/2);
+          if(show2D){ line_twoD->SetPoint(i,Pos.x()/10+line->Direction.x()*line->Momentum/10,Pos.y()/10+line->Direction.y()*line->Momentum/10,Pos.z()/10-TrackerLength/2);}
         } else {
           CLHEP::Hep3Vector Pos(line->Position.x(), line->Position.y(), zpos+line->Position.z());
           CLHEP::Hep3Vector InMu2e = PointToTracker(Pos);
           line->SetNextPoint(InMu2e.x()/10+line->Direction.x()*line->Momentum/10,InMu2e.y()/10+line->Direction.y()*line->Momentum/10, InMu2e.z()/10-TrackerLength/2);
-          line_twoD->SetNextPoint(Pos.x()/10+line->Direction.x()*line->Momentum/10,Pos.y()/10+line->Direction.y()*line->Momentum/10, Pos.z()/10-TrackerLength/2);
+          if(show2D){ line_twoD->SetNextPoint(Pos.x()/10+line->Direction.x()*line->Momentum/10,Pos.y()/10+line->Direction.y()*line->Momentum/10, Pos.z()/10-TrackerLength/2);}
         }
       }
+      if(show2D){
       line_twoD->SetLineColor(kGreen);
       line_twoD->SetLineWidth(3);
       fTrackList2D->AddElement(line_twoD);
       tracker2Dproj->fXYMgr->ImportElements(fTrackList2D, tracker2Dproj->fDetXYScene);
       tracker2Dproj->fRZMgr->ImportElements(fTrackList2D, tracker2Dproj->fDetRZScene);
+      }
       line->SetPickable(kTRUE);
       const std::string title = "Helix #" + to_string(k + 1) + ", Momentum = " + to_string(line->Momentum);
       line->SetTitle(Form(title.c_str()));
@@ -488,7 +498,7 @@ void TEveMu2eDataInterface::AddHelixPieceWise(bool firstloop, const KalSeedColle
     }
 
 }
-  void TEveMu2eDataInterface::AddCosmicTrack(bool firstloop, const CosmicTrackSeedCollection *cosmiccol, TEveMu2e2DProjection *tracker2Dproj, double time, bool Redraw){
+  void TEveMu2eDataInterface::AddCosmicTrack(bool firstloop, const CosmicTrackSeedCollection *cosmiccol, TEveMu2e2DProjection *tracker2Dproj, double time, bool Redraw, bool show2D){
      if(cosmiccol !=0){
       if (fTrackList3D == 0) {
         fTrackList3D = new TEveElementList("Cosmic3D");
@@ -497,6 +507,7 @@ void TEveMu2eDataInterface::AddHelixPieceWise(bool firstloop, const KalSeedColle
       else {
         fTrackList3D->DestroyElements();  
       }
+      if(show2D){
       if (fTrackList2D == 0) {
         fTrackList2D = new TEveElementList("Cosmic2D");
         fTrackList2D->IncDenyDestroy();     
@@ -504,7 +515,7 @@ void TEveMu2eDataInterface::AddHelixPieceWise(bool firstloop, const KalSeedColle
       else {
         fTrackList2D->DestroyElements();  
       }  
-
+	}
       TEveMu2eStraightTrack *line = new TEveMu2eStraightTrack();
       for(unsigned int ist = 0; ist < cosmiccol->size(); ++ist){
 
@@ -521,9 +532,11 @@ void TEveMu2eDataInterface::AddHelixPieceWise(bool firstloop, const KalSeedColle
         line->AddLine(tx1, ty1, tz1, tx2, ty2, tz2);
 
         cout<<st.InitParams.A0<<"track "<<st.InitParams.A1<<st.InitParams.B1<<st.InitParams.B0<<endl;
+        if(show2D){
         fTrackList2D->AddElement(line);
         tracker2Dproj->fXYMgr->ImportElements(fTrackList2D, tracker2Dproj->fDetXYScene);
         tracker2Dproj->fRZMgr->ImportElements(fTrackList2D, tracker2Dproj->fDetRZScene);
+        }
         line->SetPickable(kTRUE);
 
         line->SetLineColor(kGreen);

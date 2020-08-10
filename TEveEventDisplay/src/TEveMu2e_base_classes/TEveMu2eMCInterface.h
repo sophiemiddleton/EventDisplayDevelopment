@@ -32,8 +32,8 @@ namespace mu2e{
       TEveElementList *fTrackList2D;
       TEveElementList *fTrackList3D;
 
-      void AddMCSimParticle(bool firstloop, const CaloHitSimPartMCCollection *mcchitspcol, TEveMu2e2DProjection *calo2Dproj, double time, bool Redraw);
-      void AddMCTrajectory(bool firstloop, const MCTrajectoryCollection *trajcol, TEveMu2e2DProjection *tracker2Dproj, bool Redraw);
+      void AddMCSimParticle(bool firstloop, const CaloHitSimPartMCCollection *mcchitspcol, TEveMu2e2DProjection *calo2Dproj, double time, bool Redraw, bool show2D);
+      void AddMCTrajectory(bool firstloop, const MCTrajectoryCollection *trajcol, TEveMu2e2DProjection *tracker2Dproj, bool Redraw, bool show2D);
 
 
       ClassDef(TEveMu2eMCInterface,0);

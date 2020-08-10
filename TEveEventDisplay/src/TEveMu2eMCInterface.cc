@@ -7,7 +7,7 @@
 using namespace mu2e;
 namespace mu2e{
 
-  void TEveMu2eMCInterface::AddMCSimParticle(bool firstloop, const CaloHitSimPartMCCollection *mcchitspcol, TEveMu2e2DProjection *calo2Dproj, double time, bool Redraw){
+  void TEveMu2eMCInterface::AddMCSimParticle(bool firstloop, const CaloHitSimPartMCCollection *mcchitspcol, TEveMu2e2DProjection *calo2Dproj, double time, bool Redraw, bool show2D){
 	if(mcchitspcol == 0 && Redraw){
 	    if (fSimPartList3D != 0){
 	      fSimPartList3D ->DestroyElements();
@@ -50,14 +50,14 @@ namespace mu2e{
 	      if (time == -1 || (simpartmc.time().at(0) <= time && time != -1)){
 		teve_particle3D->DrawParticle3D("MCSimParticle3D, Position = " + pos3D + ", Time = " + to_string(simpartmc.time().at(0)) + ", ", i + 1,  pointInMu2e, SimPartList3D);
 		teve_particle2D->DrawParticle2D("MCSimParticle2D, Position = " + pos2D + ", Time = " + to_string(simpartmc.time().at(0)) + ", ", i + 1, PartPos, SimPartList2D);
-
+		if(show2D){
 		fSimPartList2D->AddElement(SimPartList2D); 
 		fSimPartList3D->AddElement(SimPartList3D); 
 		
 		// ... Import elements of the list into the projected views
 		calo2Dproj->fXYMgr->ImportElements(fSimPartList2D, calo2Dproj->fDetXYScene); 
 		calo2Dproj->fRZMgr->ImportElements(fSimPartList2D, calo2Dproj->fDetRZScene);
-
+		}
 		gEve->AddElement(fSimPartList3D);
 		gEve->Redraw3D(kTRUE);  
 		}
@@ -65,7 +65,7 @@ namespace mu2e{
       	}
 }
 
-  void TEveMu2eMCInterface::AddMCTrajectory(bool firstloop, const MCTrajectoryCollection *trajcol, TEveMu2e2DProjection *tracker2Dproj, bool Redraw){
+  void TEveMu2eMCInterface::AddMCTrajectory(bool firstloop, const MCTrajectoryCollection *trajcol, TEveMu2e2DProjection *tracker2Dproj, bool Redraw, bool show2D){
       if(trajcol == 0 && Redraw){
         if (fTrackList3D != 0){
           fTrackList3D->DestroyElements();
