@@ -629,7 +629,7 @@ namespace mu2e{
     *clusterenergy = pass_data->AddCaloClusters(firstLoop, data.clustercol, calo2Dproj, time, false, show2D);
     pass_data->AddHelixPieceWise(firstLoop, data.kalseedcol, tracker2Dproj, time, false, show2D);
     pass_mc->AddMCTrajectory(firstLoop, data.mctrajcol, tracker2Dproj, false, show2D);
-    pass_mc->AddMCSimParticle(firstLoop, data.mcchitspcol, calo2Dproj, time, false, show2D);
+    //pass_mc->AddMCSimParticle(firstLoop, data.mcchitspcol, calo2Dproj, time, false, show2D);
     gSystem->ProcessEvents();
     gClient->NeedRedraw(fTeRun);
     std::string celabeltxt = to_string(clusterenergy->at(0)) + "                           " + to_string(clusterenergy->at(1));
