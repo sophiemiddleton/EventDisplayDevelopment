@@ -13,6 +13,7 @@ EventFilter : {
 
 
 TEveEventDisplayHelix : {
+    show2D : false
     module_type : TEveEventDisplay
     filler : {
       ComboHitCollection 		    : "makeSH"
@@ -31,6 +32,7 @@ TEveEventDisplayHelix : {
       CrvCoincidenceClusterMCCollection:  NULL
       CrvDigiMCCollection:  NULL
       MCTrajectoryCollection:  NULL
+      CaloHitSimPartMCCollection : NULL
       StrawDigiMCCollection:  NULL
       addHits 			            : false
       addTracks 			          : true
@@ -53,6 +55,7 @@ TEveEventDisplayCosmics : {
     module_type : TEveEventDisplay
     showCRV : true
     showDSOnly : true
+    show2D : false
     filler : {
       ComboHitCollection 		      : "makePH"
       GenParticleCollection 	    : "compressDigiMCs" 
@@ -67,6 +70,7 @@ TEveEventDisplayCosmics : {
       CrvCoincidenceClusterMCCollection:  NULL
       CrvDigiMCCollection:  NULL
       MCTrajectoryCollection:  "compressDigiMCs"
+      CaloHitSimPartMCCollection : NULL
       StrawDigiMCCollection:  NULL
       HelixSeedCollection         : NULL
       KalSeedCollection           : NULL
@@ -86,7 +90,8 @@ TEveEventDisplayCosmics : {
   }   
 
 TEveEventDisplayCaloOnly : {
-    module_type : TEveEventDisplay  
+    module_type : TEveEventDisplay
+    show2D : false  
     filler : {
       ComboHitCollection 		      : NULL
       GenParticleCollection 		  : NULL
@@ -103,6 +108,7 @@ TEveEventDisplayCaloOnly : {
       CrvCoincidenceClusterMCCollection:  NULL
       CrvDigiMCCollection:  NULL
       MCTrajectoryCollection:  NULL
+      CaloHitSimPartMCCollection : NULL
       StrawDigiMCCollection:  NULL
       addHits 			              : false
       addTracks 			            : true

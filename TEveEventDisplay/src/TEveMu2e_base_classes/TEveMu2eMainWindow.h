@@ -66,7 +66,7 @@ namespace mu2e{
       void RedrawDataProducts(std::string type);
       void RedrawGeometry();
       Bool_t ProcessMessage(Long_t msg, Long_t param1, Long_t param2);
-      void  setEvent(const art::Event& event, bool firstLoop, Data_Collections &data, double time);
+      void  setEvent(const art::Event& event, bool firstLoop, Data_Collections &data, double time, bool show2D);
       void  fillEvent(bool firstLoop=false);
       bool  isClosed() const;
       int   getEventToFind(bool &findEvent) const;
@@ -100,7 +100,7 @@ namespace mu2e{
       bool _isClosed = false;
       bool _findEvent = true;
       bool _firstLoop = true;
-
+      bool _show2D = true;
       TEveMu2e2DProjection *tracker2Dproj = new TEveMu2e2DProjection();
       TEveMu2e2DProjection *calo2Dproj = new TEveMu2e2DProjection();
       TEveMu2e2DProjection *CRV2Dproj = new TEveMu2e2DProjection();

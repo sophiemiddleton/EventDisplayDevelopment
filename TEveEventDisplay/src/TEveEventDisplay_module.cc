@@ -107,14 +107,13 @@ namespace mu2e
     if(_showEvent){
       foundEvent = true;
       Data_Collections data;
-      //data.show2D = _show2D;
       if(_filler.addHits_)_filler.FillRecoCollections(event, data, ComboHits);
       if(_filler.addCrvHits_)_filler.FillRecoCollections(event, data, CRVRecoPulses);
       if(_filler.addCosmicSeedFit_)_filler.FillRecoCollections(event, data, CosmicTracks);
       if(_filler.addTracks_)_filler.FillRecoCollections(event, data, KalSeeds);
       if(_filler.addClusters_)_filler.FillRecoCollections(event, data, CaloClusters);
       if(_filler.addMCTraj_)_filler.FillMCCollections(event, data, MCTrajectories);
-      if(!_frame->isClosed()) _frame->setEvent(event, _firstLoop, data, -1);
+      if(!_frame->isClosed()) _frame->setEvent(event, _firstLoop, data, -1, _show2D);
       _firstLoop = false;
     }
 
