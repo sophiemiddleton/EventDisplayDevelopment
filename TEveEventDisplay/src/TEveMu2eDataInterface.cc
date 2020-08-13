@@ -97,36 +97,10 @@ namespace mu2e{
   }
 
   std::vector<double> TEveMu2eDataInterface::AddComboHits(bool firstloop, const ComboHitCollection *chcol, TEveMu2e2DProjection *tracker2Dproj, double time, bool Redraw, bool show2D){
+  std::cout<<"Made it here"<<std::endl;
   vector <double> energies = {0, 0};
-  if(chcol == 0 && Redraw){
-    if (fHitsList3D != 0){
-      fHitsList3D->DestroyElements();
-    }
-    if(show2D){
-    if (fHitsList2D != 0){
-      fHitsList2D->DestroyElements();
-    }
-    tracker2Dproj->fXYMgr->ImportElements(fHitsList2D, tracker2Dproj->fDetXYScene); 
-    tracker2Dproj->fRZMgr->ImportElements(fHitsList2D, tracker2Dproj->fDetRZScene);
-    }
-    gEve->AddElement(fHitsList3D);
-    gEve->Redraw3D(kTRUE); 
-  } 
-  if(chcol!=0){
-    if (fHitsList3D== 0) {
-      fHitsList3D = new TEveElementList("ComboHits3D");
-      fHitsList3D->IncDenyDestroy();     
-    }
-    else {
-      fHitsList3D->DestroyElements();  
-    }
-    if (fHitsList2D== 0) {
-      fHitsList2D = new TEveElementList("ComboHits2D");
-      fHitsList2D->IncDenyDestroy();     
-    }
-    else {
-      fHitsList2D->DestroyElements();  
-    }
+    DataLists<const ComboHitCollection*, TEveMu2e2DProjection*>(chcol, tracker2Dproj, Redraw, show2D, fHitsList3D, fHitsList2D);
+   if(chcol !=0){
     TEveElementList *HitList2D = new TEveElementList("Hits2D");
     TEveElementList *HitList3D = new TEveElementList("Hits3D");
     double Max_Energy = 0;
@@ -179,36 +153,9 @@ namespace mu2e{
 
   std::vector<double> TEveMu2eDataInterface::AddCaloClusters(bool firstloop, const CaloClusterCollection *clustercol, TEveMu2e2DProjection *calo2Dproj, double time, bool Redraw, bool show2D){
   vector <double> energies = {0, 0};
-  if(clustercol == 0 && Redraw){
-    if (fClusterList3D != 0){
-      fClusterList3D->DestroyElements();
-    }
-    if(show2D){
-    if (fClusterList2D != 0){
-      fClusterList2D->DestroyElements();
-    }
-    calo2Dproj->fXYMgr->ImportElements(fClusterList2D, calo2Dproj->fDetXYScene); 
-    calo2Dproj->fRZMgr->ImportElements(fClusterList2D, calo2Dproj->fDetRZScene);
-    }
-    gEve->AddElement(fClusterList3D);
-    gEve->Redraw3D(kTRUE); 
-  }
+  DataLists<const CaloClusterCollection*, TEveMu2e2DProjection*>(clustercol, calo2Dproj, Redraw, show2D, fClusterList3D, fClusterList2D);
   if(clustercol!=0){
-    if (fClusterList3D == 0) {
-      fClusterList3D = new TEveElementList("Clusters3D");
-      fClusterList3D->IncDenyDestroy();     
-    }
-    else {
-      fClusterList3D->DestroyElements();  
-    }
     TEveElementList *ClusterList3D = new TEveElementList("CaloClusters3D");
-    if (fClusterList2D == 0) {
-      fClusterList2D = new TEveElementList("Clusters2D");
-      fClusterList2D->IncDenyDestroy();     
-    }
-    else {
-      fClusterList2D->DestroyElements();  
-    }
     TEveElementList *ClusterList2D = new TEveElementList("CaloClusters2D");
     double Max_Energy = 0;
     double Min_Energy = 1000;
@@ -250,7 +197,6 @@ namespace mu2e{
         if(cluster.diskId()==1) calo2Dproj->fRZMgr->ImportElements(fClusterList2D, calo2Dproj->fDetRZScene); 
 	}
         gEve->AddElement(fClusterList3D);
-        std::cout<<"Added Clusters"<<std::endl;
         gEve->Redraw3D(kTRUE);    
         }
       }

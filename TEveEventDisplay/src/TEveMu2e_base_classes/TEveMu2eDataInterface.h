@@ -48,6 +48,7 @@ namespace mu2e{
       void AddHelixPieceWise(bool firstloop, const KalSeedCollection *seedcol, TEveMu2e2DProjection *trackerDproj, double time, bool Redraw, bool show2D);
       void AddTrackExitTrajectories(bool firstloop, const TrkExtTrajCollection *trkextcol);
 
+      #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eDataInterface.hpp" 
       template<class collection>
       void AddHitType(bool firstloop, const collection *hitcol, const char* name, std::vector<std::string> detectors, std::vector<TEveMu2e2DProjection> *projs);
       ClassDef(TEveMu2eDataInterface,0);
