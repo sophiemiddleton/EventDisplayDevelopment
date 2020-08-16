@@ -1,36 +1,83 @@
 
-	template <typename T, typename U> void DataLists(T data, U projection, bool Redraw, bool show2D, TEveElementList *List3D, TEveElementList *List2D){	
+	template <typename T, typename U> void DataLists(T data, U projection, bool Redraw, bool show2D, TEveElementList **List3D, TEveElementList **List2D){	
 		  if(data == 0 && Redraw){
-		    if (List3D != 0){
-		      List3D->DestroyElements();
+		    if (*List3D != 0){
+		      (*List3D)->DestroyElements();
 		    }
 		    if(show2D){
-		    if (List2D != 0){
-		      List2D->DestroyElements();
+		    if (*List2D != 0){
+		      (*List2D)->DestroyElements();
 		    }
-		    projection->fXYMgr->ImportElements(List2D, projection->fDetXYScene); 
-		    projection->fRZMgr->ImportElements(List2D, projection->fDetRZScene);
+		    projection->fXYMgr->ImportElements(*List2D, projection->fDetXYScene); 
+		    projection->fRZMgr->ImportElements(*List2D, projection->fDetRZScene);
 		    }
-		    gEve->AddElement(List3D);
+		    gEve->AddElement(*List3D);
 		    gEve->Redraw3D(kTRUE); 
 		  } 
 		  if(data!=0){
-		    if (List3D== 0) {
-		      List3D = new TEveElementList("3D Data");
-		      List3D->IncDenyDestroy();     
+		    if (*List3D== 0) {
+		      *List3D = new TEveElementList("3D Data");
+		      (*List3D)->IncDenyDestroy();     
 		    }
 		    else {
-		      List3D->DestroyElements();  
+		      (*List3D)->DestroyElements();  
 		    }
-		    if (List2D== 0) {
-		      List2D = new TEveElementList("2D Data");
-		      List2D->IncDenyDestroy();     
+		    if (*List2D== 0) {
+		      *List2D = new TEveElementList("2D Data");
+		      (*List2D)->IncDenyDestroy();     
 		    }
 		    else {
-		      List2D->DestroyElements();  
+		      (*List2D)->DestroyElements();  
 		    }
 	}
 }
+
+	template <typename T> double GetEnergy(T data, int type){
+		switch(type){
+			case 1:
+				return data.energyDep();
+				break;
+			case 2:
+				return data.energy();
+				break;
+			case 3:
+				return data.GetEnergy();
+				break;
+		}
+
+	}
+
+	template <typename R> CLHEP::Hep3Vector GetPosition(R data, int type){
+		switch(type){
+			case 1:
+				return (COG(data.cog3Vector().x(),data.cog3Vector().y(), data.cog3Vector().z());
+				break;
+
+	}
+
+	template <typename L> void Energies(L data, int type, double *energies[], int *energylevels[]){
+
+		double Max_Energy = 0;
+		double Min_Energy = 1000;
+		for(unsigned int i=0; i < data->size();i++){
+		      if (GetEnergy<L>((*data)[i],type) > Max_Energy){Max_Energy = GetEnergy<L>((*data)[i],type);}
+		      if (GetEnergy<L>((*data)[i],type)< Min_Energy){Min_Energy = GetEnergy<L>((*data)[i],type);}
+		    }
+		double interval = (Max_Energy - Min_Energy)/(12);
+
+
+		for(size_t i=0; i<data->size();i++){
+		for(size_t n=0; n<12;n++){
+		     if(GetEnergy<L>((*data)[i],type) >= Min_Energy + n * interval && GetEnergy<L>((*data)[i],type) <=Min_Energy + (n+1)*interval){*energylevels[i] = n;}
+		       }
+		    }
+		*energies[0] = Min_Energy;
+		*energies[1] = Max_Energy;
+
+	}
+/*	template <typename T> void Test(void (*M)(), T hit){
+		std:cout<<to_string(hit.M())<<std::endl;
+	}*/
 /*
 	template <typename S, typename M> DrawData(bool firstloop, S dataevt, M projection, double time, bool show2D, TEveElementList *List3D, TEveElementList *List2D, std::string datatype){
 
