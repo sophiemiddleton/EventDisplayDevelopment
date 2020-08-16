@@ -152,21 +152,57 @@ namespace mu2e{
   }
 
   std::vector<double> TEveMu2eDataInterface::AddCaloClusters(bool firstloop, const CaloClusterCollection *clustercol, TEveMu2e2DProjection *calo2Dproj, double time, bool Redraw, bool show2D){
-  DataLists<const CaloClusterCollection*, TEveMu2e2DProjection*>(clustercol, calo2Dproj, Redraw, show2D, &fClusterList3D, &fClusterList2D);
+ // DataLists<const CaloClusterCollection*, TEveMu2e2DProjection*>(clustercol, calo2Dproj, Redraw, show2D, &fClusterList3D, &fClusterList2D);
   vector <double> energies = {0, 0};
+  if(clustercol == 0 && Redraw){
+    if (fClusterList3D != 0){
+      fClusterList3D->DestroyElements();
+    }
+    if(show2D){
+      if (fClusterList2D != 0){
+        fClusterList2D->DestroyElements();
+      }
+      calo2Dproj->fXYMgr->ImportElements(fClusterList2D, calo2Dproj->fDetXYScene); 
+      calo2Dproj->fRZMgr->ImportElements(fClusterList2D, calo2Dproj->fDetRZScene);
+    }
+    gEve->AddElement(fClusterList3D);
+    gEve->Redraw3D(kTRUE); 
+  }
   if(clustercol!=0){
+    if (fClusterList3D == 0) {
+      fClusterList3D = new TEveElementList("Clusters3D");
+      fClusterList3D->IncDenyDestroy();     
+    }
+    else {
+      fClusterList3D->DestroyElements();  
+    }
     TEveElementList *ClusterList3D = new TEveElementList("CaloClusters3D");
+    if (fClusterList2D == 0) {
+      fClusterList2D = new TEveElementList("Clusters2D");
+      fClusterList2D->IncDenyDestroy();     
+    }
+    else {
+      fClusterList2D->DestroyElements();  
+    }
     TEveElementList *ClusterList2D = new TEveElementList("CaloClusters2D");
-/*
+    double Max_Energy = 0;
+    double Min_Energy = 1000;
+    for(unsigned int i=0; i < clustercol->size();i++){
+      CaloCluster cluster = (*clustercol)[i];
+      if (cluster.energyDep() > Max_Energy){Max_Energy = cluster.energyDep();}
+      if (cluster.energyDep()< Min_Energy){Min_Energy = cluster.energyDep();}
+    }
+    double interval = (Max_Energy - Min_Energy)/(12);
     int *energylevels;
     energylevels = new int[clustercol->size()];
-    int *energylevels;
-    energylevels = new int[clustercol->size()];
-    double energymm[2];
-    double *energies;
-    energies = energymm;
 
-  Energies<const CaloClusterCollection*>(clustercol, 1, energies, energylevels);
+    for(size_t i=0; i<clustercol->size();i++){
+      CaloCluster cluster = (*clustercol)[i];
+      for(size_t n=0; n<12;n++){
+         if(cluster.energyDep() >= Min_Energy + n * interval && cluster.energyDep() <=Min_Energy + (n+1)*interval){energylevels[i] = n;}
+       }
+    }
+    energies = {Min_Energy, Max_Energy};
     for(unsigned int i=0; i<clustercol->size();i++){
       CaloCluster const  &cluster= (*clustercol)[i];
       TEveMu2eCluster *teve_cluster3D = new TEveMu2eCluster(cluster);
@@ -176,23 +212,23 @@ namespace mu2e{
       CLHEP::Hep3Vector pointInMu2e = PointToCalo(COG,cluster.diskId());
       string pos3D = "(" + to_string((double)pointInMu2e.x()) + ", " + to_string((double)pointInMu2e.y()) + ", " + to_string((double)pointInMu2e.z()) + ")";
       string pos2D = "(" + to_string((double)COG.x()) + ", " + to_string((double)COG.y()) + ", " + to_string((double)COG.z()) + ")";
-
+      
       if (time == -1 || cluster.time() <= time ){
           teve_cluster3D->DrawCluster("CaloCluster3D, Cluster #" + to_string(i + 1) + ", Position =" + pos3D + ", Energy = " + to_string(cluster.energyDep()) + ", Time = " + to_string(cluster.time()), pointInMu2e, energylevels[i], ClusterList3D);
-	        fClusterList3D->AddElement(ClusterList3D);  
-       if(show2D){ 
-	 teve_cluster2D->DrawCluster("CaloCluster3D, Cluster #" + to_string(i + 1) + ", Position =" + pos2D + ", Energy = " + to_string(cluster.energyDep()) + ", Time = " + to_string(cluster.time()), pointInMu2e,energylevels[i], ClusterList2D);
-        fClusterList2D->AddElement(ClusterList2D); 
+	        fClusterList3D->AddElement(ClusterList3D); 
+        if(show2D){ 
+          teve_cluster2D->DrawCluster("CaloCluster3D, Cluster #" + to_string(i + 1) + ", Position =" + pos2D + ", Energy = " + to_string(cluster.energyDep()) + ", Time = " + to_string(cluster.time()), pointInMu2e,energylevels[i], ClusterList2D);   
+          fClusterList2D->AddElement(ClusterList2D); 
 
-        if(cluster.diskId()==0)  calo2Dproj->fXYMgr->ImportElements(fClusterList2D, calo2Dproj->fDetXYScene); 
+          if(cluster.diskId()==0)  calo2Dproj->fXYMgr->ImportElements(fClusterList2D, calo2Dproj->fDetXYScene); 
 
-        if(cluster.diskId()==1) calo2Dproj->fRZMgr->ImportElements(fClusterList2D, calo2Dproj->fDetRZScene); 
-	}
+          if(cluster.diskId()==1) calo2Dproj->fRZMgr->ImportElements(fClusterList2D, calo2Dproj->fDetRZScene); 
+	      }
         gEve->AddElement(fClusterList3D);
         gEve->Redraw3D(kTRUE);    
         }
       }
-    }*/}
+    }
   return energies;
   }
 
