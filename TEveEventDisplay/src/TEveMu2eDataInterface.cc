@@ -103,8 +103,28 @@ std::vector<double> TEveMu2eDataInterface::AddCaloClusters(bool firstloop, const
     energies = Energies<const CaloClusterCollection*>(clustercol, &energylevels);
     for(unsigned int i=0; i<clustercol->size();i++){
       CaloCluster const  &cluster= (*clustercol)[i];
-      DrawCaloClusterData<CaloCluster, TEveMu2e2DProjection*>(firstloop, cluster, time, show2D, "Calo Cluster", i, &energylevels, &fClusterList3D,  &ClusterList3D, &fClusterList2D, &ClusterList2D, calo2Dproj);
-      }
+      TEveMu2eCluster *teve_cluster3D = new TEveMu2eCluster(cluster);
+      TEveMu2eCluster *teve_cluster2D = new TEveMu2eCluster(cluster);
+
+      CLHEP::Hep3Vector COG(cluster.cog3Vector().x(),cluster.cog3Vector().y(), cluster.cog3Vector().z());
+      CLHEP::Hep3Vector pointInMu2e = PointToCalo(COG,cluster.diskId());
+      string pos3D = "(" + to_string((double)pointInMu2e.x()) + ", " + to_string((double)pointInMu2e.y()) + ", " + to_string((double)pointInMu2e.z()) + ")";
+      string pos2D = "(" + to_string((double)COG.x()) + ", " + to_string((double)COG.y()) + ", " + to_string((double)COG.z()) + ")";
+      
+      if (time == -1 || cluster.time() <= time ){
+          teve_cluster3D->DrawCluster("CaloCluster3D, Cluster #" + to_string(i + 1) + ", Position =" + pos3D + ", Energy = " + to_string(cluster.energyDep()) + ", Time = " + to_string(cluster.time()), pointInMu2e, energylevels[i], ClusterList3D);
+	        fClusterList3D->AddElement(ClusterList3D); 
+        if(show2D){ 
+          teve_cluster2D->DrawCluster("CaloCluster3D, Cluster #" + to_string(i + 1) + ", Position =" + pos2D + ", Energy = " + to_string(cluster.energyDep()) + ", Time = " + to_string(cluster.time()), pointInMu2e,energylevels[i], ClusterList2D);   
+          fClusterList2D->AddElement(ClusterList2D); 
+
+          if(cluster.diskId()==0)  calo2Dproj->fXYMgr->ImportElements(fClusterList2D, calo2Dproj->fDetXYScene); 
+
+          if(cluster.diskId()==1) calo2Dproj->fRZMgr->ImportElements(fClusterList2D, calo2Dproj->fDetRZScene); 
+	      }
+        gEve->AddElement(fClusterList3D);
+        gEve->Redraw3D(kTRUE);    
+        }
     }
   return energies;
   }
