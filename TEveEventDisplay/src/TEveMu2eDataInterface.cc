@@ -52,58 +52,44 @@ namespace mu2e{
 }
 
    void TEveMu2eDataInterface::AddCRVInfo(bool firstloop, const CrvRecoPulseCollection *crvcoincol,  double time, bool Redraw, bool show2D){
-      DataLists<const CrvRecoPulseCollection*, TEveMu2e2DProjection*>(crvcoincol, Redraw, show2D, &fCrvList3D);
+      DataLists<const CrvRecoPulseCollection*, TEveMu2e2DProjection*>(crvcoincol, Redraw, show2D, &fCrvList3D, &fCrvList2D);
         if(crvcoincol!=0){
           TEveElementList *CrvList3D = new TEveElementList("Crv3D");
           GeomHandle<CosmicRayShield> CRS;
           for(unsigned int i=0; i <crvcoincol->size(); i++)
           {
             const CrvRecoPulse &crvRecoPulse = crvcoincol->at(i);
-                TEveMu2eCRVEvent *teve_crv3D = new TEveMu2eCRVEvent(crvRecoPulse);
-      		DrawData<CrvRecoPulse, TEveMu2e2DProjection*, TEveMu2eCRVEvent*>(firstloop, crvRecoPulse, time, show2D, "CRVRecoPulse", i, 2, &fCrvList3D, &CrvList3D, teve_crv3D);
- 
+
+            TEveMu2eCRVEvent *teve_crv3D = new TEveMu2eCRVEvent(crvRecoPulse);
+            const CRSScintillatorBarIndex &crvBarIndex = crvRecoPulse.GetScintillatorBarIndex();
+            const CRSScintillatorBar &crvCounter = CRS->getBar(crvBarIndex);
+            CLHEP::Hep3Vector crvCounterPos = crvCounter.getPosition(); 
+            hep3vectorTocm(crvCounterPos);
+            string pos3D = "(" + to_string((double)crvCounterPos.x()) + ", " + to_string((double)crvCounterPos.y()) + ", " + to_string((double)crvCounterPos.z()) + ")";
+            teve_crv3D->DrawHit3D("CRVHits3D, Position = " + pos3D + ", Pulse Time = " + to_string(crvRecoPulse.GetPulseTime()) + ", Pulse Height = "+ to_string(crvRecoPulse.GetPulseHeight()) + + "Pulse Width = " + to_string(crvRecoPulse.GetPulseWidth()),  i + 1, crvCounterPos, CrvList3D);
+            fCrvList3D->AddElement(CrvList3D); 
             gEve->AddElement(fCrvList3D);
             gEve->Redraw3D(kTRUE); 
+          } 
           }
-        }
+        
     }
 
   std::vector<double> TEveMu2eDataInterface::AddComboHits(bool firstloop, const ComboHitCollection *chcol, TEveMu2e2DProjection *tracker2Dproj, double time, bool Redraw, bool show2D){
-  vector <double> energies = {0, 0};
+  std::vector<double> energies = {0,0};
   DataLists<const ComboHitCollection*, TEveMu2e2DProjection*>(chcol, Redraw, show2D, &fHitsList3D, &fHitsList2D, tracker2Dproj);
   if(chcol!=0){
     TEveElementList *HitList2D = new TEveElementList("Hits2D");
     TEveElementList *HitList3D = new TEveElementList("Hits3D");
-    double Max_Energy = 0;
-    double Min_Energy = 1000;
-    
+    int *energylevels = new int[chcol->size()];
+    energies = Energies<const ComboHitCollection*>(chcol, &energylevels);
     for(size_t i=0; i<chcol->size();i++){
       ComboHit hit = (*chcol)[i];
-      if ( hit.energyDep() > Max_Energy) Max_Energy =  hit.energyDep();
-      if ( hit.energyDep() < Min_Energy)  Min_Energy =  hit.energyDep(); 
-    }
-    double interval = (Max_Energy - Min_Energy)/(9);
-    int *energylevels;
-    energylevels = new int[chcol->size()];
-
-    for(size_t i=0; i<chcol->size();i++){
-      ComboHit hit = (*chcol)[i];
-      for(size_t n=0; n<9;n++){
-         if(hit.energyDep() >= Min_Energy + n * interval && hit.energyDep() <=Min_Energy + (n+1)*interval){energylevels[i] = n;}
-      }
-    }
-    energies = {Min_Energy, Max_Energy};
-    for(size_t i=0; i<chcol->size();i++){
-      ComboHit hit = (*chcol)[i];
-      TEveMu2eHit *teve_hit2D = new TEveMu2eHit(hit);
-      TEveMu2eHit *teve_hit3D = new TEveMu2eHit(hit);
-      DrawData<ComboHit, TEveMu2e2DProjection*, TEveMu2eHit*>(firstloop, hit, time, show2D, "ComboHit", i, 1, &fHitsList3D, &HitList3D, teve_hit3D, teve_hit2D, &fHitsList2D, &HitList2D, tracker2Dproj);
+      DrawTrackerHitData<ComboHit, TEveMu2e2DProjection*>(firstloop, hit, time, show2D, -1, "ComboHit", i, &energylevels, &fHitsList3D, &HitList3D, &fHitsList2D, &HitList2D, tracker2Dproj);
             }
-        gEve->AddElement(fHitsList3D);
-        gEve->Redraw3D(kTRUE);  
-        }
+
+     }
       
-    
    return energies;
   }
 
@@ -113,48 +99,11 @@ std::vector<double> TEveMu2eDataInterface::AddCaloClusters(bool firstloop, const
   if(clustercol!=0){ 
     TEveElementList *ClusterList3D = new TEveElementList("CaloClusters3D");
     TEveElementList *ClusterList2D = new TEveElementList("CaloClusters2D");
-    double Max_Energy = 0;
-    double Min_Energy = 1000;
-    for(unsigned int i=0; i < clustercol->size();i++){
-      CaloCluster cluster = (*clustercol)[i];
-      if (cluster.energyDep() > Max_Energy){Max_Energy = cluster.energyDep();}
-      if (cluster.energyDep()< Min_Energy){Min_Energy = cluster.energyDep();}
-    }
-    double interval = (Max_Energy - Min_Energy)/(12);
-    int *energylevels;
-    energylevels = new int[clustercol->size()];
-
-    for(size_t i=0; i<clustercol->size();i++){
-      CaloCluster cluster = (*clustercol)[i];
-      for(size_t n=0; n<12;n++){
-         if(cluster.energyDep() >= Min_Energy + n * interval && cluster.energyDep() <=Min_Energy + (n+1)*interval){energylevels[i] = n;}
-       }
-    }
-    energies = {Min_Energy, Max_Energy};
+    int *energylevels = new int[clustercol->size()];
+    energies = Energies<const CaloClusterCollection*>(clustercol, &energylevels);
     for(unsigned int i=0; i<clustercol->size();i++){
       CaloCluster const  &cluster= (*clustercol)[i];
-      TEveMu2eCluster *teve_cluster3D = new TEveMu2eCluster(cluster);
-      TEveMu2eCluster *teve_cluster2D = new TEveMu2eCluster(cluster);
-
-      CLHEP::Hep3Vector COG(cluster.cog3Vector().x(),cluster.cog3Vector().y(), cluster.cog3Vector().z());
-      CLHEP::Hep3Vector pointInMu2e = PointToCalo(COG,cluster.diskId());
-      string pos3D = "(" + to_string((double)pointInMu2e.x()) + ", " + to_string((double)pointInMu2e.y()) + ", " + to_string((double)pointInMu2e.z()) + ")";
-      string pos2D = "(" + to_string((double)COG.x()) + ", " + to_string((double)COG.y()) + ", " + to_string((double)COG.z()) + ")";
-      
-      if (time == -1 || cluster.time() <= time ){
-          teve_cluster3D->DrawCluster("CaloCluster3D, Cluster #" + to_string(i + 1) + ", Position =" + pos3D + ", Energy = " + to_string(cluster.energyDep()) + ", Time = " + to_string(cluster.time()), pointInMu2e, energylevels[i], ClusterList3D);
-	        fClusterList3D->AddElement(ClusterList3D); 
-        if(show2D){ 
-          teve_cluster2D->DrawCluster("CaloCluster3D, Cluster #" + to_string(i + 1) + ", Position =" + pos2D + ", Energy = " + to_string(cluster.energyDep()) + ", Time = " + to_string(cluster.time()), pointInMu2e,energylevels[i], ClusterList2D);   
-          fClusterList2D->AddElement(ClusterList2D); 
-
-          if(cluster.diskId()==0)  calo2Dproj->fXYMgr->ImportElements(fClusterList2D, calo2Dproj->fDetXYScene); 
-
-          if(cluster.diskId()==1) calo2Dproj->fRZMgr->ImportElements(fClusterList2D, calo2Dproj->fDetRZScene); 
-	      }
-        gEve->AddElement(fClusterList3D);
-        gEve->Redraw3D(kTRUE);    
-        }
+      DrawCaloClusterData<CaloCluster, TEveMu2e2DProjection*>(firstloop, cluster, time, show2D, "Calo Cluster", i, &energylevels, &fClusterList3D,  &ClusterList3D, &fClusterList2D, &ClusterList2D, calo2Dproj);
       }
     }
   return energies;
@@ -166,24 +115,9 @@ std::vector<double> TEveMu2eDataInterface::AddCaloClusters(bool firstloop, const
     if(cryHitcol!=0){
 
         TEveElementList *HitList = new TEveElementList("CrystalHits");
-        double Max_Energy = 0;
-        double Min_Energy = 1000;
-      
-        for(size_t i=0; i<cryHitcol->size();i++){
-          CaloCrystalHit hit = (*cryHitcol)[i];
-          if (hit.energyDep() > Max_Energy){Max_Energy = hit.energyDep();}
-          if (hit.energyDep()< Min_Energy){Min_Energy = hit.energyDep();}
-        }
-        double interval = (Max_Energy - Min_Energy)/(9);
-        int *energylevels;
-        energylevels = new int[cryHitcol->size()];
+    int *energylevels = new int[cryHitcol->size()];
+    energies = Energies<const CaloCrystalHitCollection*>(cryHitcol, &energylevels);
 
-        for(size_t i=0; i<cryHitcol->size();i++){
-          CaloCrystalHit hit = (*cryHitcol)[i];
-          for(size_t n=0; n<9;n++){
-             if(hit.energyDep() >= Min_Energy + n * interval && hit.energyDep() <=Min_Energy + (n+1)*interval){energylevels[i] = n;}
-          }
-        }
         for(unsigned int i=0; i<cryHitcol->size();i++){
           TEveMu2eHit *teve_hit = new TEveMu2eHit();
           CaloCrystalHit const  &hit = (*cryHitcol)[i];
