@@ -56,7 +56,7 @@ TEveEventDisplayHelix : {
 
 TEveEventDisplayCosmics : {
     module_type : TEveEventDisplay
-    showCRV : true
+    showCRV : false
     showDSOnly : true
     show2D : false
     filler : {

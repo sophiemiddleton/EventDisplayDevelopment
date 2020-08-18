@@ -1,5 +1,5 @@
 
-	template <typename T, typename U> void DataLists(T data, U projection, bool Redraw, bool show2D, TEveElementList **List3D, TEveElementList **List2D){	
+    template <typename T, typename U> void DataLists(T data, bool Redraw, bool show2D, TEveElementList **List3D, TEveElementList **List2D = 0, U projection = 0){	
 		  if(data == 0 && Redraw){
 		    if (*List3D != 0){
 		      (*List3D)->DestroyElements();
@@ -32,30 +32,36 @@
 	}
 }
 
+	template <typename K> int GetTime(K data, int type){
+		switch(type){
+			case 1:{
+				return data.time();
+				break; }
+			case 2:{
+				return data.GetPulseTime();
+				break; }
+
+		}
+		return (0);
+	}
+
 	template <typename T> double GetEnergy(T data, int type){
 		switch(type){
-			case 1:
+			case 1:{
 				return data.energyDep();
-				break;
-			case 2:
+				break; }
+			/*case 2:
 				return data.energy();
 				break;
 			case 3:
 				return data.GetEnergy();
-				break;
+				break;*/
 		}
-
+		return (0.0);
 	}
 
-	template <typename R> CLHEP::Hep3Vector GetPosition(R data, int type){
-		switch(type){
-			case 1:
-				return (COG(data.cog3Vector().x(),data.cog3Vector().y(), data.cog3Vector().z());
-				break;
 
-	}
-
-	template <typename L> void Energies(L data, int type, double *energies[], int *energylevels[]){
+/*	template <typename L> void Energies(L data, int type, double *energies[], int *energylevels[]){
 
 		double Max_Energy = 0;
 		double Min_Energy = 1000;
@@ -75,30 +81,31 @@
 		*energies[1] = Max_Energy;
 
 	}
-/*	template <typename T> void Test(void (*M)(), T hit){
+	template <typename T> void Test(void (*M)(), T hit){
 		std:cout<<to_string(hit.M())<<std::endl;
-	}*/
-/*
-	template <typename S, typename M> DrawData(bool firstloop, S dataevt, M projection, double time, bool show2D, TEveElementList *List3D, TEveElementList *List2D, std::string datatype){
-
-
-		      TEveMu2eHit *teve_hit2D = new TEveMu2eHit(dataevt);
-		      TEveMu2eHit *teve_hit3D = new TEveMu2eHit(dataevt);
-
-
-		      string pos3D = "(" + to_string((double)pointInMu2e.x()) + ", " + to_string((double)pointInMu2e.y()) + ", " + to_string((double)pointInMu2e.z()) + ")";
-		      string pos2D = "(" + to_string((double)Pos.x()) + ", " + to_string((double)Pos.y()) + ", " + to_string((double)Pos.z()) + ")";
-		      if (time == -1 || (datatime <= time && time != -1)){
-			teve_hit3D->DrawHit3D(datatype + "3D, Position = " + pos3D + ", Energy = " + energy + ", Time = " + to_string(*datatime) + ", ", i + 1,  pointInMu2e, 2, tempList3D);
-			
-			List3D->AddElement(tempList3D); 
-			if(show2D){
-			teve_hit2D->DrawHit2D(datatype + "2D, Position = " + pos2D + ", Energy = " + energy + ", Time = " + to_string(*datatime) + ", ", i + 1, Pos, 2, tempList2D);
-			List2D->AddElement(tempList2D); 
-			// ... Import elements of the list into the projected views
-			projection->fXYMgr->ImportElements(List2D, projection->fDetXYScene); 
-			projection->fRZMgr->ImportElements(List2D, projection->fDetRZScene);
 	}
-
 */
+	template <typename S, typename M, typename E> void DrawHitData(bool firstloop, S dataevt, double time, bool show2D, std::string datatype, int i, int type, TEveElementList **List3D, TEveElementList **tempList3D, E teve_data3D, E teve_data2D = 0, TEveElementList **List2D = 0, TEveElementList **tempList2D = 0, M projection = 0){
+		      CLHEP::Hep3Vector pointInMu2e;
 
+		      CLHEP::Hep3Vector DataPos(data->pos().x(), data->pos().y(), data->pos().z());;
+		      CLHEP::Hep3Vector pointInMu2e = PointToTracker(DataPos);
+
+		      double energy = GetEnergy<S>(dataevt, type);
+		      string pos3D = "(" + to_string((double)DataPos.x()) + ", " + to_string((double)DataPos.y()) + ", " + to_string((double)DataPos.z()) + ")";
+		      string pos2D = "(" + to_string((double)pointInMu2e.x()) + ", " + to_string((double)pointInMu2e.y()) + ", " + to_string((double)pointInMu2e.z()) + ")";
+
+		      if (time == -1 || (dataevt.time() <= time && time != -1)){
+			teve_data3D->DrawHit3D(datatype + "3D, Position = " + pos3D + ", Energy = " + to_string(energy) + ", Time = " + to_string(dataevt.time()) + ", ", i + 1,  pointInMu2e, 2, *tempList3D);
+			(*List3D)->AddElement(*tempList3D); 
+
+
+			if(show2D){
+				if (type == 1){teve_data2D->DrawHit2D(datatype + "2D, Position = " + pos2D + ", Energy = " + to_string(energy) + ", Time = " + to_string(dataevt.time()) + ", ", i + 1, DataPos, 2, *tempList2D);}
+				(*List2D)->AddElement(*tempList2D); 
+				// ... Import elements of the list into the projected views
+				projection->fXYMgr->ImportElements(*List2D, projection->fDetXYScene); 
+				projection->fRZMgr->ImportElements(*List2D, projection->fDetRZScene);
+			}
+    }
+}
