@@ -64,11 +64,33 @@ The DataCollection class has a list all the possible Mu2e data collections we mi
 
 ## classes.h and class_def
 
-Any src directory in mu2e which wants to use classes needs to list them in a classes.h and class_def.xml file. If you make a new class you must add it here. To make a new class use an exisitng class as a template. That way you wont run into errors.
+Any src directory in mu2e which wants to use classes needs to list them in a classes.h and class_def.xml file. If you make a new class you must add it here. To make a new class use an existing class as a template. That way you wont run into errors.
 
 ### Main Window
 
 This class sets up the Gui and imports the geometry. Here the plotting data functions are currently called. you should base any work on AddComboHits.
+
+### Adding Data Products
+
+In order to add Data Products to the Event Display you may need to add an additional plotting function to the code. Here are the steps you should take to add the function.
+
+1. Check if the data product you want to add is in the Collection Filler and Data Collections classes. If not then add it to these classes.
+
+2. Create a function to add your data product in the TEveMu2eDataInterface or TEveMu2eMCInterface based on whether it is a Reco or MC Data Product. Add two lists in the header file.
+
+3. In your function call the DataLists template function. This will take care of handling your lists so that they work with the other features in the Event Display.
+
+4. Now add a condition to make sure your Data Product Collection is not empty.
+
+5. If you would like to add energies call the energies template. This currently works for hit and cluster type data products.
+
+6. Then loop through your Data Product Collection and call the draw function to the corresponding data type. For example, DrawHit3D/2D, DrawCluster3D/2D
+
+7. To utilize the 3D only feature, create a condition and pass the show2D parameter and control the 2D drawing functions with that parameter.
+
+8. Call the function in TEveMu2eMainWindow 
+
+9. Modify the Collection Filler in TEveMu2eModule to get your data product from the art file. Add the product to the fcl file and change the prolog.fcl as needed.
 
 ## Authors
 

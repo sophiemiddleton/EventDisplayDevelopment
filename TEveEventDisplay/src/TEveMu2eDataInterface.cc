@@ -81,12 +81,39 @@ namespace mu2e{
   if(chcol!=0){
     TEveElementList *HitList2D = new TEveElementList("Hits2D");
     TEveElementList *HitList3D = new TEveElementList("Hits3D");
+    std::cout<<"GETS HERE"<<std::endl;
     int *energylevels = new int[chcol->size()];
     energies = Energies<const ComboHitCollection*>(chcol, &energylevels);
+    std::cout<<(energies.at(1))<<std::endl;
     for(size_t i=0; i<chcol->size();i++){
       ComboHit hit = (*chcol)[i];
-      DrawTrackerHitData<ComboHit, TEveMu2e2DProjection*>(firstloop, hit, time, show2D, -1, "ComboHit", i, &energylevels, &fHitsList3D, &HitList3D, &fHitsList2D, &HitList2D, tracker2Dproj);
-            }
+      TEveMu2eHit *teve_hit2D = new TEveMu2eHit(hit);
+      TEveMu2eHit *teve_hit3D = new TEveMu2eHit(hit);
+
+      CLHEP::Hep3Vector HitPos(hit.pos().x(), hit.pos().y(), hit.pos().z());
+      CLHEP::Hep3Vector pointInMu2e = PointToTracker(HitPos);
+      string energy = to_string(teve_hit3D->GetEnergy());
+      string pos3D = "(" + to_string((double)pointInMu2e.x()) + ", " + to_string((double)pointInMu2e.y()) + ", " + to_string((double)pointInMu2e.z()) + ")";
+      string pos2D = "(" + to_string((double)hit.pos().x()) + ", " + to_string((double)hit.pos().y()) + ", " + to_string((double)hit.pos().z()) + ")";
+      if (time == -1 || (hit.time() <= time && time != -1)){
+        teve_hit3D->DrawHit3D("ComboHits3D, Position = " + pos3D + ", Energy = " + energy + ", Time = " + to_string(hit.time()) + ", ", i + 1,  pointInMu2e, energylevels[i], HitList3D);
+        teve_hit2D->DrawHit2D("ComboHits2D, Position = " + pos2D + ", Energy = " + energy + ", Time = " + to_string(hit.time()) + ", ", i + 1, HitPos,energylevels[i], HitList2D);
+
+        fHitsList2D->AddElement(HitList2D); 
+        fHitsList3D->AddElement(HitList3D); 
+
+        if(show2D){
+          teve_hit2D->DrawHit2D("ComboHits2D, Position = " + pos2D + ", Energy = " + energy + ", Time = " + to_string(hit.time()) + ", ", i + 1, HitPos,energylevels[i], HitList2D);
+          fHitsList2D->AddElement(HitList2D); 
+          // ... Import elements of the list into the projected views
+          tracker2Dproj->fXYMgr->ImportElements(fHitsList2D, tracker2Dproj->fDetXYScene); 
+          tracker2Dproj->fRZMgr->ImportElements(fHitsList2D, tracker2Dproj->fDetRZScene);
+
+ 	      }
+        gEve->AddElement(fHitsList3D);
+        gEve->Redraw3D(kTRUE);  
+        }
+      }
 
      }
       
@@ -126,16 +153,19 @@ std::vector<double> TEveMu2eDataInterface::AddCaloClusters(bool firstloop, const
         gEve->Redraw3D(kTRUE);    
         }
     }
+   }
   return energies;
   }
 
   void TEveMu2eDataInterface::AddCrystalHits(bool firstloop, const CaloCrystalHitCollection *cryHitcol, TEveMu2e2DProjection *calo2Dproj, double time, bool Redraw, bool show2D){
+    vector <double> energies = {0, 0};
     Calorimeter const &cal = *(GeomHandle<Calorimeter>());
     DataLists<const CaloCrystalHitCollection*, TEveMu2e2DProjection*>(cryHitcol, Redraw, show2D, &fHitsList3D, &fHitsList2D, calo2Dproj);
     if(cryHitcol!=0){
 
         TEveElementList *HitList = new TEveElementList("CrystalHits");
     int *energylevels = new int[cryHitcol->size()];
+
     energies = Energies<const CaloCrystalHitCollection*>(cryHitcol, &energylevels);
 
         for(unsigned int i=0; i<cryHitcol->size();i++){

@@ -8,33 +8,8 @@ using namespace mu2e;
 namespace mu2e{
 
   void TEveMu2eMCInterface::AddMCSimParticle(bool firstloop, const CaloHitSimPartMCCollection *mcchitspcol, TEveMu2e2DProjection *calo2Dproj, double time, bool Redraw, bool show2D){
-	if(mcchitspcol == 0 && Redraw){
-	    if (fSimPartList3D != 0){
-	      fSimPartList3D ->DestroyElements();
-	    }
-	    if (fSimPartList2D != 0){
-	      fSimPartList2D->DestroyElements();
-	    }
-	    calo2Dproj->fXYMgr->ImportElements(fSimPartList2D, calo2Dproj->fDetXYScene); 
-	    calo2Dproj->fRZMgr->ImportElements(fSimPartList2D, calo2Dproj->fDetRZScene);
-	    gEve->AddElement(fSimPartList3D);
-	    gEve->Redraw3D(kTRUE); 
-	  }
+	DataLists<const CaloHitSimPartMCCollection*, TEveMu2e2DProjection*>(mcchitspcol, Redraw, show2D, &fSimPartList3D, &fSimPartList2D, calo2Dproj);
       if(mcchitspcol!=0){
-	    if (fSimPartList3D == 0) {
-	      fSimPartList3D = new TEveElementList("SimParticles3D");
-	      fSimPartList3D->IncDenyDestroy();     
-	    }
-	    else {
-	      fSimPartList3D->DestroyElements();  
-	    }
-	    if (fSimPartList2D== 0) {
-	      fSimPartList2D = new TEveElementList("SimParticles2D");
-	      fSimPartList2D->IncDenyDestroy();     
-	    }
-	    else {
-	      fSimPartList2D->DestroyElements();  
-	    }
 	    TEveElementList *SimPartList2D = new TEveElementList("MCSimParticles2D");
 	    TEveElementList *SimPartList3D = new TEveElementList("MCSimParticles3D");
 	    for(size_t i=0; i<mcchitspcol->size();i++){
@@ -66,32 +41,8 @@ namespace mu2e{
 }
 
   void TEveMu2eMCInterface::AddMCTrajectory(bool firstloop, const MCTrajectoryCollection *trajcol, TEveMu2e2DProjection *tracker2Dproj, bool Redraw, bool show2D){
-      if(trajcol == 0 && Redraw){
-        if (fTrackList3D != 0){
-          fTrackList3D->DestroyElements();
-        }
-        if (fTrackList2D != 0){
-          fTrackList2D->DestroyElements();
-        }
-        gEve->AddElement(fTrackList3D);
-        gEve->Redraw3D(kTRUE); 
-    }
+	DataLists<const MCTrajectoryCollection*, TEveMu2e2DProjection*>(trajcol, Redraw, show2D, &fTrackList3D, &fTrackList2D, tracker2Dproj);
     if(trajcol!=0){
-      if (fTrackList3D == 0) {
-        fTrackList3D = new TEveElementList("MCTraj3D");
-        fTrackList3D->IncDenyDestroy();     
-      }
-      else {
-        fTrackList3D->DestroyElements();  
-      }
-
-      if (fTrackList2D == 0) {
-        fTrackList2D  = new TEveElementList("MCTraj2D");
-        fTrackList2D->IncDenyDestroy();     
-      }
-      else {
-        fTrackList2D->DestroyElements();  
-      }
       TEveElementList *HitList3D = new TEveElementList("MCtraj3D");
       std::map<art::Ptr<mu2e::SimParticle>,mu2e::MCTrajectory>::const_iterator trajectoryIter;
       for(trajectoryIter=trajcol->begin(); trajectoryIter!=trajcol->end(); trajectoryIter++)

@@ -41,13 +41,15 @@
 		      if (((*data)[i]).energyDep() > Max_Energy){Max_Energy = ((*data)[i]).energyDep();}
       		      if (((*data)[i]).energyDep()< Min_Energy){Min_Energy = ((*data)[i]).energyDep();}
 		    }
-		double interval = (Max_Energy - Min_Energy)/(12);
+		double interval = (Max_Energy - Min_Energy)/(9);
 
 
 		for(size_t i=0; i<data->size();i++){
-		for(int n=0; n<12;n++){
-		     if(((*data)[i]).energyDep() >= Min_Energy + n * interval && ((*data)[i]).energyDep() <=Min_Energy + (n+1)*interval){*(energylevels[i]) = n;}
-		       }
+			for(int n=0; n<9;n++){
+			     if(((*data)[i]).energyDep() >= Min_Energy + n * interval && ((*data)[i]).energyDep() <=Min_Energy + (n+1)*interval){
+				std::cout<<"Inside if"<<std::endl; 
+				(*energylevels)[i] = n;}
+			       }
 		    }
 		energies.at(0) = Min_Energy;
 		energies.at(1) = Max_Energy;

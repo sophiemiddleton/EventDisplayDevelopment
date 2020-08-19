@@ -34,7 +34,7 @@ namespace mu2e{
 
       void AddMCSimParticle(bool firstloop, const CaloHitSimPartMCCollection *mcchitspcol, TEveMu2e2DProjection *calo2Dproj, double time, bool Redraw, bool show2D);
       void AddMCTrajectory(bool firstloop, const MCTrajectoryCollection *trajcol, TEveMu2e2DProjection *tracker2Dproj, bool Redraw, bool show2D);
-
+      #include "TEveEventDisplay/src/TEveMu2e_base_classes/TEveMu2eDataInterface.hpp" 
 
       ClassDef(TEveMu2eMCInterface,0);
 
