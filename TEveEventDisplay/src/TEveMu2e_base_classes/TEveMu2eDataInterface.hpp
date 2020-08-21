@@ -47,7 +47,6 @@
 		for(size_t i=0; i<data->size();i++){
 			for(int n=0; n<9;n++){
 			     if(((*data)[i]).energyDep() >= Min_Energy + n * interval && ((*data)[i]).energyDep() <=Min_Energy + (n+1)*interval){
-				std::cout<<"Inside if"<<std::endl; 
 				(*energylevels)[i] = n;}
 			       }
 		    }
