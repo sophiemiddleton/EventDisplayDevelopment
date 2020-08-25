@@ -651,12 +651,15 @@ namespace mu2e{
     pass_data->AddCRVInfo(firstLoop, data.crvcoincol, time, false, show2D);
     hitenergy = new vector<double>(2);
     *hitenergy = pass_data->AddComboHits(firstLoop, data.chcol, tracker2Dproj, time, false, show2D, fhitmin, fhitmax);
+    std::cout<<"Out of Add ComboHits"<<std::endl;
     clusterenergy = new vector<double>(2);
     *clusterenergy = pass_data->AddCaloClusters(firstLoop, data.clustercol, calo2Dproj, time, false, show2D, fclustmin, fclustmax);
     pass_data->AddHelixPieceWise(firstLoop, data.kalseedcol, tracker2Dproj, time, false, show2D);
     pass_mc->AddMCTrajectory(firstLoop, data.mctrajcol, tracker2Dproj, false, show2D);
     pass_mc->AddMCSimParticle(firstLoop, data.mcchitspcol, calo2Dproj, time, false, show2D);
+    std::cout<<"Finished Adding all data"<<std::endl;
     gSystem->ProcessEvents();
+    std::cout<<"Processed Events"<<std::endl;
     gClient->NeedRedraw(fTeRun);
 
     _clustminenergy->AddText(0, (to_string(clusterenergy->at(0))).c_str());
@@ -667,7 +670,9 @@ namespace mu2e{
     _hitminenergy->AddText(0, (to_string(hitenergy->at(0))).c_str());
     _hitmaxenergy->AddText(0, (to_string(hitenergy->at(1))).c_str());
     gApplication->Run(true);
+    std::cout<<"Ran gApplication"<<std::endl;
     gEve->Redraw3D(kTRUE);
+    std::cout<<"MADE IT to end of Set Geometry Function"<<std::endl;
    }
 
 

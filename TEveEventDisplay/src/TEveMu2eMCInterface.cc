@@ -30,13 +30,17 @@ namespace mu2e{
 		fSimPartList3D->AddElement(SimPartList3D); 
 		
 		// ... Import elements of the list into the projected views
-		calo2Dproj->fXYMgr->ImportElements(fSimPartList2D, calo2Dproj->fDetXYScene); 
-		calo2Dproj->fRZMgr->ImportElements(fSimPartList2D, calo2Dproj->fDetRZScene);
+
 		}
-		gEve->AddElement(fSimPartList3D);
-		gEve->Redraw3D(kTRUE);  
+ 
 		}
 	      }
+		if (show2D){
+			calo2Dproj->fXYMgr->ImportElements(fSimPartList2D, calo2Dproj->fDetXYScene); 
+			calo2Dproj->fRZMgr->ImportElements(fSimPartList2D, calo2Dproj->fDetRZScene);
+		}
+		gEve->AddElement(fSimPartList3D);
+		gEve->Redraw3D(kTRUE); 
       	}
 }
 
@@ -66,10 +70,12 @@ namespace mu2e{
               teve_hit3D->DrawLine3D("MCTraj PDG " + pdgId + "Energy = " + energy  + ", ",  StartHitPos, EndHitPos, HitList3D);
             }
             fTrackList3D->AddElement(HitList3D); 
-            gEve->AddElement(fTrackList3D);
-            gEve->Redraw3D(kTRUE);
+
         }
       }
+            gEve->AddElement(fTrackList3D);
+            gEve->Redraw3D(kTRUE);
     }
+
   }
 }
