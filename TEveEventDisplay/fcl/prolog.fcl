@@ -36,8 +36,8 @@ TEveEventDisplayHelix : {
       MCTrajectoryCollection:  NULL
       CaloHitSimPartMCCollection : "make MC Sim Particles"
       StrawDigiMCCollection:  NULL
-      addHits : false
-      addTracks 			          : true
+      addHits : true
+      addTracks 			          : false
       addCrvHits			          : false
       addCosmicSeedFit	        : false
       addClusters			          : false

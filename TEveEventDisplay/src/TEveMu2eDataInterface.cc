@@ -111,20 +111,6 @@ std::cout<<"Added energies"<<std::endl;
  
         }
 
-
-   /*  if (i %20 == 0){
-       if(show2D){
-          tracker2Dproj->fXYMgr->ImportElements(HitList2D, tracker2Dproj->fDetXYScene); 
-          tracker2Dproj->fRZMgr->ImportElements(HitList2D, tracker2Dproj->fDetRZScene);
-        }
-        gEve->AddElement(HitList3D);
-        gEve->Redraw3D(kTRUE); 
-	gSystem->ProcessEvents();
-        gSystem->IgnoreInterrupt();
-        gSystem->IgnoreSignal(kSigTermination);
-        gSystem->IgnoreSignal(kSigSegmentationViolation);
-     }*/
-
       }
 	if(show2D){
 		  tracker2Dproj->fXYMgr->ImportElements(HitList2D, tracker2Dproj->fDetXYScene); 
