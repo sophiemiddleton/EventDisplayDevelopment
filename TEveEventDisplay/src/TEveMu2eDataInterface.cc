@@ -83,6 +83,7 @@ std::cout<<"MADE IT to Add ComboHits Function"<<std::endl;
   if(chcol!=0){
     TEveElementList *HitList2D = new TEveElementList("Hits2D");
     TEveElementList *HitList3D = new TEveElementList("Hits3D");
+    
     int *energylevels = new int[chcol->size()];
     energies = Energies<const ComboHitCollection*>(chcol, &energylevels);
 std::cout<<"Added energies"<<std::endl;
@@ -109,18 +110,32 @@ std::cout<<"Added energies"<<std::endl;
  	      }
  
         }
-     std::cout<<"Inside for loop"<<std::endl;
-      }
-     std::cout<<"Outside for loop"<<std::endl;
-        if(show2D){
-          tracker2Dproj->fXYMgr->ImportElements(fHitsList2D, tracker2Dproj->fDetXYScene); 
-          tracker2Dproj->fRZMgr->ImportElements(fHitsList2D, tracker2Dproj->fDetRZScene);
+
+
+   /*  if (i %20 == 0){
+       if(show2D){
+          tracker2Dproj->fXYMgr->ImportElements(HitList2D, tracker2Dproj->fDetXYScene); 
+          tracker2Dproj->fRZMgr->ImportElements(HitList2D, tracker2Dproj->fDetRZScene);
         }
-        gEve->AddElement(fHitsList3D);
+        gEve->AddElement(HitList3D);
         gEve->Redraw3D(kTRUE); 
+	gSystem->ProcessEvents();
+        gSystem->IgnoreInterrupt();
+        gSystem->IgnoreSignal(kSigTermination);
+        gSystem->IgnoreSignal(kSigSegmentationViolation);
+     }*/
+
+      }
+	if(show2D){
+		  tracker2Dproj->fXYMgr->ImportElements(HitList2D, tracker2Dproj->fDetXYScene); 
+		  tracker2Dproj->fRZMgr->ImportElements(HitList2D, tracker2Dproj->fDetRZScene);
+		}
+		gEve->AddElement(HitList3D);
+		gEve->Redraw3D(kTRUE); 
+	 
 
      }
-      std::cout<<"Added all elements and at end of function"<<std::endl;
+  
    return energies;
   }
 
@@ -255,17 +270,17 @@ std::vector<double> TEveMu2eDataInterface::AddCaloClusters(bool firstloop, const
   void TEveMu2eDataInterface::AddHelixPieceWise(bool firstloop, const KalSeedCollection *seedcol, TEveMu2e2DProjection *tracker2Dproj, double time, bool Redraw, bool show2D){
    DataLists<const KalSeedCollection*, TEveMu2e2DProjection*>(seedcol, Redraw, show2D, &fTrackList3D, &fTrackList2D, tracker2Dproj); 
     if(seedcol!=0){  
-      for(unsigned int k = 0; k < seedcol->size(); k++){
+      for(unsigned int k = 0; k < seedcol->size(); k = k + 20){
         KalSeed kseed = (*seedcol)[k];
         TEveMu2eCustomHelix *line = new TEveMu2eCustomHelix();
         TEveMu2eCustomHelix *line_twoD = new TEveMu2eCustomHelix();
         line->fKalSeed = kseed;
         line->SetSeedInfo(kseed);
 
-        unsigned int nSteps = 1670;  
+        unsigned int nSteps = 65;  
         double CaloLength = 70 + 118+ 132; //FIXME - add to GeomUtils
         double TrackerLength = 300.8;//cm FIXME - GeomUtil
-        double kStepSize = nSteps/(CaloLength + TrackerLength);
+        double kStepSize = nSteps/(CaloLength + TrackerLength) + 70;
         for(unsigned int i = 0 ; i< nSteps; i++){
         double zpos = (i*kStepSize)-TrackerLength/2;
         line->SetPostionAndDirectionFromKalRep(zpos);//need to start from

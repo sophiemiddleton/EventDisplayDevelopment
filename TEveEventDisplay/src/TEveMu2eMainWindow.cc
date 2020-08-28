@@ -637,7 +637,6 @@ namespace mu2e{
     _run=event.id().run();
     _firstLoop = firstLoop;
     _show2D = show2D;
-    //_data = data;
     _data.chcol = data.chcol; 
     _data.clustercol = data.clustercol;
     _data.crvcoincol = data.crvcoincol;
@@ -659,6 +658,8 @@ namespace mu2e{
     pass_mc->AddMCSimParticle(firstLoop, data.mcchitspcol, calo2Dproj, time, false, show2D);
     std::cout<<"Finished Adding all data"<<std::endl;
     gSystem->ProcessEvents();
+    gSystem->IgnoreInterrupt();
+    gSystem->IgnoreSignal(kSigTermination);
     std::cout<<"Processed Events"<<std::endl;
     gClient->NeedRedraw(fTeRun);
 
