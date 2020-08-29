@@ -81,9 +81,9 @@ namespace mu2e{
       TEveMu2eMCInterface *pass_mc	=new TEveMu2eMCInterface(); 
       int eventToFind, runToFind;
 
-      TGTextEntry     *fTeRun,*fTeEvt, *fTTEvt, *fTeh1, *fTeh2, *fTeh3;    
+      TGTextEntry     *fTeRun,*fTeEvt, *fTTEvt, *fTeh1, *fTeh2, *fTeh3, *cminenergy, *cmaxenergy, *hminenergy, *hmaxenergy;    
       TGHSlider       *fTHSlid;
-      TGLabel         *fTlRun,*fTlEvt, *fTlTEvt, *fTlHSlid, *celabel, *celabelenergy, *helabel, *helabelenergy;
+      TGLabel         *fTlRun,*fTlEvt, *fTlTEvt, *fTlHSlid, *celabel, *helabel, *spacer, *spacer1;
       TGButtonGroup	*br;
       TGCheckButton	*clusterscheck, *hitscheck, *trackscheck, *cosmicscheck;
       Double_t        hitMarkerSize_;
@@ -94,7 +94,7 @@ namespace mu2e{
       Double_t        camRotateCenterV_;
       Double_t        camDollyDelta_;
       Int_t	      HSId1;
-      TGTextBuffer *_eventNumber, *_subrunNumber, *_runNumber, *_time, *fTbh1, *fTbh2, *fTbh3;
+      TGTextBuffer *_eventNumber, *_subrunNumber, *_runNumber, *_time, *fTbh1, *fTbh2, *fTbh3, *_clustminenergy, *_clustmaxenergy, *_hitminenergy, *_hitmaxenergy;
       int  _eventToFind = 0; ///TODO - this or one above>?
 
       bool _isClosed = false;
@@ -108,11 +108,17 @@ namespace mu2e{
       TEveMu2eTracker *Mu2eTracker  = new TEveMu2eTracker();
       TEveMu2eCRV *Mu2eCRV = new TEveMu2eCRV();
 
-      TText  *_eventNumberText, *_subrunNumberText, *_runNumberText, *_timeText;
+      TText  *_eventNumberText, *_subrunNumberText, *_runNumberText, *_timeText, *_cminenergy;
       int _event, _subrun, _run;
       Data_Collections _data;
       Data_Collections _emptydata;
       std::vector<double> times;
+      double fclustmin = -1;
+      double fclustmax = -1;
+      double fhitmin = -1;
+      double fhitmax = -1;
+
+
      ClassDef(TEveMu2eMainWindow,0);
 
     }; //end class def

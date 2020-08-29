@@ -67,8 +67,6 @@ namespace mu2e{
     fTlEvt(0),
     fTlTEvt(0),
     fTlHSlid(0),
-    celabelenergy(0),
-    helabelenergy(0),
     br(0),
     clusterscheck(0),
     hitscheck(0),
@@ -146,6 +144,8 @@ namespace mu2e{
         timeFrame->AddFrame(fTHSlid, new TGLayoutHints(kLHintsExpandX));
         fTHSlid->Associate(this);
 
+
+
         TGHorizontalFrame *fHframe2 = new TGHorizontalFrame(evtidFrame);
         fTeh1 = new TGTextEntry(fHframe2, fTbh1 = new TGTextBuffer(5), 1700);
         fTeh1->SetToolTipText("Time (ns)");
@@ -162,19 +162,23 @@ namespace mu2e{
         TGIcon *icon = new TGIcon(navFrame,logo,50,50);
         navFrame->AddFrame(icon,new TGLayoutHints(kLHintsLeft,20,0,0,0));
 
-        celabel = new TGLabel(evtidFrame, "Cluster Energy");
-        std::string celabeltxt = "";
-        if (clusterenergy != NULL){
-          std::string celabeltxt = to_string(clusterenergy->at(0)) + "                           " + to_string(clusterenergy->at(1));
-        }
-        celabelenergy = new TGLabel(evtidFrame, celabeltxt.c_str());
+       celabel = new TGLabel(evtidFrame, "Cluster Energy");
 
-       
-        std::string helabeltxt = "";
-        if (hitenergy != NULL){
-        std::string helabeltxt = to_string(hitenergy->at(0)) + "                           " + to_string(hitenergy->at(1));
-        }
-        helabelenergy = new TGLabel(evtidFrame, helabeltxt.c_str());
+	
+	TGHorizontalFrame *centenergyframe = new TGHorizontalFrame(evtidFrame);
+	cminenergy = new TGTextEntry(centenergyframe, _clustminenergy = new TGTextBuffer(5), 1701);
+	_clustminenergy->AddText(0, "0.0");
+	centenergyframe->AddFrame(cminenergy,new TGLayoutHints(kLHintsExpandX));
+        cminenergy->Associate(this);
+        spacer = new TGLabel(centenergyframe,"   ");
+	centenergyframe->AddFrame(spacer);
+	cmaxenergy = new TGTextEntry(centenergyframe, _clustmaxenergy = new TGTextBuffer(5), 1701);
+	_clustmaxenergy->AddText(0, "0.0");
+	centenergyframe->AddFrame(cmaxenergy,new TGLayoutHints(kLHintsExpandX));
+        cmaxenergy->Associate(this);
+
+
+
 
         std::string clusterenergy = "TEveEventDisplay/src/Icons/purplegradient.png";
         const TGPicture *ce = gClient->GetPicture(clusterenergy.c_str());
@@ -184,6 +188,19 @@ namespace mu2e{
         std::string hitenergy = "TEveEventDisplay/src/Icons/greengradient.png";
         const TGPicture *he = gClient->GetPicture(hitenergy.c_str());
         TGIcon *heicon = new TGIcon(evtidFrame, he, 40 ,8);
+
+	TGHorizontalFrame *hentenergyframe = new TGHorizontalFrame(evtidFrame);
+	hminenergy = new TGTextEntry(hentenergyframe, _hitminenergy = new TGTextBuffer(5), 1702);
+	_hitminenergy->AddText(0, "0.0");
+	hentenergyframe->AddFrame(hminenergy,new TGLayoutHints(kLHintsExpandX));
+        hminenergy->Associate(this);
+        spacer1 = new TGLabel(hentenergyframe,"   ");
+	hentenergyframe->AddFrame(spacer);
+	hmaxenergy = new TGTextEntry(hentenergyframe, _hitmaxenergy = new TGTextBuffer(5), 1702);
+	_hitmaxenergy->AddText(0, "0.0");
+	hentenergyframe->AddFrame(hmaxenergy,new TGLayoutHints(kLHintsExpandX));
+        hmaxenergy->Associate(this);
+
 
         br = new TGButtonGroup(evtidFrame, "Data Products", kVerticalFrame);
         clusterscheck = new TGCheckButton(br, new TGHotString("Clusters"), 1200);
@@ -202,10 +219,10 @@ namespace mu2e{
         evtidFrame->AddFrame(fHframe2,new TGLayoutHints(kLHintsExpandX));
         evtidFrame->AddFrame(celabel, new TGLayoutHints(kLHintsLeft,3,0,3,0));
         evtidFrame->AddFrame(ceicon, new TGLayoutHints(kLHintsLeft,20,0,0,0));
-        evtidFrame->AddFrame(celabelenergy, new TGLayoutHints(kLHintsLeft,3,0,3,0));
+	evtidFrame->AddFrame(centenergyframe, new TGLayoutHints(kLHintsLeft,3,0,3,0));
         evtidFrame->AddFrame(helabel, new TGLayoutHints(kLHintsLeft,3,0,3,0));
         evtidFrame->AddFrame(heicon, new TGLayoutHints(kLHintsLeft,20,0,0,0));
-        evtidFrame->AddFrame(helabelenergy, new TGLayoutHints(kLHintsLeft,3,0,3,0));
+	evtidFrame->AddFrame(hentenergyframe, new TGLayoutHints(kLHintsLeft,3,0,3,0));
         evtidFrame->AddFrame(br, new TGLayoutHints(kLHintsExpandX));
 
         //celabelenergy->Associate(this);
@@ -477,26 +494,25 @@ namespace mu2e{
     //_emptydata = new Data_Collections();
 
     if (type == "Clusters"){
-      *clusterenergy = pass_data->AddCaloClusters(_firstLoop, _emptydata.clustercol, calo2Dproj, texttime, true, _show2D);
+      *clusterenergy = pass_data->AddCaloClusters(_firstLoop, _emptydata.clustercol, calo2Dproj, texttime, true, _show2D, fclustmin, fclustmax);
     }
     if (type == "Hits"){
-      if (_data.chcol !=0){*hitenergy = pass_data->AddComboHits(_firstLoop, _emptydata.chcol, tracker2Dproj, texttime, true, _show2D);}
+      if (_data.chcol !=0){*hitenergy = pass_data->AddComboHits(_firstLoop, _emptydata.chcol, tracker2Dproj, texttime, true, _show2D, fhitmin, fhitmax);}
       if(_data.cryHitcol !=0){pass_data->AddCrystalHits(_firstLoop, _emptydata.cryHitcol, calo2Dproj, texttime, true, _show2D);}
     }
-    
     if (type == "Tracks"){
       pass_data->AddHelixPieceWise(_firstLoop, _emptydata.kalseedcol, tracker2Dproj, texttime, true, _show2D);
     }
     if (type == "Cosmics"){
-            if(_data.crvcoincol!= 0){pass_data->AddCRVInfo(_firstLoop, _emptydata.crvcoincol, texttime, true, _show2D);}
+      if(_data.crvcoincol!= 0){pass_data->AddCRVInfo(_firstLoop, _emptydata.crvcoincol, texttime, true, _show2D);}
       if(_data.cosmiccol!=0){pass_data->AddCosmicTrack(_firstLoop, _emptydata.cosmiccol, tracker2Dproj, texttime, true, _show2D);}
     }
 
     gSystem->ProcessEvents();
     gClient->NeedRedraw(fTeRun);
 
-    gClient->NeedRedraw(celabelenergy);
-    gClient->NeedRedraw(helabelenergy);
+
+
     gApplication->Run(true);
 
 	}
@@ -532,9 +548,10 @@ namespace mu2e{
         gClient->NeedRedraw(fTeh1);
         texttime = fTHSlid->GetPosition();
         pass_data->AddCRVInfo(_firstLoop, _data.crvcoincol, texttime, false, _show2D);//, CRV2Dproj);
-        *hitenergy = pass_data->AddComboHits(_firstLoop, _data.chcol, tracker2Dproj, texttime, false, _show2D);
-        *clusterenergy = pass_data->AddCaloClusters(_firstLoop, _data.clustercol, calo2Dproj, texttime, false, _show2D);
+        *hitenergy = pass_data->AddComboHits(_firstLoop, _data.chcol, tracker2Dproj, texttime, false, _show2D, fhitmin, fhitmax);
+        *clusterenergy = pass_data->AddCaloClusters(_firstLoop, _data.clustercol, calo2Dproj, texttime, false, _show2D, fclustmin, fclustmax);
         pass_data->AddHelixPieceWise(_firstLoop, _data.kalseedcol,tracker2Dproj, texttime, false, _show2D);
+
 	    }
      break; 
     case kC_TEXTENTRY:
@@ -542,7 +559,17 @@ namespace mu2e{
       case kTE_TEXTCHANGED:
       if (param1 == 1700){
         fTHSlid->SetPosition(atof(fTbh1->GetString()));
-      }		
+      }	
+      if (param1 == 1701){
+	fclustmin = atof(_clustminenergy->GetString());
+	fclustmax = atof(_clustmaxenergy->GetString());
+        if (fclustmin < fclustmax) {*clusterenergy = pass_data->AddCaloClusters(_firstLoop, _data.clustercol, calo2Dproj, texttime, false, _show2D, fclustmin, fclustmax);}
+	}
+      if (param1 == 1702){
+	fhitmin = atof(_hitminenergy->GetString());
+	fhitmax = atof(_hitmaxenergy->GetString());
+        if (fhitmin < fhitmax) {*hitenergy = pass_data->AddComboHits(_firstLoop, _data.chcol, tracker2Dproj, texttime, false, _show2D, fhitmin, fhitmax);}
+	}	
       break;
     }
     case kC_COMMAND:
@@ -551,26 +578,24 @@ namespace mu2e{
       case kCM_CHECKBUTTON:
       if(param1==1200){
         if(clusterscheck->IsDown()){
-        *clusterenergy = pass_data->AddCaloClusters(_firstLoop, _data.clustercol, calo2Dproj, texttime, false, _show2D);
-        gClient->NeedRedraw(celabelenergy);}
+        *clusterenergy = pass_data->AddCaloClusters(_firstLoop, _data.clustercol, calo2Dproj, texttime, false, _show2D, fclustmin, fclustmin);}
         if(!clusterscheck->IsDown() && _data.clustercol!=0){RedrawDataProducts("Clusters");}
       }
       if(param1==1201){
         if(hitscheck->IsDown()){
-          *hitenergy = pass_data->AddComboHits(_firstLoop, _data.chcol, tracker2Dproj, texttime, false, _show2D);
+        *hitenergy = pass_data->AddComboHits(_firstLoop, _data.chcol, tracker2Dproj, texttime, false, _show2D, fhitmin, fhitmax);
         pass_data->AddCrystalHits(_firstLoop, _data.cryHitcol, calo2Dproj, texttime, false, _show2D);
-
         }
         if(!hitscheck->IsDown()){RedrawDataProducts("Hits");}
       }
       if(param1==1202){
-       if(trackscheck->IsDown()){pass_data->AddHelixPieceWise(_firstLoop, _data.kalseedcol, tracker2Dproj, texttime, false, _show2D);}
+        if(trackscheck->IsDown()){pass_data->AddHelixPieceWise(_firstLoop, _data.kalseedcol, tracker2Dproj, texttime, false, _show2D);}
         if(!trackscheck->IsDown() && _data.kalseedcol!=0){RedrawDataProducts("Tracks");}
       }
       if(param1==1203){
         if(cosmicscheck->IsDown()){
-          pass_data->AddCRVInfo(_firstLoop, _data.crvcoincol, texttime, false, _show2D);
-          pass_data->AddCosmicTrack(_firstLoop, _data.cosmiccol,  tracker2Dproj, texttime, false, _show2D);			
+        pass_data->AddCRVInfo(_firstLoop, _data.crvcoincol, texttime, false, _show2D);
+        pass_data->AddCosmicTrack(_firstLoop, _data.cosmiccol,  tracker2Dproj, texttime, false, _show2D);		
         }
         if(!cosmicscheck->IsDown()){RedrawDataProducts("Cosmics");}
       }
@@ -622,26 +647,35 @@ namespace mu2e{
       std::vector<double> times = pass_data->getTimeRange(firstLoop, data.chcol, data.crvcoincol, data.clustercol);
       fTHSlid->SetRange(times.at(0), times.at(1));
     }
-     pass_data->AddCRVInfo(firstLoop, data.crvcoincol, time, false, show2D);
+    pass_data->AddCRVInfo(firstLoop, data.crvcoincol, time, false, show2D);
     hitenergy = new vector<double>(2);
-    *hitenergy = pass_data->AddComboHits(firstLoop, data.chcol, tracker2Dproj, time, false, show2D);
+    *hitenergy = pass_data->AddComboHits(firstLoop, data.chcol, tracker2Dproj, time, false, show2D, fhitmin, fhitmax);
+
     clusterenergy = new vector<double>(2);
-    *clusterenergy = pass_data->AddCaloClusters(firstLoop, data.clustercol, calo2Dproj, time, false, show2D);
+    *clusterenergy = pass_data->AddCaloClusters(firstLoop, data.clustercol, calo2Dproj, time, false, show2D, fclustmin, fclustmax);
     pass_data->AddHelixPieceWise(firstLoop, data.kalseedcol, tracker2Dproj, time, false, show2D);
     pass_mc->AddMCTrajectory(firstLoop, data.mctrajcol, tracker2Dproj, false, show2D);
     //pass_mc->AddMCSimParticle(firstLoop, data.mcchitspcol, calo2Dproj, time, false, show2D);
+
     gSystem->ProcessEvents();
+    gSystem->IgnoreInterrupt();
+    gSystem->IgnoreSignal(kSigTermination);
+    gSystem->IgnoreSignal(kSigSegmentationViolation);
+ 
+
     gClient->NeedRedraw(fTeRun);
-    std::string celabeltxt = to_string(clusterenergy->at(0)) + "                           " + to_string(clusterenergy->at(1));
-    celabelenergy->ChangeText(celabeltxt.c_str());
-    celabelenergy->Draw();
-    gClient->NeedRedraw(celabelenergy);
-    std::string helabeltxt = to_string(hitenergy->at(0)) + "                           " + to_string(hitenergy->at(1));
-    helabelenergy->ChangeText(helabeltxt.c_str());
-    helabelenergy->Draw();
-    gClient->NeedRedraw(helabelenergy);
+
+    _clustminenergy->AddText(0, (to_string(clusterenergy->at(0))).c_str());
+    _clustmaxenergy->AddText(0, (to_string(clusterenergy->at(1))).c_str());
+
+
+
+    _hitminenergy->AddText(0, (to_string(hitenergy->at(0))).c_str());
+    _hitmaxenergy->AddText(0, (to_string(hitenergy->at(1))).c_str());
     gApplication->Run(true);
+
     gEve->Redraw3D(kTRUE);
+
    }
 
 
@@ -698,4 +732,3 @@ namespace mu2e{
     return _isClosed;
   }
 }
-
