@@ -17,8 +17,8 @@ TEveEventDisplayHelix : {
     module_type : TEveEventDisplay
     filler : {
       ComboHitCollection 		    : "makeSH"
-      GenParticleCollection 		: "compressDigiMCs" 
-      StrawDigiCollection		    : "selectRecoMC"
+#      GenParticleCollection 		: "compressDigiMCs" 
+#      StrawDigiCollection		    : "selectRecoMC"
       CrvRecoPulseCollection	  :  NULL
       CosmicTrackSeedCollection :  NULL
       CaloClusterCollection		  :  "CaloClusterFromProtoCluster"
@@ -26,27 +26,16 @@ TEveEventDisplayHelix : {
       HelixSeedCollection       :  "HelixFinderDe:Negative"
       KalSeedCollection         :  "KFFDeM" 
       TrkExtTrajCollection      : NULL
-      CaloDigiMCCollection: NULL
-      CaloHitMCTruthCollection:  NULL
-      CaloHitSimPartMCCollection:  NULL
+#      CaloHitSimPartMCCollection:  NULL
       CrvCoincidenceClusterMCCollection:  NULL
-      CrvDigiMCCollection:  NULL
       MCTrajectoryCollection:  NULL
-      CaloHitSimPartMCCollection : NULL
-      StrawDigiMCCollection:  NULL
       addHits 			            : false
       addTracks 			          : true
       addCrvHits			          : false
       addCosmicSeedFit	        : false
       addClusters			          : false
       addTrkExtTrajs		: false
-      addMCCaloDigis			:false 
-      addMCHits 			:false
-      addMCHitsSP			:false 
-      addMCCrvCC			:false  
-      addMCCrvDigis			:false
       addMCTraj				:false 
-      addMCStrawDigis			:false
 
     }
   }   
@@ -58,20 +47,15 @@ TEveEventDisplayCosmics : {
     show2D : false
     filler : {
       ComboHitCollection 		      : "makePH"
-      GenParticleCollection 	    : "compressDigiMCs" 
-      StrawDigiCollection		      :  "makeSD"
+#      GenParticleCollection 	    : "compressDigiMCs" 
+#      StrawDigiCollection		      :  "makeSD"
       CrvRecoPulseCollection		  : "CrvRecoPulses"
       CosmicTrackSeedCollection 	: "CosmicTrackFinder"
       CaloClusterCollection		    : NULL
       CaloCrystalHitCollection    : NULL
-      CaloDigiMCCollection: NULL
-      CaloHitMCTruthCollection:  NULL
-      CaloHitSimPartMCCollection:  NULL
       CrvCoincidenceClusterMCCollection:  NULL
-      CrvDigiMCCollection:  NULL
       MCTrajectoryCollection:  "compressDigiMCs"
-      CaloHitSimPartMCCollection : NULL
-      StrawDigiMCCollection:  NULL
+#      CaloHitSimPartMCCollection : NULL
       HelixSeedCollection         : NULL
       KalSeedCollection           : NULL
       TrkExtTrajCollection      : NULL
@@ -79,13 +63,7 @@ TEveEventDisplayCosmics : {
       addTracks 			            : false
       addCrvHits			            : true
       addCosmicSeedFit	          : false
-      addMCCaloDigis			:false 
-      addMCHits 			: false
-      addMCHitsSP			: false 
-      addMCCrvCC			: false  
-      addMCCrvDigis			: false
       addMCTraj				: false
-      addMCStrawDigis			:false
    }
   }   
 
@@ -94,35 +72,24 @@ TEveEventDisplayCaloOnly : {
     show2D : false  
     filler : {
       ComboHitCollection 		      : NULL
-      GenParticleCollection 		  : NULL
-      StrawDigiCollection		      : NULL
+#      GenParticleCollection 		  : NULL
+#      StrawDigiCollection		      : NULL
       CrvRecoPulseCollection		  : NULL
       CosmicTrackSeedCollection 	: NULL
       CaloClusterCollection		    : "CaloClusterFromProtCluster"
       CaloCrystalHitCollection    : "CaloCrystalHitFromHit"
       HelixSeedCollection         :  NULL
       KalSeedCollection           :  NULL
-      CaloDigiMCCollection: NULL
-      CaloHitMCTruthCollection:  NULL
       CaloHitSimPartMCCollection:  NULL
       CrvCoincidenceClusterMCCollection:  NULL
-      CrvDigiMCCollection:  NULL
       MCTrajectoryCollection:  NULL
-      CaloHitSimPartMCCollection : NULL
-      StrawDigiMCCollection:  NULL
       addHits 			              : false
       addTracks 			            : true
       addClusters			            : true
       addCrvHits			            : false
       addCosmicSeedFit	          : false
       addCrystalHits              : false
-      addMCCaloDigis			:false 
-      addMCHits 			:false
-      addMCHitsSP			:false 
-      addMCCrvCC			:false  
-      addMCCrvDigis			:false
       addMCTraj				:false 
-      addMCStrawDigis			:false
   }
   }   
 

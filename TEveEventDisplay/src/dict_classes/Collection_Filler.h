@@ -6,20 +6,12 @@
 #include "RecoDataProducts/inc/CaloCrystalHitCollection.hh"
 #include "RecoDataProducts/inc/CaloHitCollection.hh"
 //MC Products:
-#include "MCDataProducts/inc/PhysicalVolumeInfoCollection.hh"
-#include "MCDataProducts/inc/PhysicalVolumeInfoMultiCollection.hh"
 #include "MCDataProducts/inc/MCTrajectoryCollection.hh"
-#include "MCDataProducts/inc/SimParticleCollection.hh"
-#include "MCDataProducts/inc/StepPointMCCollection.hh"
 //Kalman Tracks
 #include "RecoDataProducts/inc/KalSeed.hh"
 #include "RecoDataProducts/inc/KalRepCollection.hh"
 #include "RecoDataProducts/inc/TrkExtTrajCollection.hh"
 //Tracker Hits:
-#include "RecoDataProducts/inc/StrawHitCollection.hh"
-#include "RecoDataProducts/inc/StrawHitFlagCollection.hh"
-#include "RecoDataProducts/inc/StrawHitPositionCollection.hh"
-#include "RecoDataProducts/inc/StrawDigiCollection.hh"
 #include "RecoDataProducts/inc/ComboHit.hh"
 //CRV:
 #include "RecoDataProducts/inc/CrvRecoPulseCollection.hh"
@@ -45,7 +37,7 @@ using namespace CLHEP;
 namespace mu2e{
 
   enum RecoDataProductName {ComboHits, CaloCrystalHits, CaloClusters, CosmicTracks, HelixSeeds, KalSeeds, CRVRecoPulses, TrkExtTrajectories};
-  enum MCDataProductName {CaloDigisMC, CaloHitsMCTruth, CaloHitSimPartsMC, CrvCoincidenceClustersMC, CrvDigisMC, MCTrajectories, StrawDigisMC};
+  enum MCDataProductName {MCTrajectories};
 
 	class Collection_Filler
 	{
@@ -66,13 +58,7 @@ namespace mu2e{
       fhicl::Atom<art::InputTag>kalseedTag{Name("KalSeedCollection"),Comment("kalseedTag")};
       fhicl::Atom<art::InputTag>trkexttrajTag{Name("TrkExtTrajCollection"),Comment("trkexttrajTag")};
       //MC Data Products
-      fhicl::Atom<art::InputTag>mcdigisTag{Name("CaloDigiMCCollection"),Comment("mcdigisTag")};
-      fhicl::Atom<art::InputTag>mccHitTag{Name("CaloHitMCTruthCollection"),Comment("mccHitTag")};
-      fhicl::Atom<art::InputTag>mccHitSPTag{Name("CaloHitSimPartMCCollection"),Comment("mccHitSPTag")};
-    fhicl::Atom<art::InputTag>mccrvcoincluTag{Name("CrvCoincidenceClusterMCCollection"),Comment("mccrvcoincluTag")};
-      fhicl::Atom<art::InputTag>mccrvdigiTag{Name("CrvDigiMCCollection"),Comment("mccrvdigiTag")};
       fhicl::Atom<art::InputTag>mctrajTag{Name("MCTrajectoryCollection"),Comment("mctrajTag")};
-      fhicl::Atom<art::InputTag>mcstrawdigiTag{Name("StrawDigiMCCollection"),Comment("mcstrawdigiTag")};
 
      //RecoData Products
       fhicl::Atom<bool> addHits{Name("addHits"), Comment("set to add the hits"),false};
@@ -85,14 +71,7 @@ namespace mu2e{
       fhicl::Atom<bool> addTrkExtTrajs{Name("addTrkExtTrajs"), Comment("set to add track exit trajectories"), false};
       fhicl::Atom<bool> RecoOnly{Name("RecoOnly"), Comment("set to see only Reco Data Products"), false};
       fhicl::Atom<bool> FillAll{Name("FillAll"), Comment("to see all available products"), false};
-
-      fhicl::Atom<bool> addMCCaloDigis{Name("addMCCaloDigis"), Comment("set to add the MC calo digis"),false};
-      fhicl::Atom<bool> addMCHits{Name("addMCHits"), Comment("set to add MC hits"),false};
-      fhicl::Atom<bool> addMCHitsSP{Name("addMCHitsSP"), Comment("set to add MC hits sim part"),false};
-      fhicl::Atom<bool> addMCCrvCC{Name("addMCCrvCC"), Comment("set to add MC crv coin clust"),false};	
-      fhicl::Atom<bool> addMCCrvDigis{Name("addMCCrvDigis"), Comment("set to add MC crv digis"), false};
       fhicl::Atom<bool> addMCTraj{Name("addMCTraj"), Comment("set to add MC trajectories"), false};
-      fhicl::Atom<bool> addMCStrawDigis{Name("addMCStrawDigis"), Comment("set to add MC straw digis"), false};
       fhicl::Atom<bool> MCOnly{Name("MCOnly"), Comment("set to see only MC Data Products"), false};
     };
 

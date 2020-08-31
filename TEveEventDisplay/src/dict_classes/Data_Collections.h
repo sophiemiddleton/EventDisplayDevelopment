@@ -6,27 +6,12 @@
 #include "RecoDataProducts/inc/CaloCrystalHitCollection.hh"
 #include "RecoDataProducts/inc/CaloHitCollection.hh"
 //MC Products:
-#include "MCDataProducts/inc/PhysicalVolumeInfoCollection.hh"
-#include "MCDataProducts/inc/PhysicalVolumeInfoMultiCollection.hh"
 #include "MCDataProducts/inc/MCTrajectoryCollection.hh"
-#include "MCDataProducts/inc/SimParticleCollection.hh"
-#include "MCDataProducts/inc/StepPointMCCollection.hh"
-#include "MCDataProducts/inc/CaloDigiMCCollection.hh"
-#include "MCDataProducts/inc/CaloHitMCTruthCollection.hh"
-#include "MCDataProducts/inc/CaloHitSimPartMCCollection.hh"
-#include "MCDataProducts/inc/CrvCoincidenceClusterMCCollection.hh"
-#include "MCDataProducts/inc/CrvDigiMCCollection.hh"
-#include "MCDataProducts/inc/MCTrajectoryCollection.hh"
-#include "MCDataProducts/inc/StrawDigiMCCollection.hh"
 //Kalman Tracks
 #include "RecoDataProducts/inc/KalSeed.hh"
 #include "RecoDataProducts/inc/KalRepCollection.hh"
 #include "RecoDataProducts/inc/TrkExtTrajCollection.hh"
 //Tracker Hits:
-#include "RecoDataProducts/inc/StrawHitCollection.hh"
-#include "RecoDataProducts/inc/StrawHitFlagCollection.hh"
-#include "RecoDataProducts/inc/StrawHitPositionCollection.hh"
-#include "RecoDataProducts/inc/StrawDigiCollection.hh"
 #include "RecoDataProducts/inc/ComboHit.hh"
 //CRV:
 #include "RecoDataProducts/inc/CrvRecoPulseCollection.hh"
