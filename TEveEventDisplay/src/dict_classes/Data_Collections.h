@@ -60,20 +60,14 @@ namespace mu2e{
     const ComboHitCollection *chcol = 0;
     const CrvRecoPulseCollection* crvcoincol = 0;
     const CosmicTrackSeedCollection* cosmiccol = 0;
-    const GenParticleCollection* gencol = 0;
     const CaloClusterCollection* clustercol = 0;
     const CaloCrystalHitCollection* cryHitcol = 0;
     const HelixSeedCollection* hseedcol = 0;
     const KalSeedCollection* kalseedcol = 0;
     const TrkExtTrajCollection* trkextcol = 0;
     //MCDataProducts:
-    const CaloDigiMCCollection *mccdigicol = 0;
-    const CaloHitMCTruthCollection *mchittruthcol = 0;
-    const CaloHitSimPartMCCollection *mcchitspcol = 0;
-    const CrvCoincidenceClusterMCCollection *mccrvcccol = 0;
-    const CrvDigiMCCollection *mccrvdigicol = 0;
     const MCTrajectoryCollection *mctrajcol = 0;
-    const StrawDigiMCCollection *mcsdigicol = 0;
+
 
     virtual ~Data_Collections(){};
     #endif

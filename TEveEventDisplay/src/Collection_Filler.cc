@@ -9,21 +9,13 @@ namespace mu2e{
 
   Collection_Filler::Collection_Filler(const Config& conf) :
     chTag_(conf.chTag()),
-    gensTag_(conf.gensTag()),
-    strawdigiTag_(conf.strawdigiTag()),
     crvcoinTag_(conf.crvdigiTag()),
     cluTag_(conf.cluTag()),
     cryHitTag_(conf.cryHitTag()),
     hseedTag_(conf.hseedTag()),
     kalseedTag_(conf.kalseedTag()),
     trkexttrajTag_(conf.trkexttrajTag()),
-    mcdigisTag_(conf.mcdigisTag()),
-    mccHitTag_(conf.mccHitTag()),
-    mccHitSPTag_(conf.mccHitSPTag()),
-    mccrvcoincluTag_(conf.mccrvcoincluTag()),
-    mccrvdigiTag_(conf.mccrvdigiTag()),
     mctrajTag_(conf.mctrajTag()),
-    mcstrawdigiTag_(conf.mcstrawdigiTag()),
     addHits_(conf.addHits()),
     addTracks_(conf.addTracks()),
     addClusters_(conf.addClusters()),
@@ -33,13 +25,7 @@ namespace mu2e{
     addTrkExtTrajs_(conf.addTrkExtTrajs()),
     RecoOnly_(conf.RecoOnly()),
     FillAll_(conf.FillAll()),
-    addMCCaloDigis_(conf.addMCCaloDigis()), 
-    addMCHits_(conf.addMCHits()), 
-    addMCHitsSP_(conf.addMCHitsSP()), 
-    addMCCrvCC_(conf.addMCCrvCC()), 
-    addMCCrvDigis_(conf.addMCCrvDigis()), 
     addMCTraj_(conf.addMCTraj()), 
-    addMCStrawDigis_(conf.addMCStrawDigis()),
     MCOnly_(conf.MCOnly())
   {}
 
@@ -81,33 +67,9 @@ namespace mu2e{
 
 
   void Collection_Filler::FillMCCollections(const art::Event& evt, Data_Collections &data, MCDataProductName CollectionName){
-    if(FillAll_ or MCOnly_ or (addMCCaloDigis_ and CollectionName == CaloDigisMC)){ 
-      auto chH = evt.getValidHandle<mu2e::CaloDigiMCCollection>(mcdigisTag_);
-      data.mccdigicol = chH.product();
-    }
-    if(FillAll_ or MCOnly_ or (addMCHits_ and CollectionName == CaloHitsMCTruth)){ 
-      auto chH = evt.getValidHandle<mu2e::CaloHitMCTruthCollection>(mccHitTag_);
-      data.mchittruthcol = chH.product();
-    }
-    if(FillAll_ or MCOnly_ or (addMCHitsSP_ and CollectionName == CaloHitSimPartsMC)){ 
-      auto chH = evt.getValidHandle<mu2e::CaloHitSimPartMCCollection>(mccHitSPTag_);
-      data.mcchitspcol = chH.product();
-    }
-    if(FillAll_ or MCOnly_ or (addMCCrvCC_ and CollectionName == CrvCoincidenceClustersMC)){ 
-      auto chH = evt.getValidHandle<mu2e::CrvCoincidenceClusterMCCollection>(mccrvcoincluTag_);
-      data.mccrvcccol = chH.product();
-    }
-    if(FillAll_ or MCOnly_ or (addMCCrvDigis_ and CollectionName == CrvDigisMC)){ 
-      auto chH = evt.getValidHandle<mu2e::CrvDigiMCCollection>(mccrvdigiTag_);
-      data.mccrvdigicol = chH.product();
-    }
     if(FillAll_ or MCOnly_ or (addMCTraj_ and CollectionName == MCTrajectories)){ 
       auto chH = evt.getValidHandle<mu2e::MCTrajectoryCollection>(mctrajTag_);
       data.mctrajcol = chH.product();
-    }
-    if(FillAll_ or MCOnly_ or (addMCStrawDigis_ and CollectionName == StrawDigisMC)){ 
-      auto chH = evt.getValidHandle<mu2e::StrawDigiMCCollection>(mcstrawdigiTag_);
-      data.mcsdigicol = chH.product();
     }
   }
 

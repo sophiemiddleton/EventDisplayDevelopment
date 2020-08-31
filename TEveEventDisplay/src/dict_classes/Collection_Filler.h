@@ -104,8 +104,6 @@ namespace mu2e{
 
     //RecoDataProducts: 
     art::InputTag chTag_;
-    art::InputTag gensTag_;
-    art::InputTag strawdigiTag_;
     art::InputTag crvcoinTag_;
     art::InputTag cosmicTag_;
     art::InputTag cluTag_;
@@ -114,20 +112,14 @@ namespace mu2e{
     art::InputTag kalseedTag_;
     art::InputTag trkexttrajTag_;
     //MCDataProdutcs:
-    art::InputTag mcdigisTag_;
-    art::InputTag mccHitTag_;
-    art::InputTag mccHitSPTag_;
-    art::InputTag mccrvcoincluTag_;
-    art::InputTag mccrvdigiTag_;
     art::InputTag mctrajTag_;
-    art::InputTag mcstrawdigiTag_;
 
     std::string g4ModuleLabel_;
 
     art::Event *_event;
     art::Run *_run;
 
-    bool addHits_, addTracks_, addClusters_, addCrvHits_, addCosmicSeedFit_, isCosmic_, addTrkExtTrajs_, RecoOnly_,  FillAll_, addMCCaloDigis_, addMCHits_, addMCHitsSP_, addMCCrvCC_, addMCCrvDigis_, addMCTraj_, addMCStrawDigis_, MCOnly_;
+    bool addHits_, addTracks_, addClusters_, addCrvHits_, addCosmicSeedFit_, isCosmic_, addTrkExtTrajs_, RecoOnly_,  FillAll_, addMCCaloDigis_, addMCTraj_, MCOnly_;
 
     void FillRecoCollections(const art::Event& evt, Data_Collections &data, RecoDataProductName code);
     void FillMCCollections(const art::Event& evt, Data_Collections &data, MCDataProductName code);

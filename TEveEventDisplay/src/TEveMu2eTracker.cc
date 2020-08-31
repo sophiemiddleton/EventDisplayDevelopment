@@ -20,8 +20,6 @@ namespace mu2e{
       Double_t rmax{pointmmTocm(envelope.outerRadius())};
       TEveGeoShape *tr = new TEveGeoShape();
       tr->SetShape(new TGeoTube(rmin, rmax, dz));
-      std::cout<<"Size "<<rmin<<" "<<rmax<<" "<<dz<<std::endl;
-
       tr->SetMainTransparency(100);
       orthodet->AddElement(tr);
         
@@ -32,7 +30,7 @@ namespace mu2e{
       TGeoVolume *tracker = new TGeoVolume("straw Tracker ",gs, My);
       tracker->SetVisLeaves(kFALSE);
       tracker->SetInvisible();
-      topvol->AddNode(tracker, 1, new TGeoTranslation(-390.4,0,1017.1));
+      topvol->AddNode(tracker, 1, new TGeoTranslation(-390.4,0,1017.1)); 
 
   }
 }
